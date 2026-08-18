@@ -211,9 +211,38 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
     }
+function loadImageAsDataURL(src) {
+
+    return new Promise((resolve, reject) => {
+
+        const img = new Image();
+
+        img.onload = () => {
+
+            const canvas =
+                document.createElement("canvas");
+
+            canvas.width = img.naturalWidth;
+            canvas.height = img.naturalHeight;
+
+            const ctx =
+                canvas.getContext("2d");
+
+            ctx.drawImage(img, 0, 0);
+
+            resolve(
+                canvas.toDataURL("image/png")
+            );
+        };
+
+        img.onerror = reject;
+
+        img.src = src;
+    });
+}    
 
 
-function exportTableToPDF(
+async function exportTableToPDF(
     table,
     tableTitle
 ) {
@@ -229,6 +258,24 @@ function exportTableToPDF(
 
     const { jsPDF } =
         window.jspdf;
+
+    let companyLogo = null;
+
+    try {
+
+        companyLogo =
+            await loadImageAsDataURL(
+                "../assets/Logo.png"
+            );
+
+    } catch (error) {
+
+        console.warn(
+            "Company logo could not be loaded.",
+            error
+        );
+
+    }    
 
 
     const doc =
@@ -246,10 +293,16 @@ function exportTableToPDF(
         );
 
 
-    const mainTitle =
-        mainHeading
-            ? mainHeading.textContent.trim()
-            : "Report";
+    let mainTitle =
+    mainHeading
+        ? mainHeading.textContent.trim()
+        : "Report";
+
+    mainTitle =
+        mainTitle.replace(
+            /Dashboard/gi,
+            "Report"
+        );
 
 
     // MAIN HEADING
@@ -372,42 +425,209 @@ function exportTableToPDF(
     }
 
 
-    doc.autoTable({
+doc.autoTable({
 
-        html: table,
+    html: table,
 
-        startY:
-            filterText
-                ? 92
-                : 78,
+    startY:
+        filterText
+            ? 92
+            : 78,
 
-        theme: "grid",
+    theme: "plain",
 
-        styles: {
-            fontSize: 7,
-            cellPadding: 3,
-            overflow: "linebreak",
-            valign: "middle"
+    // ==========================================
+    // GENERAL TABLE STYLE
+    // ==========================================
+
+    styles: {
+
+        font: "helvetica",
+
+        fontSize: 7.2,
+
+        cellPadding: {
+            top: 4,
+            right: 4,
+            bottom: 4,
+            left: 4
         },
 
-        headStyles: {
-            fillColor: [1, 8, 83],
-            textColor: 255,
-            fontStyle: "bold"
-        },
+        overflow: "linebreak",
 
-        footStyles: {
-            fillColor: [241, 245, 249],
-            textColor: [15, 23, 42],
-            fontStyle: "bold"
-        },
+        valign: "middle",
 
-        margin: {
-            top: 70,
-            bottom: 42,
-            left: 30,
-            right: 30
-        },
+        textColor: [
+            51,
+            65,
+            85
+        ],
+
+        lineColor: [
+            203,
+            213,
+            225
+        ],
+
+        lineWidth: 0.4
+    },
+
+
+    // ==========================================
+    // TABLE HEADER
+    // ==========================================
+
+    headStyles: {
+
+        fillColor: [
+            1,
+            8,
+            83
+        ],
+
+        textColor: [
+            255,
+            255,
+            255
+        ],
+
+        fontStyle: "bold",
+
+        fontSize: 7.2,
+
+        halign: "center",
+
+        valign: "middle",
+
+        minCellHeight: 22,
+
+        lineColor: [
+            255,
+            255,
+            255
+        ],
+
+        lineWidth: 0.3
+    },
+
+
+    // ==========================================
+    // NORMAL ROWS
+    // ==========================================
+
+    bodyStyles: {
+
+        fillColor: [
+            255,
+            255,
+            255
+        ]
+    },
+
+
+    // ==========================================
+    // ALTERNATE ROW
+    // ==========================================
+
+    alternateRowStyles: {
+
+        fillColor: [
+            248,
+            250,
+            252
+        ]
+    },
+
+
+    // ==========================================
+    // TOTAL / FOOTER ROW
+    // ==========================================
+
+    footStyles: {
+
+        fillColor: [
+            226,
+            232,
+            240
+        ],
+
+        textColor: [
+            15,
+            23,
+            42
+        ],
+
+        fontStyle: "bold",
+
+        lineColor: [
+            148,
+            163,
+            184
+        ],
+
+        lineWidth: 0.6
+    },
+
+
+    // ==========================================
+    // CELL ALIGNMENT
+    // ==========================================
+
+    didParseCell: function (data) {
+
+        // Header
+        if (
+            data.section === "head"
+        ) {
+
+            data.cell.styles.halign =
+                "center";
+        }
+
+
+        // Body
+        if (
+            data.section === "body"
+        ) {
+
+            // First column
+            if (
+                data.column.index === 0
+            ) {
+
+                data.cell.styles.halign =
+                    "left";
+
+            } else {
+
+                data.cell.styles.halign =
+                    "center";
+            }
+        }
+
+
+        // Total / Footer
+        if (
+            data.section === "foot"
+        ) {
+
+            data.cell.styles.halign =
+                "center";
+        }
+
+    },
+
+
+    margin: {
+
+        top: 70,
+
+        bottom: 42,
+
+        left: 30,
+
+        right: 30
+    },
 
 
         // =====================================================
@@ -457,19 +677,42 @@ function exportTableToPDF(
             );
 
 
-            // LEFT HEADER
+            // -------------------------------------------------
+            // LEFT HEADER - LOGO + COMPANY NAME
+            // -------------------------------------------------
+
+            let companyTextX = 30;
+
+            if (companyLogo) {
+
+                doc.addImage(
+                    companyLogo,
+                    "PNG",
+                    30,     // X
+                    8,      // Y
+                    20,     // Width
+                    14      // Height
+                );
+
+                companyTextX = 56;
+            }
+
+
             doc.text(
                 "Imo Chicken & Agro (Pvt) Ltd",
-                30,
-                20
+                companyTextX,
+                19
             );
 
 
+            // -------------------------------------------------
             // RIGHT HEADER
+            // -------------------------------------------------
+
             doc.text(
                 "Live Bird Department",
                 pageWidth - 30,
-                20,
+                19,
                 {
                     align: "right"
                 }
@@ -514,6 +757,56 @@ function exportTableToPDF(
                 pageHeight - 16,
                 {
                     align: "center"
+                }
+            );
+
+            // -------------------------------------------------
+            // GENERATED DATE & TIME - RIGHT SIDE
+            // -------------------------------------------------
+
+            const generatedNow =
+                new Date();
+
+            const generatedDate =
+                generatedNow.toLocaleDateString(
+                    "en-GB",
+                    {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric"
+                    }
+                );
+
+            const generatedTime =
+                generatedNow.toLocaleTimeString(
+                    "en-US",
+                    {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true
+                    }
+                );
+
+
+            doc.setFont(
+                "helvetica",
+                "normal"
+            );
+
+            doc.setFontSize(7);
+
+            doc.setTextColor(
+                100,
+                116,
+                139
+            );
+
+            doc.text(
+                `Generated: ${generatedDate} | ${generatedTime}`,
+                pageWidth - 30,
+                pageHeight - 16,
+                {
+                    align: "right"
                 }
             );
 
