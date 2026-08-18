@@ -1342,3 +1342,54 @@ footer {
     }
 
 }
+/* =========================================================
+   USER MANUAL QR MODAL
+========================================================= */
+
+.manual-modal {
+    max-width: 430px;
+    padding: 30px;
+    text-align: center;
+}
+
+.manual-modal h2 {
+    margin-bottom: 10px;
+
+    color: #123c73;
+
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.manual-modal p {
+    margin-bottom: 22px;
+
+    color: #64748b;
+
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.manual-qr-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 18px;
+
+    background: #f8fafc;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+
+    margin-bottom: 20px;
+}
+
+.manual-qr-image {
+    width: 240px;
+    max-width: 100%;
+
+    height: auto;
+
+    display: block;
+}

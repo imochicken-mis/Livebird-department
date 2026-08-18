@@ -67,6 +67,20 @@
             <div class="nav-buttons">
 
                 <button
+                    id="manualBtn"
+                    class="nav-action-btn"
+                    type="button"
+                >
+                    <span class="material-icons">
+                        menu_book
+                    </span>
+
+                    <span>
+                        User Manual
+                    </span>
+                </button>
+
+                <button
                     id="infoBtn"
                     class="nav-action-btn"
                     type="button"
@@ -79,7 +93,6 @@
                         Info
                     </span>
                 </button>
-
 
                 <button
                     id="contactBtn"
@@ -94,7 +107,6 @@
                         Contact
                     </span>
                 </button>
-
 
                 <button
                     id="loginBtn"
@@ -340,6 +352,48 @@
                 </button>
 
             </div>
+
+        </div>
+
+    </div>
+
+    <!-- =====================================================
+     USER MANUAL QR MODAL
+    ====================================================== -->
+
+    <div
+        id="manualModal"
+        class="modal"
+    >
+
+        <div class="modal-card manual-modal">
+
+            <h2>
+                User Manual
+            </h2>
+
+            <p>
+                Scan the QR code below to access the
+                Live Bird Department User Manual.
+            </p>
+
+            <div class="manual-qr-wrapper">
+
+                <img
+                    src="assets/Qr.png"
+                    alt="User Manual QR Code"
+                    class="manual-qr-image"
+                >
+
+            </div>
+
+            <button
+                id="closeManualBtn"
+                class="close-btn"
+                type="button"
+            >
+                Close
+            </button>
 
         </div>
 

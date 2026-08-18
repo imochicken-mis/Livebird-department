@@ -11,6 +11,39 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const cancelLoginBtn = document.getElementById("cancelLoginBtn");
 
+    const manualBtn =
+    document.getElementById("manualBtn");
+
+    const manualModal =
+        document.getElementById("manualModal");
+
+    const closeManualBtn =
+        document.getElementById("closeManualBtn");
+
+
+    if (manualBtn && manualModal) {
+
+        manualBtn.addEventListener(
+            "click",
+            () => {
+                manualModal.classList.add("show");
+            }
+        );
+
+    }
+
+
+    if (closeManualBtn && manualModal) {
+
+        closeManualBtn.addEventListener(
+            "click",
+            () => {
+                manualModal.classList.remove("show");
+            }
+        );
+
+    }
+
     function openModal(modal) {
         modal.classList.add("show");
     }
