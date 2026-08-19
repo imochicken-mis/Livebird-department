@@ -4,58 +4,113 @@ document.addEventListener("DOMContentLoaded", () => {
     // ELEMENTS
     // =========================================================
 
-    const catchingForm = document.getElementById("catchingForm");
+    const catchingForm =
+        document.getElementById("catchingForm");
 
-    const catchingDate = document.getElementById("catchingDate");
-    const typeSelect = document.getElementById("type");
-    const farmerSelect = document.getElementById("farmerName");
+    const catchingDate =
+        document.getElementById("catchingDate");
 
-    const cageContainer = document.getElementById("cageContainer");
-    const cageInput = document.getElementById("cageNo");
+    const typeSelect =
+        document.getElementById("type");
 
-    const batchInput = document.getElementById("batchNo");
+    const farmerSelect =
+        document.getElementById("farmerName");
 
-    const customerSelect = document.getElementById("customerName");
+    const cageContainer =
+        document.getElementById("cageContainer");
 
-    const batch2Container = document.getElementById("batch2Container");
-    const batch2Input = document.getElementById("batchNo2");
+    const cageInput =
+        document.getElementById("cageNo");
 
-    const nobInput = document.getElementById("nob");
-    const weightInput = document.getElementById("totalWeight");
-    const priceInput = document.getElementById("sellingPrice");
-    const billInput = document.getElementById("billNo");
+    const batchInput =
+        document.getElementById("batchNo");
 
-    const amountInput = document.getElementById("totalAmount");
-    const avgWeightInput = document.getElementById("avgWeight");
+    const customerSelect =
+        document.getElementById("customerName");
 
-    const saveBtn = document.getElementById("saveBtn");
-    const saveMessage = document.getElementById("saveMessage");
+    const batch2Container =
+        document.getElementById("batch2Container");
 
-    const loggedUser = document.getElementById("loggedUser");
-    const logoutBtn = document.getElementById("logoutBtn");
+    const batch2Input =
+        document.getElementById("batchNo2");
+
+    const nobInput =
+        document.getElementById("nob");
+
+    const weightInput =
+        document.getElementById("totalWeight");
+
+    const priceInput =
+        document.getElementById("sellingPrice");
+
+    const billInput =
+        document.getElementById("billNo");
+
+    const amountInput =
+        document.getElementById("totalAmount");
+
+    const avgWeightInput =
+        document.getElementById("avgWeight");
+
+    const saveBtn =
+        document.getElementById("saveBtn");
+
+    const saveMessage =
+        document.getElementById("saveMessage");
+
+    const loggedUser =
+        document.getElementById("loggedUser");
+
+    const logoutBtn =
+        document.getElementById("logoutBtn");
+
+    const previewModal =
+        document.getElementById("previewModal");
+
+    const previewContent =
+        document.getElementById("previewContent");
+
+    const cancelPreviewBtn =
+        document.getElementById("cancelPreviewBtn");
+
+    const confirmSaveBtn =
+        document.getElementById("confirmSaveBtn");
 
 
     // =========================================================
     // CHECK LOGIN SESSION
     // =========================================================
 
-    const sessionUser = sessionStorage.getItem("livebirdUser");
+    const sessionUser =
+        sessionStorage.getItem("livebirdUser");
 
     if (!sessionUser) {
-        window.location.href = "../index.html";
+
+        window.location.href =
+            "../index.html";
+
         return;
     }
 
-    const user = JSON.parse(sessionUser);
+
+    const user =
+        JSON.parse(sessionUser);
 
 
     // Only user1 should access this page
+
     if (
         !user.username ||
         user.username.toLowerCase() !== "user1"
     ) {
-        sessionStorage.removeItem("livebirdUser");
-        window.location.href = "../index.html";
+
+        sessionStorage.removeItem(
+            "livebirdUser"
+        );
+
+        window.location.href =
+            "../index.html";
+
         return;
     }
 
@@ -80,6 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // =========================================================
 
     cageContainer.classList.add("hidden");
+
     batch2Container.classList.add("hidden");
 
 
@@ -94,87 +150,139 @@ document.addEventListener("DOMContentLoaded", () => {
     // TYPE CHANGE
     // =========================================================
 
-    typeSelect.addEventListener("change", () => {
+    typeSelect.addEventListener(
+        "change",
+        () => {
 
-        const selectedType = typeSelect.value;
+            const selectedType =
+                typeSelect.value;
 
-        farmerSelect.innerHTML =
-            `<option value="">Select Farmer</option>`;
 
-        if (selectedType === "Ownfarm") {
+            farmerSelect.innerHTML =
+                `<option value="">Select Farmer</option>`;
 
-            cageContainer.classList.remove("hidden");
 
-            loadFarmers("Ownfarm");
+            if (selectedType === "Ownfarm") {
 
-        } else if (selectedType === "Buyback") {
+                cageContainer.classList.remove(
+                    "hidden"
+                );
 
-            cageContainer.classList.add("hidden");
+                loadFarmers(
+                    "Ownfarm"
+                );
 
-            cageInput.value = "";
+            } else if (
+                selectedType === "Buyback"
+            ) {
 
-            loadFarmers("Buyback");
+                cageContainer.classList.add(
+                    "hidden"
+                );
 
-        } else {
+                cageInput.value = "";
 
-            cageContainer.classList.add("hidden");
+                loadFarmers(
+                    "Buyback"
+                );
 
-            cageInput.value = "";
+            } else {
+
+                cageContainer.classList.add(
+                    "hidden"
+                );
+
+                cageInput.value = "";
+
+            }
+
         }
-
-    });
+    );
 
 
     // =========================================================
     // CUSTOMER CHANGE
     // =========================================================
 
-    customerSelect.addEventListener("change", () => {
+    customerSelect.addEventListener(
+        "change",
+        () => {
 
-        if (customerSelect.value === "Imo Plant") {
+            if (
+                customerSelect.value ===
+                "Imo Plant"
+            ) {
 
-            batch2Container.classList.remove("hidden");
+                batch2Container.classList.remove(
+                    "hidden"
+                );
 
-        } else {
+            } else {
 
-            batch2Container.classList.add("hidden");
+                batch2Container.classList.add(
+                    "hidden"
+                );
 
-            batch2Input.value = "";
+                batch2Input.value = "";
+
+            }
+
         }
-
-    });
+    );
 
 
     // =========================================================
     // CALCULATIONS
     // =========================================================
 
-    nobInput.addEventListener("input", calculateTotals);
-    weightInput.addEventListener("input", calculateTotals);
-    priceInput.addEventListener("input", calculateTotals);
+    nobInput.addEventListener(
+        "input",
+        calculateTotals
+    );
+
+    weightInput.addEventListener(
+        "input",
+        calculateTotals
+    );
+
+    priceInput.addEventListener(
+        "input",
+        calculateTotals
+    );
 
 
     function calculateTotals() {
 
         const weight =
-            parseFloat(weightInput.value) || 0;
+            parseFloat(
+                weightInput.value
+            ) || 0;
 
         const price =
-            parseFloat(priceInput.value) || 0;
+            parseFloat(
+                priceInput.value
+            ) || 0;
 
         const nob =
-            parseFloat(nobInput.value) || 0;
+            parseFloat(
+                nobInput.value
+            ) || 0;
 
 
         // Total Amount = Weight × Selling Price
 
-        const totalAmount = weight * price;
+        const totalAmount =
+            weight * price;
+
 
         amountInput.value =
-            totalAmount.toLocaleString("en-US", {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            });
+            totalAmount.toLocaleString(
+                "en-US",
+                {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }
+            );
 
 
         // Average Weight = Weight / Number of Birds
@@ -182,11 +290,15 @@ document.addEventListener("DOMContentLoaded", () => {
         if (nob > 0) {
 
             avgWeightInput.value =
-                (weight / nob).toFixed(3);
+                (
+                    weight / nob
+                ).toFixed(3);
 
         } else {
 
-            avgWeightInput.value = "0.000";
+            avgWeightInput.value =
+                "0.000";
+
         }
 
     }
@@ -200,12 +312,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
 
-            const result = await getDashboardLists();
+            const result =
+                await getDashboardLists();
+
 
             if (!result.success) {
 
                 showMessage(
-                    result.message || "Unable to load dropdown data.",
+                    result.message ||
+                    "Unable to load dropdown data.",
                     "error"
                 );
 
@@ -213,16 +328,23 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
-            // Store lists temporarily in browser memory
+            // Store lists temporarily
 
             window.livebirdLists = {
-                ownfarm: result.ownfarm || [],
-                buyback: result.buyback || [],
-                customers: result.customers || []
+
+                ownfarm:
+                    result.ownfarm || [],
+
+                buyback:
+                    result.buyback || [],
+
+                customers:
+                    result.customers || []
+
             };
 
 
-            // Load customers immediately
+            // Load customers
 
             populateSelect(
                 customerSelect,
@@ -238,10 +360,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 error
             );
 
+
             showMessage(
                 "Unable to load farmer/customer data.",
                 "error"
             );
+
         }
 
     }
@@ -266,10 +390,13 @@ document.addEventListener("DOMContentLoaded", () => {
             farmers =
                 window.livebirdLists.ownfarm || [];
 
-        } else if (type === "Buyback") {
+        } else if (
+            type === "Buyback"
+        ) {
 
             farmers =
                 window.livebirdLists.buyback || [];
+
         }
 
 
@@ -296,36 +423,50 @@ document.addEventListener("DOMContentLoaded", () => {
             `<option value="">${placeholder}</option>`;
 
 
-        values.forEach(value => {
+        values.forEach(
+            value => {
 
-            const cleanValue =
-                String(value || "").trim();
+                const cleanValue =
+                    String(
+                        value || ""
+                    ).trim();
 
-            if (!cleanValue) {
-                return;
+
+                if (!cleanValue) {
+                    return;
+                }
+
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+
+                option.value =
+                    cleanValue;
+
+                option.textContent =
+                    cleanValue;
+
+
+                selectElement.appendChild(
+                    option
+                );
+
             }
-
-
-            const option =
-                document.createElement("option");
-
-            option.value = cleanValue;
-            option.textContent = cleanValue;
-
-            selectElement.appendChild(option);
-
-        });
+        );
 
     }
 
 
     // =========================================================
-    // SAVE FORM
+    // SAVE FORM -> SHOW PREVIEW
     // =========================================================
 
     catchingForm.addEventListener(
         "submit",
-        async (event) => {
+        (event) => {
 
             event.preventDefault();
 
@@ -333,7 +474,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             // -------------------------
-            // BASIC VALIDATION
+            // VALIDATION
             // -------------------------
 
             if (!catchingDate.value) {
@@ -380,10 +521,9 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
-            // Ownfarm requires Cage No
-
             if (
-                typeSelect.value === "Ownfarm" &&
+                typeSelect.value ===
+                    "Ownfarm" &&
                 !cageInput.value.trim()
             ) {
 
@@ -396,10 +536,9 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
-            // Imo Plant requires Batch No 2
-
             if (
-                customerSelect.value === "Imo Plant" &&
+                customerSelect.value ===
+                    "Imo Plant" &&
                 !batch2Input.value.trim()
             ) {
 
@@ -412,74 +551,319 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
-            // =================================================
-            // PREPARE SAME DATA ORDER AS PYTHON VERSION
-            // =================================================
+            // DO NOT SAVE YET
+            // SHOW PREVIEW FIRST
 
-            const record = {
+            showPreview();
 
-                date: catchingDate.value,
-
-                type: typeSelect.value,
-
-                farmer: farmerSelect.value,
-
-                cage:
-                    typeSelect.value === "Ownfarm"
-                        ? cageInput.value.trim()
-                        : "",
-
-                batch:
-                    batchInput.value.trim(),
-
-                customer:
-                    customerSelect.value,
-
-                batch2:
-                    customerSelect.value === "Imo Plant"
-                        ? batch2Input.value.trim()
-                        : "",
-
-                nob:
-                    nobInput.value || "0",
-
-                weight:
-                    weightInput.value || "0.00",
-
-                price:
-                    priceInput.value || "0.00",
-
-                bill:
-                    billInput.value.trim(),
-
-                amount:
-                    amountInput.value
-                        .replace(/,/g, "") || "0.00",
-
-                avgWeight:
-                    avgWeightInput.value || "0.000",
-
-                addedBy:
-                    user.name || user.username
-
-            };
+        }
+    );
 
 
-            // =================================================
-            // SAVE BUTTON STATE
-            // =================================================
+    // =========================================================
+    // BUILD RECORD
+    // =========================================================
 
-            saveBtn.disabled = true;
-            saveBtn.textContent = "Saving...";
+    function buildRecord() {
+
+        return {
+
+            date:
+                catchingDate.value,
+
+            type:
+                typeSelect.value,
+
+            farmer:
+                farmerSelect.value,
+
+            cage:
+                typeSelect.value ===
+                    "Ownfarm"
+                    ? cageInput.value.trim()
+                    : "",
+
+            batch:
+                batchInput.value.trim(),
+
+            customer:
+                customerSelect.value,
+
+            batch2:
+                customerSelect.value ===
+                    "Imo Plant"
+                    ? batch2Input.value.trim()
+                    : "",
+
+            nob:
+                nobInput.value || "0",
+
+            weight:
+                weightInput.value || "0.00",
+
+            price:
+                priceInput.value || "0.00",
+
+            bill:
+                billInput.value.trim(),
+
+            amount:
+                amountInput.value
+                    .replace(/,/g, "") ||
+                "0.00",
+
+            avgWeight:
+                avgWeightInput.value ||
+                "0.000",
+
+            addedBy:
+                user.name ||
+                user.username
+
+        };
+
+    }
+
+
+    // =========================================================
+    // PREVIEW
+    // =========================================================
+
+    function showPreview() {
+
+        const record =
+            buildRecord();
+
+
+        const rows = [
+
+            [
+                "Catching Date",
+                record.date || "-"
+            ],
+
+            [
+                "Type",
+                record.type || "-"
+            ],
+
+            [
+                "Farmer",
+                record.farmer || "-"
+            ],
+
+            [
+                "Cage No",
+                record.cage || "-"
+            ],
+
+            [
+                "Batch No",
+                record.batch || "-"
+            ],
+
+            [
+                "Customer",
+                record.customer || "-"
+            ],
+
+            [
+                "Batch No 2",
+                record.batch2 || "-"
+            ],
+
+            [
+                "Birds (NOB)",
+                record.nob || "0"
+            ],
+
+            [
+                "Weight (KG)",
+                record.weight || "0.00"
+            ],
+
+            [
+                "Average Weight (KG)",
+                record.avgWeight || "0.000"
+            ],
+
+            [
+                "Price",
+                record.price || "0.00"
+            ],
+
+            [
+                "Bill No",
+                record.bill || "-"
+            ],
+
+            [
+                "Amount",
+                amountInput.value ||
+                "0.00"
+            ]
+
+        ];
+
+
+        previewContent.innerHTML = "";
+
+
+        rows.forEach(
+            ([label, value]) => {
+
+                const row =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                row.style.display =
+                    "flex";
+
+                row.style.justifyContent =
+                    "space-between";
+
+                row.style.alignItems =
+                    "center";
+
+                row.style.gap =
+                    "20px";
+
+                row.style.padding =
+                    "10px 0";
+
+                row.style.borderBottom =
+                    "1px solid #eef2f7";
+
+
+                const labelElement =
+                    document.createElement(
+                        "span"
+                    );
+
+
+                labelElement.textContent =
+                    label;
+
+                labelElement.style.color =
+                    "#64748b";
+
+                labelElement.style.fontSize =
+                    "14px";
+
+
+                const valueElement =
+                    document.createElement(
+                        "strong"
+                    );
+
+
+                valueElement.textContent =
+                    value;
+
+                valueElement.style.color =
+                    "#1e293b";
+
+                valueElement.style.fontSize =
+                    "14px";
+
+                valueElement.style.textAlign =
+                    "right";
+
+
+                row.appendChild(
+                    labelElement
+                );
+
+                row.appendChild(
+                    valueElement
+                );
+
+
+                previewContent.appendChild(
+                    row
+                );
+
+            }
+        );
+
+
+        previewModal.classList.add(
+            "show"
+        );
+
+    }
+
+
+    // =========================================================
+    // CLOSE PREVIEW
+    // =========================================================
+
+    cancelPreviewBtn.addEventListener(
+        "click",
+        () => {
+
+            previewModal.classList.remove(
+                "show"
+            );
+
+        }
+    );
+
+
+    previewModal.addEventListener(
+        "click",
+        (event) => {
+
+            if (
+                event.target ===
+                previewModal
+            ) {
+
+                previewModal.classList.remove(
+                    "show"
+                );
+
+            }
+
+        }
+    );
+
+
+    // =========================================================
+    // CONFIRM + ACTUAL SAVE
+    // =========================================================
+
+    confirmSaveBtn.addEventListener(
+        "click",
+        async () => {
+
+            const record =
+                buildRecord();
+
+
+            confirmSaveBtn.disabled =
+                true;
+
+            confirmSaveBtn.textContent =
+                "Saving...";
 
 
             try {
 
                 const result =
-                    await saveCatchingRecord(record);
+                    await saveCatchingRecord(
+                        record
+                    );
 
 
                 if (result.success) {
+
+                    previewModal.classList.remove(
+                        "show"
+                    );
+
 
                     showMessage(
                         "Record Saved Successfully! 🎉",
@@ -496,8 +880,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         "Unable to save the record.",
                         "error"
                     );
-                }
 
+                }
 
             } catch (error) {
 
@@ -506,18 +890,20 @@ document.addEventListener("DOMContentLoaded", () => {
                     error
                 );
 
+
                 showMessage(
                     "Unable to connect to the server.",
                     "error"
                 );
 
-
             } finally {
 
-                saveBtn.disabled = false;
+                confirmSaveBtn.disabled =
+                    false;
 
-                saveBtn.textContent =
-                    "Save Record";
+                confirmSaveBtn.textContent =
+                    "Confirm & Save";
+
             }
 
         }
@@ -532,8 +918,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         typeSelect.value = "";
 
+
         farmerSelect.innerHTML =
             `<option value="">Select Farmer</option>`;
+
 
         cageInput.value = "";
 
@@ -551,14 +939,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
         billInput.value = "";
 
-        amountInput.value = "0.00";
+        amountInput.value =
+            "0.00";
 
-        avgWeightInput.value = "0.000";
+        avgWeightInput.value =
+            "0.000";
 
 
-        cageContainer.classList.add("hidden");
+        cageContainer.classList.add(
+            "hidden"
+        );
 
-        batch2Container.classList.add("hidden");
+        batch2Container.classList.add(
+            "hidden"
+        );
 
 
         // Keep date as today
@@ -574,17 +968,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function setTodayDate() {
 
-        const today = new Date();
+        const today =
+            new Date();
 
-        const year = today.getFullYear();
+
+        const year =
+            today.getFullYear();
+
 
         const month =
-            String(today.getMonth() + 1)
-                .padStart(2, "0");
+            String(
+                today.getMonth() + 1
+            ).padStart(
+                2,
+                "0"
+            );
+
 
         const day =
-            String(today.getDate())
-                .padStart(2, "0");
+            String(
+                today.getDate()
+            ).padStart(
+                2,
+                "0"
+            );
 
 
         catchingDate.value =
@@ -597,16 +1004,24 @@ document.addEventListener("DOMContentLoaded", () => {
     // MESSAGE
     // =========================================================
 
-    function showMessage(message, type) {
+    function showMessage(
+        message,
+        type
+    ) {
 
-        saveMessage.textContent = message;
+        saveMessage.textContent =
+            message;
+
 
         saveMessage.classList.remove(
             "success",
             "error"
         );
 
-        saveMessage.classList.add(type);
+
+        saveMessage.classList.add(
+            type
+        );
 
     }
 
@@ -615,10 +1030,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         saveMessage.textContent = "";
 
+
         saveMessage.classList.remove(
             "success",
             "error"
         );
+
     }
 
 
@@ -633,6 +1050,7 @@ document.addEventListener("DOMContentLoaded", () => {
             sessionStorage.removeItem(
                 "livebirdUser"
             );
+
 
             window.location.href =
                 "../index.html";

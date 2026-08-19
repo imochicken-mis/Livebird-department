@@ -853,142 +853,337 @@ function parseTime(value, ampm) {
     // PREVIEW
     // =========================================================
 
+    // =========================================================
+    // PREVIEW
+    // =========================================================
+
     function showPreview(batches) {
 
-        const helpers =
-            [
-                helper1.value,
-                helper2.value,
-                helper3.value
-            ]
+        const helpers = [
+            helper1.value,
+            helper2.value,
+            helper3.value
+        ]
             .filter(Boolean)
             .join(", ") || "-";
 
 
-        previewContent.innerHTML = `
-
-            <div class="preview-trip-card">
-
-                <p>
-                    <strong>Date:</strong>
-                    ${escapeHtml(tripDate.value || "-")}
-                </p>
-
-                <p>
-                    <strong>Vehicle:</strong>
-                    ${escapeHtml(vehicleNumber.value || "-")}
-                </p>
-
-                <p>
-                    <strong>Driver:</strong>
-                    ${escapeHtml(driverName.value || "-")}
-                </p>
-
-                <p>
-                    <strong>Helpers:</strong>
-                    ${escapeHtml(helpers)}
-                </p>
-
-                <p>
-                    <strong>DOA:</strong>
-                    ${escapeHtml(doa.value || "0")}
-                </p>
-
-                <p>
-                    <strong>Out Time:</strong>
-                    ${escapeHtml(
-                        outTime.value
-                            ? `${outTime.value} ${outAmPm.value}`
-                            : "-"
-                    )}
-                </p>
-
-                <p>
-                    <strong>In Time:</strong>
-                    ${escapeHtml(
-                        inTime.value
-                            ? `${inTime.value} ${inAmPm.value}`
-                            : "-"
-                    )}
-                </p>
-
-                <p>
-                    <strong>Total Trip Time:</strong>
-                    ${escapeHtml(totalTripTime.value)}
-                </p>
-
-            </div>
-
-            <p>
-                <strong>
-                    Total Batches to Save:
-                    ${batches.length}
-                </strong>
-            </p>
-
-        `;
+        // Clear old preview
+        previewContent.innerHTML = "";
 
 
-        batches.forEach(
-            (batch, index) => {
+        // =====================================================
+        // TRIP DETAILS
+        // =====================================================
 
-                const card =
-                    document.createElement("div");
+        const tripRows = [
 
-                card.className =
-                    "preview-batch-card";
+            [
+                "Date",
+                tripDate.value || "-"
+            ],
+
+            [
+                "Vehicle Number",
+                vehicleNumber.value || "-"
+            ],
+
+            [
+                "Driver Name",
+                driverName.value || "-"
+            ],
+
+            [
+                "Helpers",
+                helpers
+            ],
+
+            [
+                "DOA",
+                doa.value || "0"
+            ],
+
+            [
+                "Out Time",
+                outTime.value
+                    ? `${outTime.value} ${outAmPm.value}`
+                    : "-"
+            ],
+
+            [
+                "In Time",
+                inTime.value
+                    ? `${inTime.value} ${inAmPm.value}`
+                    : "-"
+            ],
+
+            [
+                "Total Trip Time",
+                totalTripTime.value || "00:00:00"
+            ],
+
+            [
+                "Total Batches",
+                batches.length
+            ]
+
+        ];
 
 
-                card.innerHTML = `
+        // Section title
+        const tripTitle =
+            document.createElement("div");
 
-                    <h3>
-                        Batch #${index + 1}
-                        -
-                        ${escapeHtml(batch.batchNo || "-")}
-                        (${escapeHtml(batch.location || "-")})
-                    </h3>
+        tripTitle.textContent =
+            "Trip Details";
 
-                    <div class="preview-batch-grid">
+        tripTitle.style.fontSize =
+            "13px";
 
-                        <div>
-                            Birds:
-                            <strong>
-                                ${escapeHtml(batch.availableBirds)}
-                            </strong>
-                        </div>
+        tripTitle.style.fontWeight =
+            "700";
 
-                        <div>
-                            Weight:
-                            <strong>
-                                ${escapeHtml(batch.weight)}
-                            </strong>
-                            kg
-                        </div>
+        tripTitle.style.color =
+            "#64748b";
 
-                        <div>
-                            Avg Weight:
-                            <strong>
-                                ${escapeHtml(batch.avgWeight)}
-                            </strong>
-                            kg
-                        </div>
+        tripTitle.style.textTransform =
+            "uppercase";
 
-                    </div>
-                `;
+        tripTitle.style.letterSpacing =
+            "0.7px";
 
+        tripTitle.style.marginBottom =
+            "8px";
+
+
+        previewContent.appendChild(
+            tripTitle
+        );
+
+
+        // Create normal preview rows
+        tripRows.forEach(
+            ([label, value]) => {
 
                 previewContent.appendChild(
-                    card
+                    createPreviewRow(
+                        label,
+                        value
+                    )
                 );
 
             }
         );
 
 
+        // =====================================================
+        // BATCH DETAILS
+        // =====================================================
+
+        batches.forEach(
+            (batch, index) => {
+
+                const divider =
+                    document.createElement("div");
+
+
+                divider.style.marginTop =
+                    "22px";
+
+                divider.style.marginBottom =
+                    "8px";
+
+                divider.style.paddingTop =
+                    "16px";
+
+                divider.style.borderTop =
+                    "1px solid #e2e8f0";
+
+
+                const batchTitle =
+                    document.createElement("div");
+
+
+                batchTitle.textContent =
+                    `Batch ${index + 1}`;
+
+
+                batchTitle.style.fontSize =
+                    "13px";
+
+                batchTitle.style.fontWeight =
+                    "700";
+
+                batchTitle.style.color =
+                    "#64748b";
+
+                batchTitle.style.textTransform =
+                    "uppercase";
+
+                batchTitle.style.letterSpacing =
+                    "0.7px";
+
+
+                divider.appendChild(
+                    batchTitle
+                );
+
+
+                previewContent.appendChild(
+                    divider
+                );
+
+
+                const batchRows = [
+
+                    [
+                        "Farmer Batch No",
+                        batch.batchNo || "-"
+                    ],
+
+                    [
+                        "Location",
+                        batch.location || "-"
+                    ],
+
+                    [
+                        "Age (Days)",
+                        batch.age || "0"
+                    ],
+
+                    [
+                        "Expected Avg Weight",
+                        `${batch.expectedAvg || "0"} KG`
+                    ],
+
+                    [
+                        "Order Birds",
+                        batch.orderBirds || "0"
+                    ],
+
+                    [
+                        "Available Birds",
+                        batch.availableBirds || "0"
+                    ],
+
+                    [
+                        "Weight",
+                        `${batch.weight || "0.00"} KG`
+                    ],
+
+                    [
+                        "Avg Weight",
+                        `${batch.avgWeight || "0.000"} KG`
+                    ],
+
+                    [
+                        "Weight Diff",
+                        `${batch.weightDiff || "0.00"} KG`
+                    ]
+
+                ];
+
+
+                batchRows.forEach(
+                    ([label, value]) => {
+
+                        previewContent.appendChild(
+                            createPreviewRow(
+                                label,
+                                value
+                            )
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+
+        // Show modal
         previewModal.classList.add(
             "show"
         );
 
+    }
+
+
+    // =========================================================
+    // CREATE PREVIEW ROW
+    // =========================================================
+
+    function createPreviewRow(
+        label,
+        value
+    ) {
+
+        const row =
+            document.createElement("div");
+
+
+        row.style.display =
+            "flex";
+
+        row.style.justifyContent =
+            "space-between";
+
+        row.style.alignItems =
+            "center";
+
+        row.style.gap =
+            "20px";
+
+        row.style.padding =
+            "10px 0";
+
+        row.style.borderBottom =
+            "1px solid #eef2f7";
+
+
+        // Label
+        const labelElement =
+            document.createElement("span");
+
+
+        labelElement.textContent =
+            label;
+
+        labelElement.style.color =
+            "#64748b";
+
+        labelElement.style.fontSize =
+            "14px";
+
+
+        // Value
+        const valueElement =
+            document.createElement("strong");
+
+
+        valueElement.textContent =
+            value;
+
+        valueElement.style.color =
+            "#1e293b";
+
+        valueElement.style.fontSize =
+            "14px";
+
+        valueElement.style.textAlign =
+            "right";
+
+
+        row.appendChild(
+            labelElement
+        );
+
+        row.appendChild(
+            valueElement
+        );
+
+
+        return row;
     }
 
 
