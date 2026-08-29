@@ -1194,18 +1194,19 @@ function setUser4SidebarGroupState(
 }
 document.addEventListener("DOMContentLoaded", function () {
 
-    const headerUser = document.querySelector(".header-user");
+    const headerUser = document.querySelector(".header-user, .admin-header-user");
 
     if (!headerUser) {
         return;
     }
 
-    const dashboardHeader = document.querySelector(".dashboard-header");
+    const dashboardHeader = document.querySelector(".dashboard-header, .admin-header");
 
     const clockEl = document.createElement("span");
     clockEl.id = "liveClock";
     clockEl.style.position = "absolute";
-    clockEl.style.top = "-25px";
+    clockEl.style.top = "-15px";
+    clockEl.style.transform = "translateY(-50%)";
     clockEl.style.right = "30px";
     clockEl.style.color = "#010853";
     clockEl.style.fontSize = "15px";
@@ -1213,6 +1214,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (dashboardHeader) {
         dashboardHeader.style.position = "relative";
+        dashboardHeader.style.overflow = "visible";   // <-- අලුතින් add කරන්න
         dashboardHeader.appendChild(clockEl);
     } else {
         headerUser.insertBefore(clockEl, headerUser.firstChild);

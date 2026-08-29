@@ -56,9 +56,18 @@ body.admin-analytics-page {
 
     gap: 18px;
 
-    background: #ffffff;
+    background:
+        linear-gradient(#ffffff, #ffffff) padding-box,
+        linear-gradient(
+            90deg,
+            #010853 0%,
+            #1E5AA8 50%,
+            #010853 100%
+        ) border-box;
 
-    border: 1px solid #e2e8f0;
+    border: 0px solid transparent;
+    border-top: 4px solid transparent;
+
     border-radius: 18px;
 
     padding: 16px 20px;
@@ -69,6 +78,12 @@ body.admin-analytics-page {
     overflow: hidden;
 }
 
+
+/* OLD STRAIGHT TOP BAR OFF */
+.admin-header::before {
+    display: none;
+}
+
 .admin-header::before {
     content: "";
 
@@ -76,8 +91,9 @@ body.admin-analytics-page {
 
     top: 0;
     left: 0;
+    right: 0;
 
-    width: 100%;
+    width: auto;
     height: 4px;
 
     background:
@@ -91,6 +107,9 @@ body.admin-analytics-page {
     background-size: 200% auto;
 
     animation: adminShimmer 8s linear infinite;
+
+    /* Parent clips this strip to the exact rounded header shape */
+    border-radius: 18px 18px 0 0;
 }
 
 .admin-header-left {
