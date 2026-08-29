@@ -168,7 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     /*
                      * Same source used by
-                     * Live Bird Catching Report / Admin Analytics
+                     * 1) Live Bird Catching Report / REPORT MODULES
                      */
                     getDefectReportData(),
 
@@ -236,7 +236,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (error) {
 
             console.error(
-                "Forecast vs Actual Report Error:",
+                "8) Forecast vs Actual Report Error:",
                 error
             );
 
@@ -255,7 +255,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             showMessage(
                 error.message ||
-                "Unable to load Forecast vs Actual report.",
+                "Unable to load 8) Forecast vs Actual Report.",
                 "error"
             );
 
@@ -1446,7 +1446,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             showMessage(
-                "Forecast vs Actual report refreshed.",
+                "8) Forecast vs Actual Report refreshed.",
                 "success"
             );
 

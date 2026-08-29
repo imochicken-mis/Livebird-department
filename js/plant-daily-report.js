@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 showMessage(
                     result.message ||
-                    "Unable to load  Plant Received & DOA Report.",
+                    "Unable to load  5) Plant Received & DOA Report.",
                     "error"
                 );
 

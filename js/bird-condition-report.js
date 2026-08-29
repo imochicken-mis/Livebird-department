@@ -115,7 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 showMessage(
                     result.message ||
-                    "Unable to load bird condition report.",
+                    "Unable to load 6) Bird Condition Report.",
                     "error"
                 );
 
@@ -140,7 +140,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (error) {
 
             console.error(
-                "Bird condition report error:",
+                "6) Bird Condition Report error:",
                 error
             );
 

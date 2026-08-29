@@ -1,3 +1,10 @@
+@import url('https://fonts.cdnfonts.com/css/digital-7-mono');
+
+#liveClock {
+    font-family: 'Digital-7 Mono', monospace;
+    letter-spacing: 1px;
+}
+
 /* ===============================
    DASHBOARD BASE
 ================================ */
@@ -342,4 +349,458 @@
     .form-grid {
         grid-template-columns: 1fr;
     }
+}
+/* ===============================
+   DASHBOARD BASE
+================================ */
+
+.dashboard-page {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f4f6f9;
+    color: #0f172a;
+    display: flex;
+    min-height: 100vh;
+}
+
+
+/* ===============================
+   SIDEBAR
+================================ */
+
+.sidebar {
+    width: 260px;
+    min-height: 100vh;
+    background: #010853;
+    color: white;
+    padding: 22px 16px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.sidebar-brand {
+    text-align: center;
+    padding: 10px 0 20px;
+}
+
+.sidebar-brand img {
+    width: 72px;
+    height: 52px;
+    object-fit: contain;
+    filter:
+        drop-shadow(0 0 8px rgba(255,255,255,0.45))
+        drop-shadow(0 0 16px rgba(255,255,255,0.25));
+}
+
+.sidebar-brand h2 {
+    font-size: 16px;
+    margin-top: 10px;
+    font-weight: 800;
+}
+
+.sidebar-divider {
+    height: 1px;
+    background: rgba(255,255,255,0.12);
+    margin: 10px 0 16px;
+}
+
+.sidebar-section-title {
+    font-size: 10px;
+    font-weight: 800;
+    color: #94a3b8;
+    letter-spacing: 1.5px;
+    padding: 0 8px;
+    margin: 8px 0;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.sidebar-link {
+    display: block;
+    text-decoration: none;
+    color: #cbd5e1;
+    padding: 11px 13px;
+    border-radius: 9px;
+    font-size: 14px;
+    transition: 0.2s ease;
+}
+
+.sidebar-link:hover {
+    background: rgba(255,255,255,0.10);
+    color: white;
+}
+
+.sidebar-link.active {
+    background: #1E5AA8;
+    color: white;
+}
+
+
+/* ===============================
+   MAIN CONTENT
+================================ */
+
+.dashboard-main {
+    margin-left: 260px;
+    width: calc(100% - 260px);
+    padding: 32px;
+}
+
+
+/* ===============================
+   HEADER
+================================ */
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 18px 20px;
+    box-shadow: 0 3px 10px rgba(15, 23, 42, 0.05);
+    margin-bottom: 24px;
+}
+
+.dashboard-header h1 {
+    margin: 0;
+    font-size: 22px;
+    color: #1e293b;
+}
+
+.header-user {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+#loggedUser {
+    background: #f1f5f9;
+    color: #475569;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.logout-btn {
+    border: none;
+    background: #ef4444;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 9px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.logout-btn:hover {
+    background: #dc2626;
+}
+
+
+/* ===============================
+   FORM CARD
+================================ */
+
+.form-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    padding: 26px;
+    box-shadow: 0 3px 12px rgba(15, 23, 42, 0.05);
+}
+
+.form-card-title {
+    margin-bottom: 22px;
+}
+
+.form-card-title h2 {
+    margin: 0;
+    font-size: 20px;
+    color: #1e293b;
+}
+
+
+/* ===============================
+   FORM GRID
+================================ */
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-size: 11px;
+    font-weight: 800;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-bottom: 7px;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    height: 44px;
+    padding: 0 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+    background: white;
+    color: #0f172a;
+    font-size: 14px;
+    outline: none;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #1E5AA8;
+    box-shadow: 0 0 0 3px rgba(30, 90, 168, 0.10);
+}
+
+.readonly-field {
+    background: #eef2f6 !important;
+    font-weight: 700;
+    color: #0f172a !important;
+}
+
+
+/* ===============================
+   HIDDEN FIELDS
+================================ */
+
+.hidden {
+    display: none;
+}
+
+
+/* ===============================
+   FORM ACTIONS
+================================ */
+
+.form-actions {
+    margin-top: 24px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.save-btn {
+    border: none;
+    background: #010853;
+    color: white;
+    padding: 12px 22px;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    min-width: 140px;
+}
+
+.save-btn:hover {
+    background: #001a45;
+}
+
+.save-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+
+/* ===============================
+   MESSAGE
+================================ */
+
+.save-message {
+    margin-top: 18px;
+    min-height: 20px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.save-message.success {
+    color: #15803d;
+}
+
+.save-message.error {
+    color: #dc2626;
+}
+
+
+/* ===============================
+   RESPONSIVE
+================================ */
+
+@media (max-width: 1200px) {
+    .form-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+    .sidebar {
+        width: 220px;
+    }
+
+    .dashboard-main {
+        margin-left: 220px;
+        width: calc(100% - 220px);
+    }
+
+    .form-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 700px) {
+    .dashboard-page {
+        display: block;
+    }
+
+    .sidebar {
+        position: relative;
+        width: 100%;
+        min-height: auto;
+    }
+
+    .dashboard-main {
+        margin-left: 0;
+        width: 100%;
+        padding: 18px;
+    }
+
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .header-user {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* =========================================================
+   USER 4 SIDEBAR - COLLAPSIBLE MODULE GROUPS
+   Applies only when the User 4 accordion is created by api.js
+========================================================= */
+
+.user4-sidebar-group {
+    width: 100%;
+}
+
+.user4-sidebar-group + .user4-sidebar-group {
+    margin-top: 4px;
+}
+
+.user4-sidebar-group-header {
+    width: 100%;
+    min-height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+
+    padding: 9px 12px;
+
+    border: 0;
+    background: transparent;
+
+    color: #9fbbe0;
+
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+
+    cursor: pointer;
+    text-align: left;
+
+    border-radius: 8px;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+.user4-sidebar-group-header:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: #ffffff;
+}
+
+.user4-sidebar-group-arrow {
+    flex: 0 0 auto;
+
+    width: 20px;
+    height: 20px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #9fbbe0;
+
+    font-size: 17px;
+    line-height: 1;
+
+    transform: rotate(0deg);
+
+    transition:
+        transform 0.22s ease,
+        color 0.2s ease;
+}
+
+.user4-sidebar-group.open
+.user4-sidebar-group-arrow {
+    transform: rotate(90deg);
+    color: #ffffff;
+}
+
+.user4-sidebar-group-panel {
+    display: grid;
+    grid-template-rows: 0fr;
+
+    opacity: 0.35;
+
+    transition:
+        grid-template-rows 0.25s ease,
+        opacity 0.2s ease;
+}
+
+.user4-sidebar-group.open
+.user4-sidebar-group-panel {
+    grid-template-rows: 1fr;
+    opacity: 1;
+}
+
+.user4-sidebar-group-panel > .sidebar-nav {
+    min-height: 0;
+    overflow: hidden;
+}
+
+.user4-sidebar-group-panel .sidebar-nav {
+    padding-top: 2px;
+    padding-bottom: 6px;
+}
+
+.user4-sidebar-group-panel .sidebar-link {
+    margin-top: 2px;
 }

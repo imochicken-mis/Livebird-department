@@ -1,5 +1,5 @@
 // =========================================================
-// USER 4 - Live Bird Catching Report
+// USER 4 - 1) Live Bird Catching Report
 // =========================================================
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -1610,7 +1610,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (error) {
 
             console.error(
-                "Live Bird Catching Report load error:",
+                "1) Live Bird Catching Report load error:",
                 error
             );
 
@@ -1623,7 +1623,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             AdminCommon.showMessage(
                 message,
-                "Unable to load Live Bird Catching Report data.",
+                "Unable to load 1) Live Bird Catching Report data.",
                 "error"
             );
 

@@ -1365,7 +1365,7 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
 
             /*
-             * Reuse the existing Plant Received & DOA Report API.
+             * Reuse the existing 5) Plant Received & DOA Report API.
              *
              * If your api.js function has a slightly different
              * name, we only need to change this one call.

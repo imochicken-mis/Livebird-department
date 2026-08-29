@@ -1,5 +1,5 @@
 // =========================================================
-// USER 4 - COMMON ADMIN ANALYTICS HELPERS
+// USER 4 - COMMON REPORT MODULES HELPERS
 // =========================================================
 
 const AdminCommon = (() => {

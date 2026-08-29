@@ -1,9 +1,9 @@
 /* =========================================================
-   USER 4 - COMMON ADMIN ANALYTICS STYLES
+   USER 4 - COMMON REPORT MODULES STYLES
    Used by:
-   - Live Bird Catching Report
-   - Processing P.Received Report
-   - Live Bird Sales Report
+   - 1) Live Bird Catching Report
+   - 2) Processing P.Received Report
+   - 3) Live Bird Sales Report
    - Own Farm Report
    - Birds Received Analytics
 ========================================================= */
@@ -358,6 +358,21 @@ body.admin-analytics-page {
 
     box-shadow:
         0 12px 30px rgba(15, 23, 42, 0.09);
+}
+.analytics-kpi-card:nth-child(1) {
+    border-left: 5px solid #861ea8;
+}
+
+.analytics-kpi-card:nth-child(2) {
+    border-left: 5px solid #10b981;
+}
+
+.analytics-kpi-card:nth-child(3) {
+    border-left: 5px solid #f59e0b;
+}
+
+.analytics-kpi-card:nth-child(4) {
+    border-left: 5px solid #ef4444;
 }
 
 .analytics-kpi-top {

@@ -360,7 +360,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (error) {
 
             console.error(
-                "Bird Condition Report Error:",
+                "6) Bird Condition Report Error:",
                 error
             );
 
