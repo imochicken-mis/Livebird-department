@@ -214,6 +214,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 barMaxWidth: 45,
 
                 itemStyle: {
+                    color: "#a44848",
                     borderRadius: [6, 6, 0, 0]
                 }
 
@@ -230,6 +231,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 barMaxWidth: 45,
 
                 itemStyle: {
+                    color: "#ae948a",
                     borderRadius: [6, 6, 0, 0]
                 }
 
