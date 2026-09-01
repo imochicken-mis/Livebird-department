@@ -9,6 +9,10 @@
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/dashboard.css">
     <link rel="stylesheet" href="../css/report.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 
 <body class="dashboard-page">
@@ -93,9 +97,10 @@
         </header>
 
 
-        <section class="form-card">
+        <section class="form-card analytics-card">
 
             <div class="report-toolbar">
+                <div class="analytics-section-heading"></div>
 
                 <div>
                     <h2> 
@@ -134,7 +139,7 @@
 
             <div class="report-table-wrapper">
 
-                <table id="reportTable">
+                <table id="reportTable" class="analytics-table">
 
                     <thead>
                         <tr>
@@ -184,6 +189,7 @@
 
     <script src="../js/api.js"></script>
     <script src="../js/vehicle-expenses-report.js"></script>
+    <script src="../js/admin-export.js"></script>
 
 </body>
 </html>

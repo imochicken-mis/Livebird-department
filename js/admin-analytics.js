@@ -560,10 +560,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // CURRENT MONTH DATA
     // =====================================================
 
-    function getCurrentMonthRows(data) {
-
-        const currentMonth =
-            AdminCommon.getCurrentMonth();
+    function getMonthRows(
+        data,
+        month
+    ) {
 
         return data.filter(row => {
 
@@ -574,10 +574,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
             return (
                 date &&
-                date.startsWith(currentMonth)
+                date.startsWith(month)
             );
 
         });
+
+    }
+
+
+    function getTrendMonth() {
+
+        if (fromDate.value) {
+            return fromDate.value.substring(0, 7);
+        }
+
+
+        if (toDate.value) {
+            return toDate.value.substring(0, 7);
+        }
+
+
+        return AdminCommon.getCurrentMonth();
 
     }
 
@@ -1008,15 +1025,20 @@ document.addEventListener("DOMContentLoaded", () => {
         // original Python uses FULL DATA current month,
         // not filtered data.
 
-        const currentMonthRows =
-            getCurrentMonthRows(
-                allReportData
+        const trendMonth =
+            getTrendMonth();
+
+
+        const monthRows =
+            getMonthRows(
+                allReportData,
+                trendMonth
             );
 
 
         const trend =
             groupByDate(
-                currentMonthRows
+                monthRows
             );
 
 
@@ -1136,15 +1158,20 @@ document.addEventListener("DOMContentLoaded", () => {
         metrics
     ) {
 
-        const currentMonthRows =
-            getCurrentMonthRows(
-                allReportData
+        const trendMonth =
+            getTrendMonth();
+
+
+        const monthRows =
+            getMonthRows(
+                allReportData,
+                trendMonth
             );
 
 
         const currentMonthRejection =
             AdminCommon.sumBy(
-                currentMonthRows,
+                monthRows,
                 "rejection_weight"
             );
 

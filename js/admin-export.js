@@ -18,6 +18,10 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
         if (!wrapper) {
+            console.warn(
+                "Export buttons not added — table is missing a '.analytics-card' wrapper:",
+                table
+            );
             return;
         }
 
@@ -29,15 +33,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         const titleElement =
-            heading?.querySelector(
-                "h2, h3"
-            );
+            heading?.querySelector("h2, h3") ||
+            heading?.parentElement?.querySelector("h2, h3");
 
 
         const reportTitle =
-            titleElement
+            titleElement && titleElement.textContent.trim()
                 ? titleElement.textContent.trim()
-                : `Report ${index + 1}`;
+                : "";
 
 
         const toolbar =
@@ -118,7 +121,8 @@ document.addEventListener("DOMContentLoaded", () => {
     function exportTableToCSV(
         table,
         title
-    ) {
+    ) { const mainHeading = document.querySelector(".admin-header h1, .dashboard-header h1, h1");
+        const pageTitle = mainHeading ? mainHeading.textContent.trim() : "Report";
 
         const rows =
             Array.from(
@@ -191,8 +195,11 @@ document.addEventListener("DOMContentLoaded", () => {
             url;
 
 
-        link.download =
-            `${cleanFileName(title)}.csv`;
+        const fileNameParts = [pageTitle, title]
+            .filter((part) => part && part.trim())
+            .map(cleanFileName);
+
+        link.download = `${fileNameParts.join("-")}.csv`;
 
 
         document.body.appendChild(
@@ -242,618 +249,307 @@ function loadImageAsDataURL(src) {
 }    
 
 
-async function exportTableToPDF(
-    table,
-    tableTitle
-) {
+async function exportTableToPDF(table, tableTitle) {
 
-    if (
-        !window.jspdf ||
-        !window.jspdf.jsPDF
-    ) {
+    if (!window.jspdf || !window.jspdf.jsPDF) {
         alert("PDF library is not loaded.");
         return;
     }
 
+    if (!window.html2canvas) {
+        alert("PDF rendering library is not loaded.");
+        return;
+    }
 
-    const { jsPDF } =
-        window.jspdf;
+    const { jsPDF } = window.jspdf;
 
     let companyLogo = null;
-
     try {
-
-        companyLogo =
-            await loadImageAsDataURL(
-                "../assets/Logo.png"
-            );
-
+        companyLogo = await loadImageAsDataURL("../assets/Logo.png");
     } catch (error) {
-
-        console.warn(
-            "Company logo could not be loaded.",
-            error
-        );
-
-    }    
-
-
-    const doc =
-        new jsPDF({
-            orientation: "landscape",
-            unit: "pt",
-            format: "a4"
-        });
-
-
-    // MAIN PAGE TITLE
-    const mainHeading =
-        document.querySelector(
-            ".admin-header h1, .dashboard-header h1, h1"
-        );
-
-
-    let mainTitle =
-    mainHeading
-        ? mainHeading.textContent.trim()
-        : "Report";
-
-    mainTitle =
-        mainTitle.replace(
-            /Dashboard/gi,
-            "Report"
-        );
-
-
-    // MAIN HEADING
-    doc.setFont(
-        "helvetica",
-        "bold"
-    );
-
-    doc.setFontSize(17);
-
-    doc.text(
-        mainTitle,
-        40,
-        50
-    );
-
-
-    // SUB HEADING - TABLE TITLE
-    doc.setFont(
-        "helvetica",
-        "normal"
-    );
-
-    doc.setFontSize(11);
-
-    doc.text(
-        tableTitle,
-        40,
-        68
-    );
-
-
-    // OPTIONAL FILTER PERIOD
-    let filterText = "";
-
-
-    const monthFilter =
-        document.getElementById(
-            "monthFilter"
-        );
-
-
-    const fromDate =
-        document.getElementById(
-            "fromDate"
-        );
-
-
-    const toDate =
-        document.getElementById(
-            "toDate"
-        );
-
-
-    if (
-    monthFilter &&
-    monthFilter.value
-) {
-
-    const [year, month] =
-        monthFilter.value.split("-");
-
-    const monthNames = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December"
-    ];
-
-    const monthName =
-        monthNames[
-            Number(month) - 1
-        ];
-
-    filterText =
-        `Period: ${year} ${monthName}`;
-
-
-    } else if (
-        fromDate?.value ||
-        toDate?.value
-    ) {
-
-        filterText =
-            `Period: ${fromDate?.value || "Start"} to ${toDate?.value || "End"}`;
-
+        console.warn("Company logo could not be loaded.", error);
     }
 
+    const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const marginLeft = 30;
+    const marginRight = 30;
+    const footerReserve = 42;
+
+    const mainHeading = document.querySelector(".admin-header h1, .dashboard-header h1, h1");
+    let mainTitle = mainHeading ? mainHeading.textContent.trim() : "Report";
+    mainTitle = mainTitle.replace(/Dashboard/gi, "Report");
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(17);
+    doc.text(mainTitle, 40, 50);
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(11);
+    doc.text(tableTitle, 40, 68);
+
+    let filterText = "";
+    const monthFilter = document.getElementById("monthFilter");
+    const fromDate = document.getElementById("fromDate");
+    const toDate = document.getElementById("toDate");
+
+    if (monthFilter && monthFilter.value) {
+        const [year, month] = monthFilter.value.split("-");
+        const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+        filterText = `Period: ${year} ${monthNames[Number(month) - 1]}`;
+    } else if (fromDate?.value || toDate?.value) {
+        filterText = `Period: ${fromDate?.value || "Start"} to ${toDate?.value || "End"}`;
+    }
 
     if (filterText) {
-
         doc.setFontSize(9);
-
-        doc.setTextColor(
-            100,
-            116,
-            139
-        );
-
-        doc.text(
-            filterText,
-            40,
-            80
-        );
-
-        doc.setTextColor(
-            0,
-            0,
-            0
-        );
-
+        doc.setTextColor(100, 116, 139);
+        doc.text(filterText, 40, 80);
+        doc.setTextColor(0, 0, 0);
     }
 
+    // Temporarily disable "position: sticky" — otherwise
+    // html2canvas freezes header/footer rows at their current
+    // scroll position instead of their true row position.
 
-doc.autoTable({
+    table.classList.add("pdf-capture-mode");
 
-    html: table,
-
-    startY:
-        filterText
-            ? 92
-            : 78,
-
-    theme: "plain",
-
-    // ==========================================
-    // GENERAL TABLE STYLE
-    // ==========================================
-
-    styles: {
-
-        font: "helvetica",
-
-        fontSize: 7.2,
-
-        cellPadding: {
-            top: 4,
-            right: 4,
-            bottom: 4,
-            left: 4
-        },
-
-        overflow: "linebreak",
-
-        valign: "middle",
-
-        textColor: [
-            51,
-            65,
-            85
-        ],
-
-        lineColor: [
-            203,
-            213,
-            225
-        ],
-
-        lineWidth: 0.4
-    },
-
-
-    // ==========================================
-    // TABLE HEADER
-    // ==========================================
-
-    headStyles: {
-
-        fillColor: [
-            1,
-            8,
-            83
-        ],
-
-        textColor: [
-            255,
-            255,
-            255
-        ],
-
-        fontStyle: "bold",
-
-        fontSize: 7.2,
-
-        halign: "center",
-
-        valign: "middle",
-
-        minCellHeight: 22,
-
-        lineColor: [
-            255,
-            255,
-            255
-        ],
-
-        lineWidth: 0.3
-    },
-
-
-    // ==========================================
-    // NORMAL ROWS
-    // ==========================================
-
-    bodyStyles: {
-
-        fillColor: [
-            255,
-            255,
-            255
-        ]
-    },
-
-
-    // ==========================================
-    // ALTERNATE ROW
-    // ==========================================
-
-    alternateRowStyles: {
-
-        fillColor: [
-            248,
-            250,
-            252
-        ]
-    },
-
-
-    // ==========================================
-    // TOTAL / FOOTER ROW
-    // ==========================================
-
-    footStyles: {
-
-        fillColor: [
-            226,
-            232,
-            240
-        ],
-
-        textColor: [
-            15,
-            23,
-            42
-        ],
-
-        fontStyle: "bold",
-
-        lineColor: [
-            148,
-            163,
-            184
-        ],
-
-        lineWidth: 0.6
-    },
-
-
-    // ==========================================
-    // CELL ALIGNMENT
-    // ==========================================
-
-    didParseCell: function (data) {
-
-        // Header
-        if (
-            data.section === "head"
-        ) {
-
-            data.cell.styles.halign =
-                "center";
-        }
-
-
-        // Body
-        if (
-            data.section === "body"
-        ) {
-
-            // First column
-            if (
-                data.column.index === 0
-            ) {
-
-                data.cell.styles.halign =
-                    "left";
-
-            } else {
-
-                data.cell.styles.halign =
-                    "center";
-            }
-        }
-
-
-        // Total / Footer
-        if (
-            data.section === "foot"
-        ) {
-
-            data.cell.styles.halign =
-                "center";
-        }
-
-    },
-
-
-    margin: {
-
-        top: 70,
-
-        bottom: 42,
-
-        left: 30,
-
-        right: 30
-    },
-
-
-        // =====================================================
-        // HEADER + FOOTER ON EVERY PDF PAGE
-        // =====================================================
-
-        didDrawPage: function () {
-
-            const pageWidth =
-                doc.internal.pageSize.getWidth();
-
-            const pageHeight =
-                doc.internal.pageSize.getHeight();
-
-
-            // -------------------------------------------------
-            // HEADER
-            // -------------------------------------------------
-
-            doc.setDrawColor(
-                226,
-                232,
-                240
-            );
-
-            doc.setLineWidth(0.5);
-
-            doc.line(
-                30,
-                28,
-                pageWidth - 30,
-                28
-            );
-
-
-            doc.setFont(
-                "helvetica",
-                "bold"
-            );
-
-            doc.setFontSize(9);
-
-            doc.setTextColor(
-                1,
-                8,
-                83
-            );
-
-
-            // -------------------------------------------------
-            // LEFT HEADER - LOGO + COMPANY NAME
-            // -------------------------------------------------
-
-            let companyTextX = 30;
-
-            if (companyLogo) {
-
-                doc.addImage(
-                    companyLogo,
-                    "PNG",
-                    30,     // X
-                    8,      // Y
-                    20,     // Width
-                    14      // Height
-                );
-
-                companyTextX = 56;
-            }
-
-
-            doc.text(
-                "Imo Chicken & Agro (Pvt) Ltd",
-                companyTextX,
-                19
-            );
-
-
-            // -------------------------------------------------
-            // RIGHT HEADER
-            // -------------------------------------------------
-
-            doc.text(
-                "Live Bird Department",
-                pageWidth - 30,
-                19,
-                {
-                    align: "right"
-                }
-            );
-
-
-            // -------------------------------------------------
-            // FOOTER
-            // -------------------------------------------------
-
-            doc.setDrawColor(
-                226,
-                232,
-                240
-            );
-
-            doc.line(
-                30,
-                pageHeight - 28,
-                pageWidth - 30,
-                pageHeight - 28
-            );
-
-
-            doc.setFont(
-                "helvetica",
-                "normal"
-            );
-
-            doc.setFontSize(8);
-
-            doc.setTextColor(
-                100,
-                116,
-                139
-            );
-
-
-            doc.text(
-                "Copyright © 2026 | MIS Department | All Rights Reserved",
-                pageWidth / 2,
-                pageHeight - 16,
-                {
-                    align: "center"
-                }
-            );
-
-            // -------------------------------------------------
-            // GENERATED DATE & TIME - RIGHT SIDE
-            // -------------------------------------------------
-
-            const generatedNow =
-                new Date();
-
-            const generatedDate =
-                generatedNow.toLocaleDateString(
-                    "en-GB",
-                    {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric"
-                    }
-                );
-
-            const generatedTime =
-                generatedNow.toLocaleTimeString(
-                    "en-US",
-                    {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        hour12: true
-                    }
-                );
-
-
-            doc.setFont(
-                "helvetica",
-                "normal"
-            );
-
-            doc.setFontSize(7);
-
-            doc.setTextColor(
-                100,
-                116,
-                139
-            );
-
-            doc.text(
-                `Generated: ${generatedDate} | ${generatedTime}`,
-                pageWidth - 30,
-                pageHeight - 16,
-                {
-                    align: "right"
-                }
-            );
-
-
-            // Reset text colour
-            doc.setTextColor(
-                0,
-                0,
-                0
-            );
-
-        }
-
-    });
-
-
-    doc.save(
-        `${cleanFileName(
-            mainTitle
-        )}-${cleanFileName(
-            tableTitle
-        )}.pdf`
+    const stickyElements = table.querySelectorAll(
+        "thead th, tfoot td, tfoot th"
     );
 
+    const originalPositions = [];
+
+    stickyElements.forEach((el) => {
+        originalPositions.push(el.style.position);
+        el.style.position = "static";
+    });
+
+    const captureScale = 2;
+
+    const theadEl = table.querySelector("thead");
+    const tbodyEl = table.querySelector("tbody");
+    const tfootEl = table.querySelector("tfoot");
+
+    const headCanvas = theadEl
+        ? await html2canvas(theadEl, {
+            scale: captureScale,
+            backgroundColor: "#ffffff",
+            useCORS: true
+        })
+        : null;
+
+    const bodyCanvas = await html2canvas(tbodyEl || table, {
+        scale: captureScale,
+        backgroundColor: "#ffffff",
+        useCORS: true
+    });
+
+    const footCanvas = tfootEl
+        ? await html2canvas(tfootEl, {
+            scale: captureScale,
+            backgroundColor: "#ffffff",
+            useCORS: true
+        })
+        : null;
+
+    // Restore sticky positioning
+    stickyElements.forEach((el, index) => {
+        el.style.position = originalPositions[index];
+    });
+
+    table.classList.remove("pdf-capture-mode");
+
+
+    // ==========================================
+    // WORK OUT SAFE ROW-BOUNDARY CUT POINTS
+    // (so a page break never slices a row in half)
+    // ==========================================
+
+    const contentWidth = pageWidth - marginLeft - marginRight;
+    const pxPerPt = bodyCanvas.width / contentWidth;
+
+    const rowBoundariesPx = tbodyEl
+        ? Array.from(tbodyEl.rows).map((row) => {
+            const rowRect = row.getBoundingClientRect();
+            const bodyRect = tbodyEl.getBoundingClientRect();
+            return Math.round(
+                (rowRect.bottom - bodyRect.top) * captureScale
+            );
+        })
+        : [bodyCanvas.height];
+
+    const headHeightPt = headCanvas
+        ? headCanvas.height / pxPerPt
+        : 0;
+
+    const footHeightPt = footCanvas
+        ? footCanvas.height / pxPerPt
+        : 0;
+
+    const firstPageTop = filterText ? 92 : 78;
+    const otherPageTop = 40;
+    const pageBottom = pageHeight - footerReserve;
+
+    let renderedPx = 0;
+    let pageIndex = 0;
+
+    while (renderedPx < bodyCanvas.height) {
+
+        const isFirstPage = pageIndex === 0;
+        const contentTop = isFirstPage ? firstPageTop : otherPageTop;
+        const availablePt = pageBottom - contentTop - headHeightPt;
+        const availablePx = Math.floor(availablePt * pxPerPt);
+
+        const remainingPx = bodyCanvas.height - renderedPx;
+        const remainingBodyPt = remainingPx / pxPerPt;
+
+        let slicePx;
+        let isLastPage;
+
+        if (remainingBodyPt + footHeightPt <= availablePt) {
+
+            slicePx = remainingPx;
+            isLastPage = true;
+
+        } else {
+
+            const target = renderedPx + availablePx;
+
+            const fittingBoundary =
+                [...rowBoundariesPx]
+                    .reverse()
+                    .find((b) => b > renderedPx && b <= target);
+
+            slicePx = fittingBoundary
+                ? fittingBoundary - renderedPx
+                : Math.min(availablePx, remainingPx);
+
+            isLastPage = false;
+        }
+
+        if (pageIndex > 0) {
+            doc.addPage();
+        }
+
+        if (headCanvas) {
+
+            doc.addImage(
+                headCanvas.toDataURL("image/png"),
+                "PNG",
+                marginLeft,
+                contentTop,
+                contentWidth,
+                headHeightPt
+            );
+        }
+
+        const sliceCanvas = document.createElement("canvas");
+        sliceCanvas.width = bodyCanvas.width;
+        sliceCanvas.height = slicePx;
+
+        const ctx = sliceCanvas.getContext("2d");
+        ctx.drawImage(
+            bodyCanvas,
+            0, renderedPx, bodyCanvas.width, slicePx,
+            0, 0, bodyCanvas.width, slicePx
+        );
+
+        const sliceHeightPt = slicePx / pxPerPt;
+        const bodyTop = contentTop + headHeightPt;
+
+        doc.addImage(
+            sliceCanvas.toDataURL("image/png"),
+            "PNG",
+            marginLeft,
+            bodyTop,
+            contentWidth,
+            sliceHeightPt
+        );
+
+        if (isLastPage && footCanvas) {
+
+            doc.addImage(
+                footCanvas.toDataURL("image/png"),
+                "PNG",
+                marginLeft,
+                bodyTop + sliceHeightPt,
+                contentWidth,
+                footHeightPt
+            );
+        }
+
+        drawPageHeaderFooter();
+
+        renderedPx += slicePx;
+        pageIndex += 1;
+    }
+
+    function drawPageHeaderFooter() {
+
+        doc.setDrawColor(226, 232, 240);
+        doc.setLineWidth(0.5);
+        doc.line(30, 28, pageWidth - 30, 28);
+
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(9);
+        doc.setTextColor(1, 8, 83);
+
+        let companyTextX = 30;
+
+        if (companyLogo) {
+            doc.addImage(companyLogo, "PNG", 30, 8, 20, 14);
+            companyTextX = 56;
+        }
+
+        doc.text("Imo Chicken & Agro (Pvt) Ltd", companyTextX, 19);
+        doc.text("Live Bird Department", pageWidth - 30, 19, { align: "right" });
+
+        doc.setDrawColor(226, 232, 240);
+        doc.line(30, pageHeight - 28, pageWidth - 30, pageHeight - 28);
+
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(8);
+        doc.setTextColor(100, 116, 139);
+
+        doc.text(
+            "Copyright © 2026 | MIS Department | All Rights Reserved",
+            pageWidth / 2,
+            pageHeight - 16,
+            { align: "center" }
+        );
+
+        const generatedNow = new Date();
+        const generatedDate = generatedNow.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+        const generatedTime = generatedNow.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
+
+        doc.setFontSize(7);
+        doc.text(
+            `Generated: ${generatedDate} | ${generatedTime}`,
+            pageWidth - 30,
+            pageHeight - 16,
+            { align: "right" }
+        );
+
+        doc.setTextColor(0, 0, 0);
+    }
+
+    const fileNameParts = [mainTitle, tableTitle]
+        .filter((part) => part && part.trim())
+        .map(cleanFileName);
+
+    doc.save(`${fileNameParts.join("-")}.pdf`);
 }
 
 
-    function cleanFileName(
-        value
-    ) {
+function cleanFileName(value) {
 
-        return String(
-            value || "report"
-        )
+    return String(value || "report")
+        .trim()
+        .replace(/[\\/:*?"<>|]/g, "")
+        .replace(/\s+/g, "-");
 
-            .trim()
-
-            .replace(
-                /[\\/:*?"<>|]/g,
-                ""
-            )
-
-            .replace(
-                /\s+/g,
-                "-"
-            );
-
-    }
+}
 
 });

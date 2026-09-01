@@ -1,3 +1,23 @@
+// ENSURE MATERIAL ICONS FONT IS LOADED ON EVERY PAGE
+(function ensureMaterialIconsLoaded() {
+
+    const alreadyLoaded = document.querySelector(
+        "link[href*='fonts.googleapis.com/icon?family=Material+Icons']"
+    );
+
+    if (alreadyLoaded) {
+        return;
+    }
+
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "https://fonts.googleapis.com/icon?family=Material+Icons";
+    document.head.appendChild(link);
+
+})();
+
+
+
 const API_URL =
     "https://script.google.com/macros/s/AKfycbxmcNomsgsRhz_akI6RlmWGHnDMc2AudiMcri566pKC3cUUtRUPupy2lBbiKRWhI9c/exec";
 

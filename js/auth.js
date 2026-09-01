@@ -1,16 +1,16 @@
 const USER_PERMISSIONS = {
     user1: {
-        name: "Charith",
+        name: "Mr.Nalin",
         home: "pages/dashboard.html"
     },
 
     user2: {
-        name: "Nilupa",
+        name: "Ms.Oshani",
         home: "pages/user2-dashboard.html"
     },
 
     user3: {
-        name: "Akila",
+        name: "Mr.Kasun",
         home: "pages/user3-dashboard.html"
     },
 

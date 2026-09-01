@@ -1084,6 +1084,49 @@ document.addEventListener("DOMContentLoaded", () => {
     // DETAIL TABLE
     // =====================================================
 
+    function formatClockTime(value) {
+    const text = String(value || "").trim();
+
+    if (!text) {
+        return "—";
+    }
+
+    const match =
+        text.match(/(?:T|\s)(\d{1,2}):(\d{2})(?::\d{2})?/);
+
+    if (!match) {
+        return text;
+    }
+
+    const hours = Number(match[1]);
+    const minutes = match[2];
+
+    const period =
+        hours >= 12 ? "PM" : "AM";
+
+    const displayHour =
+        String((hours % 12) || 12).padStart(2, "0");
+
+    return `${displayHour}:${minutes} ${period}`;
+}
+
+
+    function formatTripTime(value) {
+        const text = String(value || "").trim();
+
+        if (!text) {
+            return "—";
+        }
+
+        const match =
+            text.match(/(?:T|\s)(\d{1,2}):(\d{2})(?::(\d{2}))?/);
+
+        if (!match) {
+            return text;
+        }
+
+        return `${String(match[1]).padStart(2, "0")}:${match[2]}:${match[3] || "00"}`;
+    }
     function renderTable(data) {
 
         if (!data.length) {
@@ -1207,19 +1250,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     <td>
                         ${AdminCommon.escapeHtml(
-                            row.out_time
+                            formatClockTime(row.out_time)
                         )}
                     </td>
 
                     <td>
                         ${AdminCommon.escapeHtml(
-                            row.in_time
+                            formatClockTime(row.in_time)
                         )}
                     </td>
 
                     <td>
                         ${AdminCommon.escapeHtml(
-                            row.total_time
+                            formatTripTime(row.total_time)
                         )}
                     </td>
 

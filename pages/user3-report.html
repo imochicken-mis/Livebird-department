@@ -21,6 +21,10 @@
 
     <link rel="stylesheet" href="../css/report.css">
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 </head>
 
 
@@ -138,7 +142,7 @@
              REPORT CARD
         ================================================== -->
 
-        <section class="form-card">
+        <section class="form-card analytics-card">
 
 
             <!-- =================================================
@@ -146,6 +150,7 @@
             ================================================== -->
 
             <div class="report-toolbar">
+                <div class="analytics-section-heading"></div>
 
 
                 <div>
@@ -237,10 +242,7 @@
             <div class="buyback-table-wrapper">
 
 
-                <table
-                    id="reportTable"
-                    class="buyback-report-table"
-                >
+                <table id="reportTable" class="buyback-report-table exportable-table">
 
 
                     <!-- =========================================
@@ -458,7 +460,6 @@
                             <!-- PANNALA -->
 
                             <td class="farm-total-label">
-                                TOTAL
                             </td>
 
                             <td id="grandPannala">
@@ -474,7 +475,6 @@
                             <!-- KOTADENIYAWA -->
 
                             <td class="farm-total-label">
-                                TOTAL
                             </td>
 
                             <td id="grandKotadeniyawa">
@@ -490,7 +490,6 @@
                             <!-- WEERAPOKUNA -->
 
                             <td class="farm-total-label">
-                                TOTAL
                             </td>
 
                             <td id="grandWeerapokuna">
@@ -506,7 +505,6 @@
                             <!-- EPALADENIYA -->
 
                             <td class="farm-total-label">
-                                TOTAL
                             </td>
 
                             <td id="grandEpaladeniya">
@@ -576,7 +574,8 @@
     <script src="../js/api.js"></script>
 
     <script src="../js/user3-report.js"></script>
-
+    
+    <script src="../js/admin-export.js"></script>
 
 </body>
 

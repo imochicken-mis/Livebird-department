@@ -371,15 +371,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 </td>
 
                 <td>
-                    ${escapeHtml(record.out_time)}
+                    ${escapeHtml(formatClockTime(record.out_time))}
                 </td>
 
                 <td>
-                    ${escapeHtml(record.in_time)}
+                    ${escapeHtml(formatClockTime(record.in_time))}
                 </td>
 
                 <td>
-                    ${escapeHtml(record.total_time)}
+                    ${escapeHtml(formatTripTime(record.total_time))}
                 </td>
 
             `;
@@ -602,6 +602,46 @@ document.addEventListener("DOMContentLoaded", () => {
     // HTML SAFETY
     // =========================================================
 
+    function formatClockTime(value) {
+    const text = String(value || "").trim();
+
+    if (!text) {
+        return "—";
+    }
+
+    const match =
+        text.match(/(?:T|\s)(\d{1,2}):(\d{2})(?::\d{2})?/);
+
+    if (!match) {
+        return text;
+    }
+
+    const hours = Number(match[1]);
+    const minutes = match[2];
+    const period = hours >= 12 ? "PM" : "AM";
+    const displayHour =
+        String((hours % 12) || 12).padStart(2, "0");
+
+    return `${displayHour}:${minutes} ${period}`;
+}
+
+
+    function formatTripTime(value) {
+        const text = String(value || "").trim();
+
+        if (!text) {
+            return "—";
+        }
+
+        const match =
+            text.match(/(?:T|\s)(\d{1,2}):(\d{2})(?::(\d{2}))?/);
+
+        if (!match) {
+            return text;
+        }
+
+        return `${String(match[1]).padStart(2, "0")}:${match[2]}:${match[3] || "00"}`;
+    }
     function escapeHtml(value) {
 
         if (
