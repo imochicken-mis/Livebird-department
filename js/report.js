@@ -334,7 +334,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 <td>${formatNumber(record.amount, 2)}</td>
 
-                <td>${formatNumber(record.avg_weight, 3)}</td>
+                <td>${formatNumber(record.avg_weight, 2)}</td>
 
                 <td>${formatNumber(record.rejection_weight, 2)}</td>
 

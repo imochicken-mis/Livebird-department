@@ -16,20 +16,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const batch2Input =
         document.getElementById("batchNo2");
 
-    const nobInput =
-        document.getElementById("nob");
-
-    const weightInput =
-        document.getElementById("weight");
-
-    const avgWeightInput =
-        document.getElementById("avgWeight");
-
     const rejectionWeightInput =
         document.getElementById("rejectionWeight");
-
-    const finalWeightInput =
-        document.getElementById("finalWeight");
 
     const reasonSelect =
         document.getElementById("reason");
@@ -152,63 +140,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // =========================================================
-    // CALCULATIONS
-    // =========================================================
-
-    nobInput.addEventListener(
-        "input",
-        calculateBirdTotals
-    );
-
-    weightInput.addEventListener(
-        "input",
-        calculateBirdTotals
-    );
-
-    rejectionWeightInput.addEventListener(
-        "input",
-        calculateBirdTotals
-    );
-
-
-    function calculateBirdTotals() {
-
-        const nob =
-            parseFloat(nobInput.value) || 0;
-
-        const weight =
-            parseFloat(weightInput.value) || 0;
-
-        const rejection =
-            parseFloat(rejectionWeightInput.value) || 0;
-
-
-        // Average Weight
-
-        if (nob > 0) {
-
-            avgWeightInput.value =
-                (weight / nob).toFixed(3);
-
-        } else {
-
-            avgWeightInput.value =
-                "0.000";
-        }
-
-
-        // Final Total Weight
-
-        const finalWeight =
-            Math.max(0, weight - rejection);
-
-        finalWeightInput.value =
-            finalWeight.toFixed(2);
-
-    }
-
-
-    // =========================================================
     // FORM SUBMIT -> SHOW PREVIEW
     // =========================================================
 
@@ -266,20 +197,8 @@ document.addEventListener("DOMContentLoaded", () => {
             batch2:
                 batch2Input.value.trim(),
 
-            nob:
-                nobInput.value || "0",
-
-            weight:
-                weightInput.value || "0.00",
-
-            avgWeight:
-                avgWeightInput.value || "0.000",
-
             rejectionWeight:
                 rejectionWeightInput.value || "0",
-
-            finalWeight:
-                finalWeightInput.value || "0.00",
 
             reason:
                 reasonSelect.value || "",
@@ -316,28 +235,8 @@ document.addEventListener("DOMContentLoaded", () => {
             ],
 
             [
-                "Birds (NOB)",
-                record.nob || "0"
-            ],
-
-            [
-                "Weight (KG)",
-                record.weight || "0.00"
-            ],
-
-            [
-                "Average Weight (KG)",
-                record.avgWeight || "0.000"
-            ],
-
-            [
                 "Rejection Weight (KG)",
                 record.rejectionWeight || "0"
-            ],
-
-            [
-                "Final Total Weight (KG)",
-                record.finalWeight || "0.00"
             ],
 
             [
@@ -560,18 +459,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         batch2Input.value = "";
 
-        nobInput.value = "";
-
-        weightInput.value = "";
-
-        avgWeightInput.value =
-            "0.000";
-
         rejectionWeightInput.value =
             "0";
-
-        finalWeightInput.value =
-            "0.00";
 
         reasonSelect.value = "";
 
