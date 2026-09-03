@@ -22,6 +22,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const reasonSelect =
         document.getElementById("reason");
 
+    const lookupNobInput =
+        document.getElementById("lookupNob");
+
+    const lookupWeightInput =
+        document.getElementById("lookupWeight");
+
+    const lookupAvgWeightInput =
+        document.getElementById("lookupAvgWeight");
+
     const saveBtn =
         document.getElementById("saveBtn");
 
@@ -135,6 +144,107 @@ document.addEventListener("DOMContentLoaded", () => {
                 "error"
             );
         }
+
+    }
+
+
+    // =========================================================
+    // CATCHING INFO LOOKUP (display only — Date + Farmer + Batch No 2)
+    // =========================================================
+
+    conditionDate.addEventListener(
+        "change",
+        lookupCatchingInfo
+    );
+
+    farmerSelect.addEventListener(
+        "change",
+        lookupCatchingInfo
+    );
+
+    batch2Input.addEventListener(
+        "change",
+        lookupCatchingInfo
+    );
+
+
+    async function lookupCatchingInfo() {
+
+        const date =
+            conditionDate.value;
+
+        const farmer =
+            farmerSelect.value;
+
+        const batch2 =
+            batch2Input.value.trim();
+
+
+        if (!date || !farmer || !batch2) {
+
+            resetLookupFields();
+
+            return;
+        }
+
+
+        try {
+
+            const result =
+                await getCatchingRecordLookup(
+                    date,
+                    farmer,
+                    batch2
+                );
+
+
+            if (
+                result.success &&
+                result.found
+            ) {
+
+                lookupNobInput.value =
+                    result.nob;
+
+                lookupWeightInput.value =
+                    result.weight;
+
+                lookupAvgWeightInput.value =
+                    result.avgWeight;
+
+            } else {
+
+                resetLookupFields(
+                    "Not Found"
+                );
+
+            }
+
+        } catch (error) {
+
+            console.error(error);
+
+            resetLookupFields(
+                "Not Found"
+            );
+
+        }
+
+    }
+
+
+    function resetLookupFields(
+        placeholder = "-"
+    ) {
+
+        lookupNobInput.value =
+            placeholder;
+
+        lookupWeightInput.value =
+            placeholder;
+
+        lookupAvgWeightInput.value =
+            placeholder;
 
     }
 
@@ -463,6 +573,8 @@ document.addEventListener("DOMContentLoaded", () => {
             "0";
 
         reasonSelect.value = "";
+
+        resetLookupFields();
 
         setTodayDate();
 

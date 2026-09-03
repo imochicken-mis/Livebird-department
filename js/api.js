@@ -131,6 +131,29 @@ async function saveBirdConditionRecord(
 }
 
 
+async function getCatchingRecordLookup(
+    date,
+    farmer,
+    batch2
+) {
+
+    return await sendRequest({
+
+        action:
+            "getCatchingRecordLookup",
+
+        date:
+            date,
+
+        farmer:
+            farmer,
+
+        batch2:
+            batch2
+    });
+}
+
+
 async function getOperationsReportData() {
 
     return await sendRequest({

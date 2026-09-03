@@ -937,6 +937,24 @@ footer {
 }
 
 
+#previewModal .modal-card {
+    display: flex;
+
+    flex-direction: column;
+
+    max-height: 85vh;
+}
+
+
+#previewModal #previewContent {
+    overflow-y: auto;
+
+    flex: 1;
+
+    padding-right: 4px;
+}
+
+
 .small-modal h2 {
     margin-bottom: 18px;
 

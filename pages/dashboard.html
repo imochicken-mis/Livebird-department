@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -167,50 +166,12 @@
 
 
                     <div class="form-group hidden" id="batch2Container">
-                        <label for="batchNo2">Load No</label>
+                        <label for="batchNo2">Load No (Imo Plant)</label>
 
                         <input
                             type="text"
                             id="batchNo2"
                             placeholder="Ex:- 1501"
-                        >
-                    </div>
-
-
-                    <div class="form-group">
-                        <label for="nob">No of Birds (NOB)</label>
-
-                        <input
-                            type="number"
-                            id="nob"
-                            placeholder="0"
-                            min="0"
-                        >
-                    </div>
-
-
-                    <div class="form-group">
-                        <label for="totalWeight">Total Weight (KG)</label>
-
-                        <input
-                            type="number"
-                            id="totalWeight"
-                            placeholder="0.00"
-                            step="0.01"
-                            min="0"
-                        >
-                    </div>
-
-
-                    <div class="form-group">
-                        <label for="sellingPrice">Selling Price (Rs.)</label>
-
-                        <input
-                            type="number"
-                            id="sellingPrice"
-                            placeholder="0.00"
-                            step="0.01"
-                            min="0"
                         >
                     </div>
 
@@ -224,9 +185,223 @@
                         >
                     </div>
 
+                </div>
+
+
+                <div class="form-box form-box-healthy">
+
+                <div class="form-section-title">
+                    <h3>Healthy Birds</h3>
+                </div>
+
+                <div class="form-grid">
 
                     <div class="form-group">
-                        <label for="totalAmount">Total Amount (Rs.)</label>
+                        <label for="healthyNob">No of Birds (NOB)</label>
+
+                        <input
+                            type="number"
+                            id="healthyNob"
+                            placeholder="0"
+                            min="0"
+                        >
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="healthyWeight">Weight (KG)</label>
+
+                        <input
+                            type="number"
+                            id="healthyWeight"
+                            placeholder="0.00"
+                            step="0.01"
+                            min="0"
+                        >
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="healthyAvgWeight">Avg Weight (KG)</label>
+
+                        <input
+                            type="text"
+                            id="healthyAvgWeight"
+                            value="0.000"
+                            readonly
+                            class="readonly-field"
+                        >
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="healthyPrice">Price (Rs.)</label>
+
+                        <input
+                            type="number"
+                            id="healthyPrice"
+                            placeholder="0.00"
+                            step="0.01"
+                            min="0"
+                        >
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="healthyAmount">Amount (Rs.)</label>
+
+                        <input
+                            type="text"
+                            id="healthyAmount"
+                            value="0.00"
+                            readonly
+                            class="readonly-field"
+                        >
+                    </div>
+
+                </div>
+
+                </div>
+
+
+                <div class="form-box form-box-disable">
+
+                <div class="form-section-title">
+                    <h3>Disable Birds</h3>
+                </div>
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label for="disableNob">No of Birds (NOB)</label>
+
+                        <input
+                            type="number"
+                            id="disableNob"
+                            placeholder="0"
+                            min="0"
+                        >
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="disableWeight">Weight (KG)</label>
+
+                        <input
+                            type="number"
+                            id="disableWeight"
+                            placeholder="0.00"
+                            step="0.01"
+                            min="0"
+                        >
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="disableAvgWeight">Avg Weight (KG)</label>
+
+                        <input
+                            type="text"
+                            id="disableAvgWeight"
+                            value="0.000"
+                            readonly
+                            class="readonly-field"
+                        >
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="disablePrice">Price (Rs.)</label>
+
+                        <input
+                            type="number"
+                            id="disablePrice"
+                            placeholder="0.00"
+                            step="0.01"
+                            min="0"
+                        >
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="disableAmount">Amount (Rs.)</label>
+
+                        <input
+                            type="text"
+                            id="disableAmount"
+                            value="0.00"
+                            readonly
+                            class="readonly-field"
+                        >
+                    </div>
+
+                </div>
+
+                </div>
+
+
+                <div class="form-box form-box-total">
+
+                <div class="form-section-title">
+                    <h3>Total Birds</h3>
+                </div>
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label for="totalNob">No of Birds (NOB)</label>
+
+                        <input
+                            type="text"
+                            id="totalNob"
+                            value="0"
+                            readonly
+                            class="readonly-field"
+                        >
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="totalWeight">Weight (KG)</label>
+
+                        <input
+                            type="text"
+                            id="totalWeight"
+                            value="0.00"
+                            readonly
+                            class="readonly-field"
+                        >
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="totalAvgWeight">Avg Weight (KG)</label>
+
+                        <input
+                            type="text"
+                            id="totalAvgWeight"
+                            value="0.000"
+                            readonly
+                            class="readonly-field"
+                        >
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="totalPrice">Price (Rs.)</label>
+
+                        <input
+                            type="text"
+                            id="totalPrice"
+                            value="0.00"
+                            readonly
+                            class="readonly-field"
+                        >
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="totalAmount">Amount (Rs.)</label>
 
                         <input
                             type="text"
@@ -237,20 +412,7 @@
                         >
                     </div>
 
-
-                    <div class="form-group">
-                        <label for="avgWeight">
-                            Avg Weight (KG / Bird)
-                        </label>
-
-                        <input
-                            type="text"
-                            id="avgWeight"
-                            value="0.000"
-                            readonly
-                            class="readonly-field"
-                        >
-                    </div>
+                </div>
 
                 </div>
 
@@ -321,4 +483,4 @@
     <script src="../js/dashboard.js"></script>
 
 </body>
-</html> 
+</html>

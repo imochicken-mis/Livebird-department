@@ -948,17 +948,13 @@ body.admin-analytics-page {
     }
 
     .sidebar {
-        position: fixed;
-        left: -280px;
-        top: 0;
-        width: 260px;
-        height: 100vh;
-        z-index: 1000;
-        transition: left 0.25s ease;
-    }
-
-    .sidebar.mobile-open {
+        position: relative;
         left: 0;
+        top: auto;
+        width: 100%;
+        height: auto;
+        min-height: auto;
+        z-index: auto;
     }
 
     .admin-main {

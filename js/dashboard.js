@@ -34,23 +34,53 @@ document.addEventListener("DOMContentLoaded", () => {
     const batch2Input =
         document.getElementById("batchNo2");
 
-    const nobInput =
-        document.getElementById("nob");
-
-    const weightInput =
-        document.getElementById("totalWeight");
-
-    const priceInput =
-        document.getElementById("sellingPrice");
-
     const billInput =
         document.getElementById("billNo");
 
-    const amountInput =
-        document.getElementById("totalAmount");
+    const disableNobInput =
+        document.getElementById("disableNob");
 
-    const avgWeightInput =
-        document.getElementById("avgWeight");
+    const disableWeightInput =
+        document.getElementById("disableWeight");
+
+    const disableAvgWeightInput =
+        document.getElementById("disableAvgWeight");
+
+    const disablePriceInput =
+        document.getElementById("disablePrice");
+
+    const disableAmountInput =
+        document.getElementById("disableAmount");
+
+    const healthyNobInput =
+        document.getElementById("healthyNob");
+
+    const healthyWeightInput =
+        document.getElementById("healthyWeight");
+
+    const healthyAvgWeightInput =
+        document.getElementById("healthyAvgWeight");
+
+    const healthyPriceInput =
+        document.getElementById("healthyPrice");
+
+    const healthyAmountInput =
+        document.getElementById("healthyAmount");
+
+    const totalNobInput =
+        document.getElementById("totalNob");
+
+    const totalWeightInput =
+        document.getElementById("totalWeight");
+
+    const totalAvgWeightInput =
+        document.getElementById("totalAvgWeight");
+
+    const totalPriceInput =
+        document.getElementById("totalPrice");
+
+    const totalAmountInput =
+        document.getElementById("totalAmount");
 
     const saveBtn =
         document.getElementById("saveBtn");
@@ -235,48 +265,123 @@ document.addEventListener("DOMContentLoaded", () => {
     // CALCULATIONS
     // =========================================================
 
-    nobInput.addEventListener(
+    disableNobInput.addEventListener(
         "input",
-        calculateTotals
+        () => {
+            calculateBox(
+                disableNobInput,
+                disableWeightInput,
+                disableAvgWeightInput,
+                disablePriceInput,
+                disableAmountInput
+            );
+            calculateTotalBox();
+        }
     );
 
-    weightInput.addEventListener(
+    disableWeightInput.addEventListener(
         "input",
-        calculateTotals
+        () => {
+            calculateBox(
+                disableNobInput,
+                disableWeightInput,
+                disableAvgWeightInput,
+                disablePriceInput,
+                disableAmountInput
+            );
+            calculateTotalBox();
+        }
     );
 
-    priceInput.addEventListener(
+    disablePriceInput.addEventListener(
         "input",
-        calculateTotals
+        () => {
+            calculateBox(
+                disableNobInput,
+                disableWeightInput,
+                disableAvgWeightInput,
+                disablePriceInput,
+                disableAmountInput
+            );
+            calculateTotalBox();
+        }
+    );
+
+    healthyNobInput.addEventListener(
+        "input",
+        () => {
+            calculateBox(
+                healthyNobInput,
+                healthyWeightInput,
+                healthyAvgWeightInput,
+                healthyPriceInput,
+                healthyAmountInput
+            );
+            calculateTotalBox();
+        }
+    );
+
+    healthyWeightInput.addEventListener(
+        "input",
+        () => {
+            calculateBox(
+                healthyNobInput,
+                healthyWeightInput,
+                healthyAvgWeightInput,
+                healthyPriceInput,
+                healthyAmountInput
+            );
+            calculateTotalBox();
+        }
+    );
+
+    healthyPriceInput.addEventListener(
+        "input",
+        () => {
+            calculateBox(
+                healthyNobInput,
+                healthyWeightInput,
+                healthyAvgWeightInput,
+                healthyPriceInput,
+                healthyAmountInput
+            );
+            calculateTotalBox();
+        }
     );
 
 
-    function calculateTotals() {
+    // Disable/Healthy Box: Avg Weight = Weight / NOB,
+    // Amount = Price * Weight
 
-        const weight =
-            parseFloat(
-                weightInput.value
-            ) || 0;
-
-        const price =
-            parseFloat(
-                priceInput.value
-            ) || 0;
+    function calculateBox(
+        nobInput,
+        weightInput,
+        avgWeightInput,
+        priceInput,
+        amountInput
+    ) {
 
         const nob =
-            parseFloat(
-                nobInput.value
-            ) || 0;
+            parseFloat(nobInput.value) || 0;
+
+        const weight =
+            parseFloat(weightInput.value) || 0;
+
+        const price =
+            parseFloat(priceInput.value) || 0;
 
 
-        // Total Amount = Weight × Selling Price
+        avgWeightInput.value =
+            nob > 0
+                ? (weight / nob).toFixed(3)
+                : "0.000";
 
-        const totalAmount =
-            weight * price;
 
+        const amount =
+            price * weight;
 
         amountInput.value =
-            totalAmount.toLocaleString(
+            amount.toLocaleString(
                 "en-US",
                 {
                     minimumFractionDigits: 2,
@@ -284,22 +389,79 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             );
 
+    }
 
-        // Average Weight = Weight / Number of Birds
 
-        if (nob > 0) {
+    // Total Box:
+    // NOB = Disable NOB + Healthy NOB
+    // Weight = Disable Weight + Healthy Weight
+    // Avg Weight = Total Weight / Total NOB
+    // Price = Healthy Price
+    // Amount = Disable Amount + Healthy Amount
 
-            avgWeightInput.value =
-                (
-                    weight / nob
-                ).toFixed(3);
+    function calculateTotalBox() {
 
-        } else {
+        const disableNob =
+            parseFloat(disableNobInput.value) || 0;
 
-            avgWeightInput.value =
-                "0.000";
+        const disableWeight =
+            parseFloat(disableWeightInput.value) || 0;
 
-        }
+        const disableAmount =
+            parseFloat(
+                disableAmountInput.value.replace(/,/g, "")
+            ) || 0;
+
+        const healthyNob =
+            parseFloat(healthyNobInput.value) || 0;
+
+        const healthyWeight =
+            parseFloat(healthyWeightInput.value) || 0;
+
+        const healthyPrice =
+            parseFloat(healthyPriceInput.value) || 0;
+
+        const healthyAmount =
+            parseFloat(
+                healthyAmountInput.value.replace(/,/g, "")
+            ) || 0;
+
+
+        const totalNob =
+            disableNob + healthyNob;
+
+        const totalWeight =
+            disableWeight + healthyWeight;
+
+        const totalAvgWeight =
+            totalNob > 0
+                ? totalWeight / totalNob
+                : 0;
+
+        const totalAmount =
+            disableAmount + healthyAmount;
+
+
+        totalNobInput.value =
+            totalNob;
+
+        totalWeightInput.value =
+            totalWeight.toFixed(2);
+
+        totalAvgWeightInput.value =
+            totalAvgWeight.toFixed(3);
+
+        totalPriceInput.value =
+            healthyPrice.toFixed(2);
+
+        totalAmountInput.value =
+            totalAmount.toLocaleString(
+                "en-US",
+                {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }
+            );
 
     }
 
@@ -568,53 +730,102 @@ document.addEventListener("DOMContentLoaded", () => {
 
         return {
 
-            date:
-                catchingDate.value,
+            common: {
 
-            type:
-                typeSelect.value,
+                date:
+                    catchingDate.value,
 
-            farmer:
-                farmerSelect.value,
+                type:
+                    typeSelect.value,
 
-            cage:
-                typeSelect.value ===
-                    "Ownfarm"
-                    ? cageInput.value.trim()
-                    : "",
+                farmer:
+                    farmerSelect.value,
 
-            batch:
-                batchInput.value.trim(),
+                cage:
+                    typeSelect.value ===
+                        "Ownfarm"
+                        ? cageInput.value.trim()
+                        : "",
 
-            customer:
-                customerSelect.value,
+                batch:
+                    batchInput.value.trim(),
 
-            batch2:
-                customerSelect.value ===
-                    "Imo Plant"
-                    ? batch2Input.value.trim()
-                    : "",
+                customer:
+                    customerSelect.value,
 
-            nob:
-                nobInput.value || "0",
+                loadNo:
+                    customerSelect.value ===
+                        "Imo Plant"
+                        ? batch2Input.value.trim()
+                        : "",
 
-            weight:
-                weightInput.value || "0.00",
+                bill:
+                    billInput.value.trim()
 
-            price:
-                priceInput.value || "0.00",
+            },
 
-            bill:
-                billInput.value.trim(),
+            disable: {
 
-            amount:
-                amountInput.value
-                    .replace(/,/g, "") ||
-                "0.00",
+                nob:
+                    disableNobInput.value || "0",
 
-            avgWeight:
-                avgWeightInput.value ||
-                "0.000",
+                weight:
+                    disableWeightInput.value || "0.00",
+
+                avgWeight:
+                    disableAvgWeightInput.value || "0.000",
+
+                price:
+                    disablePriceInput.value || "0.00",
+
+                amount:
+                    disableAmountInput.value
+                        .replace(/,/g, "") ||
+                    "0.00"
+
+            },
+
+            healthy: {
+
+                nob:
+                    healthyNobInput.value || "0",
+
+                weight:
+                    healthyWeightInput.value || "0.00",
+
+                avgWeight:
+                    healthyAvgWeightInput.value || "0.000",
+
+                price:
+                    healthyPriceInput.value || "0.00",
+
+                amount:
+                    healthyAmountInput.value
+                        .replace(/,/g, "") ||
+                    "0.00"
+
+            },
+
+            total: {
+
+                nob:
+                    totalNobInput.value || "0",
+
+                weight:
+                    totalWeightInput.value || "0.00",
+
+                avgWeight:
+                    totalAvgWeightInput.value || "0.000",
+
+                price:
+                    totalPriceInput.value || "0.00",
+
+                amount:
+                    totalAmountInput.value
+                        .replace(/,/g, "") ||
+                    "0.00"
+
+            },
 
             addedBy:
                 user.name ||
@@ -639,68 +850,132 @@ document.addEventListener("DOMContentLoaded", () => {
 
             [
                 "Catching Date",
-                record.date || "-"
+                record.common.date || "-"
             ],
 
             [
                 "Type",
-                record.type || "-"
+                record.common.type || "-"
             ],
 
             [
                 "Farmer",
-                record.farmer || "-"
+                record.common.farmer || "-"
             ],
 
             [
                 "Cage No",
-                record.cage || "-"
+                record.common.cage || "-"
             ],
 
             [
                 "Batch No",
-                record.batch || "-"
+                record.common.batch || "-"
             ],
 
             [
                 "Customer",
-                record.customer || "-"
+                record.common.customer || "-"
             ],
 
             [
-                "Batch No 2",
-                record.batch2 || "-"
-            ],
-
-            [
-                "Birds (NOB)",
-                record.nob || "0"
-            ],
-
-            [
-                "Weight (KG)",
-                record.weight || "0.00"
-            ],
-
-            [
-                "Average Weight (KG)",
-                record.avgWeight || "0.000"
-            ],
-
-            [
-                "Price",
-                record.price || "0.00"
+                "Load No",
+                record.common.loadNo || "-"
             ],
 
             [
                 "Bill No",
-                record.bill || "-"
+                record.common.bill || "-"
             ],
 
             [
-                "Amount",
-                amountInput.value ||
-                "0.00"
+                "— Disable Birds —",
+                ""
+            ],
+
+            [
+                "Disable NOB",
+                record.disable.nob || "0"
+            ],
+
+            [
+                "Disable Weight (KG)",
+                record.disable.weight || "0.00"
+            ],
+
+            [
+                "Disable Avg Weight (KG)",
+                record.disable.avgWeight || "0.000"
+            ],
+
+            [
+                "Disable Price (Rs.)",
+                record.disable.price || "0.00"
+            ],
+
+            [
+                "Disable Amount (Rs.)",
+                record.disable.amount || "0.00"
+            ],
+
+            [
+                "— Healthy Birds —",
+                ""
+            ],
+
+            [
+                "Healthy NOB",
+                record.healthy.nob || "0"
+            ],
+
+            [
+                "Healthy Weight (KG)",
+                record.healthy.weight || "0.00"
+            ],
+
+            [
+                "Healthy Avg Weight (KG)",
+                record.healthy.avgWeight || "0.000"
+            ],
+
+            [
+                "Healthy Price (Rs.)",
+                record.healthy.price || "0.00"
+            ],
+
+            [
+                "Healthy Amount (Rs.)",
+                record.healthy.amount || "0.00"
+            ],
+
+            [
+                "— Total Birds —",
+                ""
+            ],
+
+            [
+                "Total NOB",
+                record.total.nob || "0"
+            ],
+
+            [
+                "Total Weight (KG)",
+                record.total.weight || "0.00"
+            ],
+
+            [
+                "Total Avg Weight (KG)",
+                record.total.avgWeight || "0.000"
+            ],
+
+            [
+                "Total Price (Rs.)",
+                record.total.price || "0.00"
+            ],
+
+            [
+                "Total Amount (Rs.)",
+                record.total.amount || "0.00"
             ]
 
         ];
@@ -931,19 +1206,46 @@ document.addEventListener("DOMContentLoaded", () => {
 
         batch2Input.value = "";
 
-        nobInput.value = "";
-
-        weightInput.value = "";
-
-        priceInput.value = "";
-
         billInput.value = "";
 
-        amountInput.value =
+        disableNobInput.value = "";
+
+        disableWeightInput.value = "";
+
+        disableAvgWeightInput.value =
+            "0.000";
+
+        disablePriceInput.value = "";
+
+        disableAmountInput.value =
             "0.00";
 
-        avgWeightInput.value =
+        healthyNobInput.value = "";
+
+        healthyWeightInput.value = "";
+
+        healthyAvgWeightInput.value =
             "0.000";
+
+        healthyPriceInput.value = "";
+
+        healthyAmountInput.value =
+            "0.00";
+
+        totalNobInput.value =
+            "0";
+
+        totalWeightInput.value =
+            "0.00";
+
+        totalAvgWeightInput.value =
+            "0.000";
+
+        totalPriceInput.value =
+            "0.00";
+
+        totalAmountInput.value =
+            "0.00";
 
 
         cageContainer.classList.add(

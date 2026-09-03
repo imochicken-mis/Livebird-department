@@ -804,3 +804,50 @@
 .user4-sidebar-group-panel .sidebar-link {
     margin-top: 2px;
 }
+
+.form-box {
+    margin: 20px 0;
+    padding: 14px 18px 18px;
+    border: 2px solid #cbd5e1;
+    border-radius: 12px;
+}
+
+.form-box .form-section-title {
+    margin: 0 0 10px;
+    padding-bottom: 6px;
+    border-bottom: none;
+}
+
+.form-box .form-section-title h3 {
+    margin: 0;
+    font-size: 15px;
+}
+
+.form-box-healthy {
+    border-color: #22c55e;
+}
+
+.form-box-healthy .form-section-title h3 {
+    color: #15803d;
+}
+
+.form-box-disable {
+    border-color: #ef4444;
+}
+
+.form-box-disable .form-section-title h3 {
+    color: #b91c1c;
+}
+
+.form-box-total {
+    border-color: #3b82f6;
+    background: #f8fafc;
+}
+
+.form-box-total .form-section-title h3 {
+    color: #1d4ed8;
+}
+
+.form-grid + .form-grid {
+    margin-top: 26px;
+}
