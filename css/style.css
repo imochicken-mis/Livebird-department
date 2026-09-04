@@ -704,6 +704,38 @@ footer {
 }
 
 
+.serial-result-box {
+    margin-top: 14px;
+    padding: 18px;
+    background: #eef2f6;
+    border: 1px dashed #1E5AA8;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.serial-result-box span {
+    font-size: 26px;
+    font-weight: 800;
+    color: #010853;
+    letter-spacing: 1px;
+}
+
+.serial-result-batch {
+    font-size: 13px;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-bottom: 6px;
+}
+
+
+
+/* =========================================================
+   LOGIN MODAL
+========================================================= */
+
+
 
 /* =========================================================
    LOGIN MODAL

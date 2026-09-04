@@ -50,6 +50,10 @@
                 Bird Condition Report
             </a>
 
+            <a href="catching-breakdown.html" class="sidebar-link">
+                Catching Breakdown
+            </a>
+
         </nav>
 
         <div class="sidebar-divider"></div>
@@ -183,6 +187,30 @@
                             type="text"
                             id="billNo"
                         >
+                    </div>
+
+
+                    <div class="form-group" id="serialSearchGroup">
+                        <label for="serialNoSearch">Serial No (Search to Edit)</label>
+
+                        <div class="serial-search-row">
+
+                            <input
+                                type="text"
+                                id="serialNoSearch"
+                                placeholder="Ex:- 26-247-01"
+                            >
+
+                            <button type="button" id="searchSerialBtn">
+                                Search
+                            </button>
+
+                            <button type="button" id="clearEditBtn" class="hidden">
+                                Clear
+                            </button>
+
+                        </div>
+
                     </div>
 
                 </div>
@@ -470,6 +498,49 @@
                     type="button"
                 >
                     Confirm & Save
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- SERIAL NO RESULT MODAL -->
+
+    <div id="serialResultModal" class="modal">
+
+        <div class="modal-card small-modal">
+
+            <h2 id="serialResultTitle">Record Saved!</h2>
+
+            <div class="serial-result-box">
+                <div id="serialResultBatch" class="serial-result-batch"></div>
+                <span id="serialResultValue">-</span>
+            </div>
+
+            <div style="
+                display:flex;
+                justify-content:flex-end;
+                gap:10px;
+                margin-top:22px;
+            ">
+
+                <button
+                    id="copySerialBtn"
+                    class="cancel-btn"
+                    type="button"
+                >
+                    📋 Copy
+                </button>
+
+                <button
+                    id="closeSerialResultBtn"
+                    class="save-btn"
+                    type="button"
+                >
+                    OK
                 </button>
 
             </div>

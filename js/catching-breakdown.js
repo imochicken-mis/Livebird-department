@@ -28,6 +28,24 @@ document.addEventListener("DOMContentLoaded", () => {
     const reportMessage =
         document.getElementById("reportMessage");
 
+    const totalDisableNob =
+        document.getElementById("totalDisableNob");
+
+    const totalDisableWeight =
+        document.getElementById("totalDisableWeight");
+
+    const totalDisableAmount =
+        document.getElementById("totalDisableAmount");
+
+    const totalHealthyNob =
+        document.getElementById("totalHealthyNob");
+
+    const totalHealthyWeight =
+        document.getElementById("totalHealthyWeight");
+
+    const totalHealthyAmount =
+        document.getElementById("totalHealthyAmount");
+
     const totalNob =
         document.getElementById("totalNob");
 
@@ -36,9 +54,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const totalAmount =
         document.getElementById("totalAmount");
-
-    const totalRejection =
-        document.getElementById("totalRejection");
 
     const loggedUser =
         document.getElementById("loggedUser");
@@ -101,7 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
 
             const result =
-                await getOperationsReportData();
+                await getCatchingBreakdownData();
 
             if (!result.success) {
 
@@ -113,7 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 allReportData = [];
 
-                renderTable([]);
+                renderAll([]);
 
                 return;
             }
@@ -142,7 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             allReportData = [];
 
-            renderTable([]);
+            renderAll([]);
 
         } finally {
 
@@ -167,9 +182,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!fromDate && !toDate) {
 
-            renderTable(allReportData);
-
-            updateTotals(allReportData);
+            renderAll(allReportData);
 
             return;
         }
@@ -206,9 +219,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
 
-        renderTable(filteredData);
-
-        updateTotals(filteredData);
+        renderAll(filteredData);
 
         showMessage(
             `Filtered ${filteredData.length} records found.`,
@@ -229,9 +240,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         clearMessage();
 
-        renderTable(allReportData);
-
-        updateTotals(allReportData);
+        renderAll(allReportData);
 
         showMessage(
             "Filters cleared.",
@@ -273,6 +282,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // =========================================================
+    // RENDER ALL (TABLE + TOTALS)
+    // =========================================================
+
+    function renderAll(data) {
+
+        renderTable(data);
+
+        updateTotals(data);
+
+    }
+
+
+    // =========================================================
     // TABLE RENDER
     // =========================================================
 
@@ -291,7 +313,7 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
             row.innerHTML = `
-                <td colspan="15">
+                <td colspan="20">
                     No report records found.
                 </td>
             `;
@@ -325,21 +347,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 <td>${escapeHtml(record.customer)}</td>
 
-                <td>${formatNumber(record.nob, 0)}</td>
-
-                <td>${formatNumber(record.weight, 2)}</td>
-
-                <td>${formatNumber(record.price, 2)}</td>
-
                 <td>${escapeHtml(record.bill)}</td>
 
-                <td>${formatNumber(record.amount, 2)}</td>
+                <td>${formatNumber(record.disable_nob, 0)}</td>
 
-                <td>${formatNumber(record.avg_weight, 2)}</td>
+                <td>${formatNumber(record.disable_weight, 2)}</td>
 
-                <td>${formatNumber(record.rejection_weight, 2)}</td>
+                <td>${formatNumber(record.disable_price, 2)}</td>
 
-                <td>${escapeHtml(record.reason)}</td>
+                <td>${formatNumber(record.disable_amount, 2)}</td>
+
+                <td>${formatNumber(record.healthy_nob, 0)}</td>
+
+                <td>${formatNumber(record.healthy_weight, 2)}</td>
+
+                <td>${formatNumber(record.healthy_price, 2)}</td>
+
+                <td>${formatNumber(record.healthy_amount, 2)}</td>
+
+                <td>${formatNumber(record.total_nob, 0)}</td>
+
+                <td>${formatNumber(record.total_weight, 2)}</td>
+
+                <td>${formatNumber(record.total_price, 2)}</td>
+
+                <td>${formatNumber(record.total_amount, 2)}</td>
 
             `;
 
@@ -359,70 +391,63 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function updateTotals(data) {
 
+        let disableNob = 0;
+        let disableWeight = 0;
+        let disableAmount = 0;
+
+        let healthyNob = 0;
+        let healthyWeight = 0;
+        let healthyAmount = 0;
+
         let nob = 0;
         let weight = 0;
         let amount = 0;
-        let rejection = 0;
 
 
         data.forEach(row => {
 
-            nob += safeNumber(
-                row.nob
-            );
+            disableNob += safeNumber(row.disable_nob);
+            disableWeight += safeNumber(row.disable_weight);
+            disableAmount += safeNumber(row.disable_amount);
 
-            weight += safeNumber(
-                row.weight
-            );
+            healthyNob += safeNumber(row.healthy_nob);
+            healthyWeight += safeNumber(row.healthy_weight);
+            healthyAmount += safeNumber(row.healthy_amount);
 
-            amount += safeNumber(
-                row.amount
-            );
-
-            rejection += safeNumber(
-                row.rejection_weight
-            );
+            nob += safeNumber(row.total_nob);
+            weight += safeNumber(row.total_weight);
+            amount += safeNumber(row.total_amount);
 
         });
 
 
-        totalNob.textContent =
-            nob.toLocaleString(
-                "en-US",
-                {
-                    maximumFractionDigits: 0
-                }
-            );
+        totalDisableNob.textContent =
+            formatDisplayNumber(disableNob, 0);
 
+        totalDisableWeight.textContent =
+            formatDisplayNumber(disableWeight, 2);
+
+        totalDisableAmount.textContent =
+            formatDisplayNumber(disableAmount, 2);
+
+        totalHealthyNob.textContent =
+            formatDisplayNumber(healthyNob, 0);
+
+        totalHealthyWeight.textContent =
+            formatDisplayNumber(healthyWeight, 2);
+
+        totalHealthyAmount.textContent =
+            formatDisplayNumber(healthyAmount, 2);
+
+        totalNob.textContent =
+            formatDisplayNumber(nob, 0);
 
         totalWeight.textContent =
-            weight.toLocaleString(
-                "en-US",
-                {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                }
-            );
-
+            formatDisplayNumber(weight, 2);
 
         totalAmount.textContent =
-            amount.toLocaleString(
-                "en-US",
-                {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                }
-            );
+            formatDisplayNumber(amount, 2);
 
-
-        totalRejection.textContent =
-            rejection.toLocaleString(
-                "en-US",
-                {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                }
-            );
 
     }
 
@@ -533,6 +558,22 @@ document.addEventListener("DOMContentLoaded", () => {
             safeNumber(value);
 
         return number.toLocaleString(
+            "en-US",
+            {
+                minimumFractionDigits: decimals,
+                maximumFractionDigits: decimals
+            }
+        );
+
+    }
+
+
+    function formatDisplayNumber(
+        value,
+        decimals
+    ) {
+
+        return value.toLocaleString(
             "en-US",
             {
                 minimumFractionDigits: decimals,

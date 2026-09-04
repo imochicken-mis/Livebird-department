@@ -114,13 +114,22 @@
     white-space: nowrap;
 }
 .pdf-capture-mode {
-    min-width: 1100px !important;
+    min-width: 1250px !important;
 }
 
 .pdf-capture-mode th,
 .pdf-capture-mode td {
     white-space: normal !important;
     word-wrap: break-word;
+}
+
+/* Serial No & Date are short fixed-format values —
+   never let them wrap, even if other text columns do */
+.pdf-capture-mode th:nth-child(1),
+.pdf-capture-mode td:nth-child(1),
+.pdf-capture-mode th:nth-child(2),
+.pdf-capture-mode td:nth-child(2) {
+    white-space: nowrap !important;
 }
 
 #reportTable thead th {

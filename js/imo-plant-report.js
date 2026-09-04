@@ -572,6 +572,31 @@ document.addEventListener("DOMContentLoaded", () => {
     // TYPE GROUPING
     // =====================================================
 
+    // Same normalization rule used for the KPI cards above
+    // (own farm / buyback), so the charts always merge into
+    // the same two categories no matter how "Type" was typed
+    // in the sheet (Buyback, BuyBack, buy back, etc.).
+    function normalizeFarmType(rawType) {
+
+        const type =
+            String(rawType || "").trim();
+
+        const lower =
+            type.toLowerCase();
+
+        if (lower.includes("own")) {
+            return "Own Farm";
+        }
+
+        if (lower.includes("buy")) {
+            return "Buyback";
+        }
+
+        return type || "Unknown";
+
+    }
+
+
     function groupByType(data) {
 
         const grouped = {};
@@ -580,9 +605,9 @@ document.addEventListener("DOMContentLoaded", () => {
         data.forEach(row => {
 
             const type =
-                String(
-                    row.type || "Unknown"
-                ).trim() || "Unknown";
+                normalizeFarmType(
+                    row.type
+                );
 
 
             if (!grouped[type]) {

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Bird Condition Analysis Report</title>
+    <title>Catching Breakdown Report</title>
 
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/dashboard.css">
@@ -13,12 +13,61 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    
+
+    <style>
+
+        /* =========================================
+           CATCHING BREAKDOWN - SUMMARY CARDS
+        ========================================= */
+
+        .cb-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .cb-summary-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 16px 18px;
+        }
+
+        .cb-summary-card h3 {
+            margin: 0 0 8px;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            color: #64748b;
+        }
+
+        .cb-summary-card p {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        @media (max-width: 1200px) {
+            .cb-summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 700px) {
+            .cb-summary-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+    </style>
+
 </head>
 
 <body class="dashboard-page">
 
-    <!-- SIDEBAR -->
     <aside class="sidebar">
 
         <div class="sidebar-brand">
@@ -52,12 +101,11 @@
                 Catching Summ. Report
             </a>
 
-            <a href="bird-condition-report.html"
-               class="sidebar-link active">
+            <a href="bird-condition-report.html" class="sidebar-link">
                 Bird Condition Report
             </a>
 
-            <a href="catching-breakdown.html" class="sidebar-link">
+            <a href="catching-breakdown.html" class="sidebar-link active">
                 Catching Breakdown
             </a>
 
@@ -78,13 +126,11 @@
     </aside>
 
 
-    <!-- MAIN -->
     <main class="dashboard-main">
 
-        <!-- HEADER -->
         <header class="dashboard-header">
 
-            <h1>Bird Condition Analysis Report</h1>
+            <h1>Catching Breakdown Report</h1>
 
             <div class="header-user">
 
@@ -92,10 +138,7 @@
                     Logged in as:
                 </span>
 
-                <button
-                    id="logoutBtn"
-                    class="logout-btn"
-                >
+                <button id="logoutBtn" class="logout-btn">
                     Logout
                 </button>
 
@@ -104,7 +147,6 @@
         </header>
 
 
-        <!-- REPORT CARD -->
         <section class="form-card analytics-card">
 
             <div class="report-toolbar">
@@ -112,9 +154,8 @@
                 <div class="analytics-section-heading"></div>
 
                 <div>
-                    <h2> </h2>
+                    <h2></h2>
                 </div>
-
 
                 <div class="report-filters">
 
@@ -130,7 +171,6 @@
                         title="To Date"
                     >
 
-
                     <button
                         id="filterBtn"
                         class="report-btn"
@@ -138,14 +178,12 @@
                         Filter
                     </button>
 
-
                     <button
                         id="clearBtn"
                         class="report-btn"
                     >
                         Clear
                     </button>
-
 
                     <button
                         id="refreshBtn"
@@ -159,97 +197,86 @@
             </div>
 
 
-            <!-- MESSAGE -->
-
             <div
                 id="reportMessage"
                 class="save-message"
             ></div>
 
 
-            <!-- LOADING -->
-
             <div
                 id="reportLoading"
                 class="report-loading hidden"
             >
-                Loading Bird Condition Report...
+                Loading report data...
             </div>
 
 
-            <!-- TABLE -->
+            
+
 
             <div class="report-table-wrapper">
 
                 <table id="reportTable" class="analytics-table">
 
                     <thead>
-
                         <tr>
-
+                            <th>SERIAL NO</th>
                             <th>DATE</th>
-
-                            <th>FARMER NAME</th>
-
-                            <th>NOB</th>
-
-                            <th>WEIGHT (KG)</th>
-
-                            <th>AVERAGE WEIGHT</th>
-
-                            <th>REJECTION WEIGHT</th>
-
-                            <th>REASON</th>
-
-                            <th>FINAL WEIGHT</th>
-
+                            <th>TYPE</th>
+                            <th>FARMER/LOCATION</th>
+                            <th>CAGE NO</th>
+                            <th>BATCH NO</th>
+                            <th>CUSTOMER</th>
+                            <th>BILL NO</th>
+                            <th>DISABLE NOB</th>
+                            <th>DISABLE WEIGHT</th>
+                            <th>DISABLE PRICE</th>
+                            <th>DISABLE AMOUNT</th>
+                            <th>HEALTHY NOB</th>
+                            <th>HEALTHY WEIGHT</th>
+                            <th>HEALTHY PRICE</th>
+                            <th>HEALTHY AMOUNT</th>
+                            <th>TOTAL NOB</th>
+                            <th>TOTAL WEIGHT</th>
+                            <th>TOTAL PRICE</th>
+                            <th>TOTAL AMOUNT</th>
                         </tr>
-
                     </thead>
-
 
                     <tbody id="reportTableBody">
                     </tbody>
 
-
                     <tfoot>
-
                         <tr class="grand-total-row">
 
-                            <td>
-                                GRAND TOTAL:
-                            </td>
-
                             <td></td>
 
-
-                            <td id="totalNob">
-                                0
-                            </td>
-
-
-                            <td id="totalWeight">
-                                0.00
-                            </td>
-
-
-                            <td id="totalAverage">
-                                0.00
-                            </td>
-
-
-                            <td id="totalRejection">
-                                0.00
-                            </td>
+                            <td>GRAND TOTAL:</td>
 
                             <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
 
-                            <td id="totalFinalWeight">
-                                0.00
-                            </td>
+                            <td id="totalDisableNob">0</td>
+                            <td id="totalDisableWeight">0.00</td>
+                            <td></td>
+                            <td id="totalDisableAmount">0.00</td>
+
+                            <td id="totalHealthyNob">0</td>
+                            <td id="totalHealthyWeight">0.00</td>
+                            <td></td>
+                            <td id="totalHealthyAmount">0.00</td>
+
+                            <td id="totalNob">0</td>
+                            <td id="totalWeight">0.00</td>
+                            <td></td>
+                            <td id="totalAmount">0.00</td>
+
 
                         </tr>
-
                     </tfoot>
 
                 </table>
@@ -262,8 +289,7 @@
 
 
     <script src="../js/api.js"></script>
-    <script src="../js/admin-common.js"></script>
-    <script src="../js/bird-condition-report.js"></script>
+    <script src="../js/catching-breakdown.js"></script>
     <script src="../js/admin-export.js"></script>
 
 </body>

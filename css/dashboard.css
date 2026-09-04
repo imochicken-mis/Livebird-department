@@ -617,6 +617,69 @@
     cursor: not-allowed;
 }
 
+/* ===============================
+   SERIAL NO SEARCH (EDIT LOOKUP)
+================================ */
+
+#serialSearchGroup .serial-search-row {
+    display: flex;
+    gap: 8px;
+}
+
+#serialNoSearch {
+    flex: 1;
+    min-width: 0;
+}
+
+#searchSerialBtn,
+#clearEditBtn {
+    height: 44px;
+    padding: 0 18px;
+    border-radius: 9px;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+#searchSerialBtn {
+    border: none;
+    background: #1E5AA8;
+    color: white;
+}
+
+#searchSerialBtn:hover {
+    background: #164784;
+}
+
+#searchSerialBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+#clearEditBtn {
+    border: 1px solid #dc2626;
+    background: white;
+    color: #dc2626;
+}
+
+#clearEditBtn:hover {
+    background: #fef2f2;
+}
+
+@media (max-width: 600px) {
+
+    #serialSearchGroup .serial-search-row {
+        flex-wrap: wrap;
+    }
+
+    #serialNoSearch {
+        flex: 1 1 100%;
+    }
+
+}
+
 
 /* ===============================
    MESSAGE

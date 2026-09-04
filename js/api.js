@@ -154,11 +154,34 @@ async function getCatchingRecordLookup(
 }
 
 
+async function getCatchingRecordBySerial(
+    serialNo
+) {
+
+    return await sendRequest({
+
+        action:
+            "getCatchingRecordBySerial",
+
+        serialNo:
+            serialNo
+    });
+}
+
+
 async function getOperationsReportData() {
 
     return await sendRequest({
         action:
             "getOperationsReportData"
+    });
+}
+
+async function getCatchingBreakdownData() {
+
+    return await sendRequest({
+        action:
+            "getCatchingBreakdownData"
     });
 }
 

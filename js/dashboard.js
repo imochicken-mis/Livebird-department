@@ -106,6 +106,35 @@ document.addEventListener("DOMContentLoaded", () => {
     const confirmSaveBtn =
         document.getElementById("confirmSaveBtn");
 
+    const serialNoSearchInput =
+        document.getElementById("serialNoSearch");
+
+    const searchSerialBtn =
+        document.getElementById("searchSerialBtn");
+
+    const clearEditBtn =
+        document.getElementById("clearEditBtn");
+
+    const serialResultModal =
+        document.getElementById("serialResultModal");
+
+    const serialResultTitle =
+        document.getElementById("serialResultTitle");
+
+    const serialResultValue =
+        document.getElementById("serialResultValue");
+
+    const serialResultBatch =
+        document.getElementById("serialResultBatch");
+
+    const copySerialBtn =
+        document.getElementById("copySerialBtn");
+
+    const closeSerialResultBtn =
+        document.getElementById("closeSerialResultBtn");
+
+    let editingSerialNo = null;
+
 
     // =========================================================
     // CHECK LOGIN SESSION
@@ -259,6 +288,132 @@ document.addEventListener("DOMContentLoaded", () => {
 
         }
     );
+
+
+    // =========================================================
+    // SEARCH RECORD BY SERIAL NO (EDIT MODE)
+    // =========================================================
+
+    searchSerialBtn.addEventListener(
+        "click",
+        async () => {
+
+            const serialNo =
+                serialNoSearchInput.value.trim();
+
+            if (!serialNo) {
+                showMessage(
+                    "Please enter a Serial No to search.",
+                    "error"
+                );
+                return;
+            }
+
+            searchSerialBtn.disabled = true;
+            searchSerialBtn.textContent = "Searching...";
+
+            try {
+
+                const result =
+                    await getCatchingRecordBySerial(serialNo);
+
+                if (!result.success) {
+                    showMessage(
+                        result.message || "Unable to search.",
+                        "error"
+                    );
+                    return;
+                }
+
+                if (!result.found) {
+                    showMessage(
+                        "No record found for Serial No: " + serialNo,
+                        "error"
+                    );
+                    return;
+                }
+
+                fillFormFromRecord(result);
+                editingSerialNo = result.serialNo;
+
+                clearEditBtn.classList.remove("hidden");
+
+                showMessage(
+                    "Record loaded — editing " + result.serialNo,
+                    "success"
+                );
+
+            } catch (error) {
+
+                console.error("Search serial error:", error);
+                showMessage(
+                    "Unable to connect to the server.",
+                    "error"
+                );
+
+            } finally {
+
+                searchSerialBtn.disabled = false;
+                searchSerialBtn.textContent = "Search";
+
+            }
+
+        }
+    );
+
+
+    clearEditBtn.addEventListener(
+        "click",
+        () => {
+
+            editingSerialNo = null;
+            serialNoSearchInput.value = "";
+            clearEditBtn.classList.add("hidden");
+
+            resetForm();
+
+            showMessage("Switched to New Entry.", "success");
+
+        }
+    );
+
+
+    function fillFormFromRecord(data) {
+
+        catchingDate.value = data.date || "";
+
+        typeSelect.value = data.type || "";
+        typeSelect.dispatchEvent(new Event("change"));
+
+        farmerSelect.value = data.farmer || "";
+        cageInput.value = data.cage || "";
+        batchInput.value = data.batch || "";
+
+        customerSelect.value = data.customer || "";
+        customerSelect.dispatchEvent(new Event("change"));
+
+        batch2Input.value = data.loadNo || "";
+        billInput.value = data.bill || "";
+
+        disableNobInput.value = data.disable.nob || "0";
+        disableWeightInput.value = data.disable.weight || "0.00";
+        disableAvgWeightInput.value = data.disable.avgWeight || "0.000";
+        disablePriceInput.value = data.disable.price || "0.00";
+        disableAmountInput.value = data.disable.amount || "0.00";
+
+        healthyNobInput.value = data.healthy.nob || "0";
+        healthyWeightInput.value = data.healthy.weight || "0.00";
+        healthyAvgWeightInput.value = data.healthy.avgWeight || "0.000";
+        healthyPriceInput.value = data.healthy.price || "0.00";
+        healthyAmountInput.value = data.healthy.amount || "0.00";
+
+        totalNobInput.value = data.total.nob || "0";
+        totalWeightInput.value = data.total.weight || "0.00";
+        totalAvgWeightInput.value = data.total.avgWeight || "0.000";
+        totalPriceInput.value = data.total.price || "0.00";
+        totalAmountInput.value = data.total.amount || "0.00";
+
+    }
 
 
     // =========================================================
@@ -829,7 +984,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
             addedBy:
                 user.name ||
-                user.username
+                user.username,
+
+            serialNo:
+                editingSerialNo || ""
 
         };
 
@@ -1107,6 +1265,74 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // =========================================================
+    // SERIAL NO RESULT POPUP
+    // =========================================================
+
+    function showSerialResultModal(serialNo, wasUpdate, batchNo) {
+
+        serialResultTitle.textContent =
+            wasUpdate
+                ? "Record Updated!"
+                : "Record Saved!";
+
+        serialResultBatch.textContent =
+            "Batch No: " + (batchNo || "-");
+
+        serialResultValue.textContent =
+            serialNo;
+
+        copySerialBtn.textContent =
+            "📋 Copy";
+
+        serialResultModal.classList.add(
+            "show"
+        );
+
+    }
+
+
+    closeSerialResultBtn.addEventListener(
+        "click",
+        () => {
+
+            serialResultModal.classList.remove(
+                "show"
+            );
+
+        }
+    );
+
+
+    copySerialBtn.addEventListener(
+        "click",
+        async () => {
+
+            try {
+
+                await navigator.clipboard.writeText(
+                    serialResultValue.textContent
+                );
+
+                copySerialBtn.textContent =
+                    "✅ Copied!";
+
+            } catch (error) {
+
+                console.error(
+                    "Copy failed:",
+                    error
+                );
+
+                copySerialBtn.textContent =
+                    "Copy failed";
+
+            }
+
+        }
+    );
+
+
+    // =========================================================
     // CONFIRM + ACTUAL SAVE
     // =========================================================
 
@@ -1140,13 +1366,17 @@ document.addEventListener("DOMContentLoaded", () => {
                     );
 
 
-                    showMessage(
-                        "Record Saved Successfully! 🎉",
-                        "success"
-                    );
+                    const wasUpdate =
+                        !!editingSerialNo;
 
 
                     resetForm();
+
+                    showSerialResultModal(
+                        result.serialNo || "-",
+                        wasUpdate,
+                        record.common.batch
+                    );
 
                 } else {
 
@@ -1190,6 +1420,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // =========================================================
 
     function resetForm() {
+
+        editingSerialNo = null;
+        serialNoSearchInput.value = "";
+        clearEditBtn.classList.add("hidden");
 
         typeSelect.value = "";
 
