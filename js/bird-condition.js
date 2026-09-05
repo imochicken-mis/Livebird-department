@@ -16,11 +16,26 @@ document.addEventListener("DOMContentLoaded", () => {
     const batch2Input =
         document.getElementById("batchNo2");
 
-    const rejectionWeightInput =
-        document.getElementById("rejectionWeight");
+    const reason1Select =
+        document.getElementById("reason1");
 
-    const reasonSelect =
-        document.getElementById("reason");
+    const weight1Input =
+        document.getElementById("weight1");
+
+    const reason2Select =
+        document.getElementById("reason2");
+
+    const weight2Input =
+        document.getElementById("weight2");
+
+    const reason3Select =
+        document.getElementById("reason3");
+
+    const weight3Input =
+        document.getElementById("weight3");
+
+    const totalRejectionWeightInput =
+        document.getElementById("totalRejectionWeight");
 
     const lookupNobInput =
         document.getElementById("lookupNob");
@@ -129,7 +144,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             populateSelect(
-                reasonSelect,
+                reason1Select,
+                result.reasons || [],
+                "Select Reason"
+            );
+
+            populateSelect(
+                reason2Select,
+                result.reasons || [],
+                "Select Reason"
+            );
+
+            populateSelect(
+                reason3Select,
                 result.reasons || [],
                 "Select Reason"
             );
@@ -250,6 +277,45 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // =========================================================
+    // AUTO TOTAL REJECTION WEIGHT
+    // =========================================================
+
+    [weight1Input, weight2Input, weight3Input].forEach(input => {
+
+        input.addEventListener(
+            "input",
+            updateTotalRejectionWeight
+        );
+
+    });
+
+
+    function updateTotalRejectionWeight() {
+
+        const total =
+            safeNum(weight1Input.value) +
+            safeNum(weight2Input.value) +
+            safeNum(weight3Input.value);
+
+        totalRejectionWeightInput.value =
+            total.toFixed(2);
+
+    }
+
+
+    function safeNum(value) {
+
+        const number =
+            parseFloat(value);
+
+        return Number.isFinite(number)
+            ? number
+            : 0;
+
+    }
+
+
+    // =========================================================
     // FORM SUBMIT -> SHOW PREVIEW
     // =========================================================
 
@@ -273,10 +339,15 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
-            if (!reasonSelect.value) {
+            const hasAtLeastOneReason =
+                reason1Select.value ||
+                reason2Select.value ||
+                reason3Select.value;
+
+            if (!hasAtLeastOneReason) {
 
                 showMessage(
-                    "Please select Reason.",
+                    "Please select at least one Reason.",
                     "error"
                 );
 
@@ -307,11 +378,26 @@ document.addEventListener("DOMContentLoaded", () => {
             batch2:
                 batch2Input.value.trim(),
 
-            rejectionWeight:
-                rejectionWeightInput.value || "0",
+            reason1:
+                reason1Select.value || "",
 
-            reason:
-                reasonSelect.value || "",
+            weight1:
+                weight1Input.value || "0",
+
+            reason2:
+                reason2Select.value || "",
+
+            weight2:
+                weight2Input.value || "0",
+
+            reason3:
+                reason3Select.value || "",
+
+            weight3:
+                weight3Input.value || "0",
+
+            totalRejectionWeight:
+                totalRejectionWeightInput.value || "0.00",
 
             addedBy:
                 user.name || user.username
@@ -345,13 +431,38 @@ document.addEventListener("DOMContentLoaded", () => {
             ],
 
             [
-                "Rejection Weight (KG)",
-                record.rejectionWeight || "0"
+                "Reason 1",
+                record.reason1 || "-"
             ],
 
             [
-                "Reason",
-                record.reason || "-"
+                "Weight 1 (KG)",
+                record.weight1 || "0"
+            ],
+
+            [
+                "Reason 2",
+                record.reason2 || "-"
+            ],
+
+            [
+                "Weight 2 (KG)",
+                record.weight2 || "0"
+            ],
+
+            [
+                "Reason 3",
+                record.reason3 || "-"
+            ],
+
+            [
+                "Weight 3 (KG)",
+                record.weight3 || "0"
+            ],
+
+            [
+                "Total Rejection Weight (KG)",
+                record.totalRejectionWeight || "0.00"
             ]
 
         ];
@@ -569,10 +680,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
         batch2Input.value = "";
 
-        rejectionWeightInput.value =
-            "0";
+        reason1Select.value = "";
+        weight1Input.value = "0";
 
-        reasonSelect.value = "";
+        reason2Select.value = "";
+        weight2Input.value = "0";
+
+        reason3Select.value = "";
+        weight3Input.value = "0";
+
+        totalRejectionWeightInput.value =
+            "0.00";
 
         resetLookupFields();
 

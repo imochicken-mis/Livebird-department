@@ -285,84 +285,97 @@ document.addEventListener("DOMContentLoaded", () => {
     // TABLE RENDER
     // =========================================================
 
-    function renderTable(data) {
+function renderTable(data) {
 
-        reportTableBody.innerHTML = "";
+    reportTableBody.innerHTML = "";
 
+    if (!data || data.length === 0) {
 
-        if (!data || data.length === 0) {
-
-            const row =
-                document.createElement("tr");
-
-            row.classList.add(
-                "report-empty-row"
-            );
-
-            row.innerHTML = `
-                <td colspan="8">
+        reportTableBody.innerHTML = `
+            <tr class="report-empty-row">
+                <td colspan="9">
                     No bird condition records found.
                 </td>
-            `;
+            </tr>
+        `;
 
-            reportTableBody.appendChild(
-                row
-            );
-
-            return;
-        }
-
-
-        data.forEach(record => {
-
-            const row =
-                document.createElement("tr");
-
-
-            row.innerHTML = `
-
-                <td>
-                    ${escapeHtml(record.date)}
-                </td>
-
-                <td>
-                    ${escapeHtml(record.farmer)}
-                </td>
-
-                <td>
-                    ${formatNumber(record.nob, 0)}
-                </td>
-
-                <td>
-                    ${formatNumber(record.weight, 2)}
-                </td>
-
-                <td>
-                    ${formatNumber(record.avg_weight, 2)}
-                </td>
-
-                <td>
-                    ${formatNumber(record.rejection_weight, 2)}
-                </td>
-
-                <td>
-                ${escapeHtml(record.reason || "-")}
-                </td>
-
-                <td>
-                    ${formatNumber(record.final_weight, 2)}
-                </td>
-
-            `;
-
-
-            reportTableBody.appendChild(
-                row
-            );
-
-        });
-
+        return;
     }
+
+    data.forEach(record => {
+
+        const reasons =
+            Array.isArray(record.reasons) &&
+            record.reasons.length > 0
+                ? record.reasons
+                : [{
+                    reason: record.reason || "—",
+                    weight: record.rejection_weight || 0
+                }];
+
+        const rowCount = reasons.length;
+
+        reasons.forEach((item, index) => {
+
+            const row = document.createElement("tr");
+
+            if (index === 0) {
+
+                row.innerHTML = `
+                    <td rowspan="${rowCount}" style="vertical-align: middle;">
+                        ${escapeHtml(record.date)}
+                    </td>
+
+                    <td rowspan="${rowCount}" style="vertical-align: middle;">
+                        ${escapeHtml(record.farmer)}
+                    </td>
+
+                    <td rowspan="${rowCount}" style="vertical-align: middle;">
+                        ${formatNumber(record.nob, 0)}
+                    </td>
+
+                    <td rowspan="${rowCount}" style="vertical-align: middle;">
+                        ${formatNumber(record.weight, 2)}
+                    </td>
+
+                    <td rowspan="${rowCount}" style="vertical-align: middle;">
+                        ${formatNumber(record.avg_weight, 3)}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(item.reason || "—")}
+                    </td>
+
+                    <td>
+                        ${formatNumber(item.weight, 2)}
+                    </td>
+
+                    <td rowspan="${rowCount}" style="vertical-align: middle;">
+                        ${formatNumber(record.rejection_total_weight, 2)}
+                    </td>
+
+                    <td rowspan="${rowCount}" style="vertical-align: middle;">
+                        ${formatNumber(record.final_weight, 2)}
+                    </td>
+                `;
+
+            } else {
+
+                row.innerHTML = `
+                    <td>
+                        ${escapeHtml(item.reason || "—")}
+                    </td>
+
+                    <td>
+                        ${formatNumber(item.weight, 2)}
+                    </td>
+                `;
+            }
+
+            reportTableBody.appendChild(row);
+        });
+    });
+}
 
 
     // =========================================================

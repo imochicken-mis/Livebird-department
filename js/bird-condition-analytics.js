@@ -350,11 +350,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
             allReportData =
                 Array.isArray(result.data)
-                    ? result.data
+                    ? result.data.map(normalizeReportRow)
                     : [];
 
-
-            applyDateFilter(false);
+        applyDateFilter(false);
 
 
         } catch (error) {
@@ -518,12 +517,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const reasons =
             [...new Set(
 
-                data
-                    .map(row =>
-                        cleanReason(
-                            row.reason
-                        )
-                    )
+        data.flatMap(row =>
+            Array.isArray(row.reasons)
+                ? row.reasons.map(pair => cleanReason(pair.reason))
+                : [cleanReason(row.reason)]
+        )
                     .filter(reason =>
                         reason !== ""
                     )
@@ -608,14 +606,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
         } else {
 
-            tableData =
-                dateFilteredData.filter(row =>
+            tableData = dateFilteredData
+    .map(row => {
 
-                    cleanReason(
-                        row.reason
-                    ) === selectedReason
+        const matches = (row.reasons || [])
+            .filter(pair =>
+                cleanReason(pair.reason) === selectedReason
+            );
 
-                );
+        if (matches.length === 0) {
+            return null;
+        }
+
+        const selectedWeight = matches.reduce(
+            (sum, pair) =>
+                sum + safeNumber(pair.weight),
+            0
+        );
+
+        return {
+            ...row,
+            reasons: matches,
+            reason: selectedReason,
+            rejection_weight: selectedWeight,
+            rejection_total_weight: selectedWeight
+        };
+    })
+    .filter(Boolean);
 
         }
 
@@ -629,6 +646,10 @@ document.addEventListener("DOMContentLoaded", () => {
             tableData
         );
 
+        updateChart(
+            tableData
+        );
+
     }
 
 
@@ -636,248 +657,181 @@ document.addEventListener("DOMContentLoaded", () => {
     // CHART
     // =========================================================
 
-    function updateChart(data) {
+function updateChart(data) {
 
-        const grouped = {};
+    const grouped = {};
 
+    data.forEach(row => {
 
-        data.forEach(row => {
+        const pairs =
+            Array.isArray(row.reasons) &&
+            row.reasons.length > 0
+                ? row.reasons
+                : [{
+                    reason: row.reason,
+                    weight: row.rejection_weight
+                }];
 
-            let reason =
-                cleanReason(
-                    row.reason
-                );
+        pairs.forEach(pair => {
 
-
-            /*
-             * Empty reasons are grouped as
-             * "Not Specified"
-             */
-
-            if (!reason) {
-
-                reason =
-                    "Not Specified";
-
-            }
-
+            const reason =
+                cleanReason(pair.reason) ||
+                "Not Specified";
 
             if (!grouped[reason]) {
-
                 grouped[reason] = 0;
-
             }
 
-
             grouped[reason] +=
-                safeNumber(
-                    row.rejection_weight
-                );
-
+                safeNumber(pair.weight);
         });
+    });
 
-
-        const chartData =
-            Object.entries(grouped)
-
-                .map(
-                    ([reason, weight]) => ({
-
-                        reason,
-
-                        weight
-
-                    })
-                )
-
-                .sort(
-                    (a, b) =>
-                        b.weight -
-                        a.weight
-                );
-
-
-        const total =
-            chartData.reduce(
-                (sum, row) =>
-                    sum +
-                    row.weight,
-                0
+    const chartData =
+        Object.entries(grouped)
+            .map(([reason, weight]) => ({
+                reason,
+                weight
+            }))
+            .sort((a, b) =>
+                b.weight - a.weight
             );
 
+    const total =
+        chartData.reduce(
+            (sum, row) =>
+                sum + row.weight,
+            0
+        );
 
-        chartTotalBadge.textContent =
-            `Total Rejection: ${formatDecimal(total)} kg`;
+    chartTotalBadge.textContent =
+        `Total Rejection: ${formatDecimal(total)} kg`;
 
+    reasonChart.setOption({
 
-        reasonChart.setOption({
+        xAxis: {
+            data: chartData.map(
+                row => row.reason
+            )
+        },
 
-            xAxis: {
+        series: [{
+            data: chartData.map(
+                row => row.weight
+            )
+        }]
 
-                data:
-                    chartData.map(
-                        row =>
-                            row.reason
-                    )
-
-            },
-
-
-            series: [
-
-                {
-
-                    data:
-                        chartData.map(
-                            row =>
-                                row.weight
-                        )
-
-                }
-
-            ]
-
-        });
-
-    }
+    });
+}
 
 
     // =========================================================
     // TABLE
     // =========================================================
 
-    function renderTable(data) {
+function renderTable(data) {
 
-        tableBody.innerHTML = "";
+    tableBody.innerHTML = "";
 
+    if (!Array.isArray(data) || data.length === 0) {
 
-        if (
-            !Array.isArray(data) ||
-            data.length === 0
-        ) {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="9" class="analytics-empty-state">
+                    No bird condition records found.
+                </td>
+            </tr>
+        `;
 
-            tableBody.innerHTML = `
+        return;
+    }
 
-                <tr>
+    const sortedData = [...data].sort(
+        (a, b) =>
+            normalizeDate(b.date).localeCompare(
+                normalizeDate(a.date)
+            )
+    );
 
-                    <td
-                        colspan="8"
-                        class="analytics-empty-state"
-                    >
-                        No bird condition records found.
-                    </td>
+    sortedData.forEach(record => {
 
-                </tr>
+        const reasons =
+            Array.isArray(record.reasons) &&
+            record.reasons.length > 0
+                ? record.reasons
+                : [{
+                    reason: record.reason || "—",
+                    weight: record.rejection_weight || 0
+                }];
 
-            `;
+        const rowCount = reasons.length;
 
-
-            return;
-        }
-
-
-        const sortedData =
-            [...data].sort(
-                (a, b) => {
-
-                    const dateA =
-                        normalizeDate(
-                            a.date
-                        );
-
-                    const dateB =
-                        normalizeDate(
-                            b.date
-                        );
-
-
-                    return dateB.localeCompare(
-                        dateA
-                    );
-
-                }
-            );
-
-
-        sortedData.forEach(record => {
+        reasons.forEach((item, index) => {
 
             const row =
-                document.createElement(
-                    "tr"
-                );
+                document.createElement("tr");
 
+            if (index === 0) {
 
-            row.innerHTML = `
+                row.innerHTML = `
+                    <td rowspan="${rowCount}" style="vertical-align: middle;">
+                        ${escapeHtml(
+                            formatDisplayDate(record.date)
+                        )}
+                    </td>
 
-                <td>
-                    ${escapeHtml(
-                        formatDisplayDate(
-                            record.date
-                        )
-                    )}
-                </td>
+                    <td rowspan="${rowCount}" style="vertical-align: middle;">
+                        ${escapeHtml(record.farmer || "—")}
+                    </td>
 
+                    <td rowspan="${rowCount}" class="numeric" style="vertical-align: middle;">
+                        ${formatWhole(record.nob)}
+                    </td>
 
-                <td>
-                    ${escapeHtml(
-                        record.farmer || "—"
-                    )}
-                </td>
+                    <td rowspan="${rowCount}" class="numeric" style="vertical-align: middle;">
+                        ${formatDecimal(record.weight)}
+                    </td>
 
+                    <td rowspan="${rowCount}" class="numeric" style="vertical-align: middle;">
+                        ${formatThreeDecimal(record.avg_weight)}
+                    </td>
 
-                <td class="numeric">
-                    ${formatWhole(
-                        record.nob
-                    )}
-                </td>
+                    <td>
+                        ${escapeHtml(item.reason || "—")}
+                    </td>
 
+                    <td class="numeric">
+                        ${formatDecimal(item.weight)}
+                    </td>
 
-                <td class="numeric">
-                    ${formatDecimal(
-                        record.weight
-                    )}
-                </td>
+                    <td rowspan="${rowCount}" class="numeric" style="vertical-align: middle;">
+                        ${formatDecimal(
+                            record.rejection_total_weight
+                        )}
+                    </td>
 
+                    <td rowspan="${rowCount}" class="numeric" style="vertical-align: middle;">
+                        ${formatDecimal(record.final_weight)}
+                    </td>
+                `;
 
-                <td class="numeric">
-                    ${formatThreeDecimal(
-                        record.avg_weight
-                    )}
-                </td>
+            } else {
 
+                row.innerHTML = `
+                    <td>
+                        ${escapeHtml(item.reason || "—")}
+                    </td>
 
-                <td class="numeric">
-                    ${formatDecimal(
-                        record.rejection_weight
-                    )}
-                </td>
+                    <td class="numeric">
+                        ${formatDecimal(item.weight)}
+                    </td>
+                `;
+            }
 
-
-                <td>
-                    ${escapeHtml(
-                        cleanReason(
-                            record.reason
-                        ) || "—"
-                    )}
-                </td>
-
-
-                <td class="numeric">
-                    ${formatDecimal(
-                        record.final_weight
-                    )}
-                </td>
-
-            `;
-
-
-            tableBody.appendChild(
-                row
-            );
-
+            tableBody.appendChild(row);
         });
-
-    }
+    });
+}
 
 
     // =========================================================
@@ -1065,6 +1019,46 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
+
+    // =========================================================
+    // NORMALIZE API RESPONSE
+    // Supports both the original report fields and the newer
+    // BirdCondition response shape returned by Apps Script.
+    // =========================================================
+
+    function normalizeReportRow(row) {
+
+        const reasonPairs =
+            Array.isArray(row.reasons)
+                ? row.reasons
+                : [];
+
+        const reasons =
+            String(row.reason || "").trim() ||
+            reasonPairs
+                .map(pair => String(pair.reason || "").trim())
+                .filter(Boolean)
+                .join(", ");
+
+        const pairWeight =
+            reasonPairs.reduce(
+                (total, pair) =>
+                    total + safeNumber(pair.weight),
+                0
+            );
+
+        return {
+            ...row,
+            reason: reasons,
+            rejection_weight:
+                row.rejection_weight ??
+                row.rejection_total_weight ??
+                pairWeight,
+            avg_weight:
+                row.avg_weight ?? row.avgWeight ?? 0
+        };
+
+    }
 
     // =========================================================
     // DATE

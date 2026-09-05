@@ -226,6 +226,57 @@
     box-shadow: 0 0 0 3px rgba(30, 90, 168, 0.10);
 }
 
+
+/* ===============================
+   REJECTION BOXES
+   (Bird Condition / Defect input form —
+   groups Reason + Weight into one bordered box)
+================================ */
+
+.rejection-boxes {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-bottom: 18px;
+}
+
+.rejection-box {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 16px;
+    border-radius: 10px;
+    border: 1.5px solid #cbd5e1;
+    background: #f8fafc;
+}
+
+.rejection-box .form-group {
+    margin: 0;
+}
+
+.rejection-box-1 {
+    border-color: #1E5AA8;
+    background: #eef4fb;
+}
+
+.rejection-box-2 {
+    border-color: #f59e0b;
+    background: #fef8ec;
+}
+
+.rejection-box-3 {
+    border-color: #ef4444;
+    background: #fdeeee;
+}
+
+@media (max-width: 900px) {
+
+    .rejection-boxes {
+        grid-template-columns: 1fr;
+    }
+
+}
+
 .readonly-field {
     background: #eef2f6 !important;
     font-weight: 700;

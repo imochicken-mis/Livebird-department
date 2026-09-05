@@ -427,12 +427,12 @@ document.addEventListener("DOMContentLoaded", () => {
                             cage:
                                 cageNo
                                     ? `C${cageNo}`
-                                    : "—",
+                                    : "-",
 
                             qty,
 
                             size:
-                                size || "—"
+                                size || "-"
 
                         });
 
@@ -481,11 +481,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                     const liveSale =
-                        Math.max(
-                            0,
-                            totalQty -
-                            item.imoPlant
-                        );
+                        totalQty -
+                        item.imoPlant; 
 
 
                     return {
@@ -524,7 +521,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         liveSale,
 
                         remark:
-                            item.remark || "—"
+                            item.remark || "-"
 
                     };
 
@@ -695,15 +692,15 @@ document.addEventListener("DOMContentLoaded", () => {
             return `
 
                 <td>
-                    —
+                    -
                 </td>
 
                 <td>
-                    —
+                    -
                 </td>
 
                 <td>
-                    —
+                    -
                 </td>
 
             `;

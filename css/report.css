@@ -134,8 +134,6 @@
 
 #reportTable thead th {
     position: sticky;
-    top: 0;
-    z-index: 5;
     background: #010853;
     color: white;
     font-weight: 700;
@@ -289,7 +287,7 @@
 
 
 .buyback-report-table .sub-header-row th {
-    top: 39px;
+    top: 37px;
     z-index: 7;
 
     background: #06156f;
@@ -386,6 +384,38 @@
     font-weight: 500;
 
     color: #000000;
+}
+
+/* =========================================================
+   FARM GROUP COLOR TINTS
+========================================================= */
+
+/* PANNALA (Cage, Qty, Size) */
+.buyback-report-table tbody td:nth-child(3),
+.buyback-report-table tbody td:nth-child(4),
+.buyback-report-table tbody td:nth-child(5) {
+    background: #eaf2fb !important;
+}
+
+/* KOTADENIYAWA (Cage, Qty, Size) */
+.buyback-report-table tbody td:nth-child(6),
+.buyback-report-table tbody td:nth-child(7),
+.buyback-report-table tbody td:nth-child(8) {
+    background: #eafbf0 !important;
+}
+
+/* WEERAPOKUNA (Cage, Qty, Size) */
+.buyback-report-table tbody td:nth-child(9),
+.buyback-report-table tbody td:nth-child(10),
+.buyback-report-table tbody td:nth-child(11) {
+    background: #fffaeb !important;
+}
+
+/* EPALADENIYA (Cage, Qty, Size) */
+.buyback-report-table tbody td:nth-child(12),
+.buyback-report-table tbody td:nth-child(13),
+.buyback-report-table tbody td:nth-child(14) {
+    background: #faeaf7 !important;
 }
 
 

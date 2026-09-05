@@ -998,7 +998,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 grouped[date] = {
 
-                    buyback: 0,
+                    buyback:
+                        safeNumber(
+                            row.buyback
+                        ),
 
                     pannala: [],
 
@@ -1010,7 +1013,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     total: 0,
 
-                    imoPlant: 0,
+                    imoPlant:
+                        safeNumber(
+                            row.imo_plant
+                        ),
 
                     liveSale: 0,
 
@@ -1035,32 +1041,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 safeNumber(
                     row.qty
                 );
-
-
-            const buyback =
-                safeNumber(
-                    row.buyback
-                );
-
-
-            const imoPlant =
-                safeNumber(
-                    row.imo_plant
-                );
-
-
-            const liveSale =
-                safeNumber(
-                    row.live_sale
-                );
-
-
-            // ---------------------------------------------
-            // BUY BACK
-            // ---------------------------------------------
-
-            day.buyback +=
-                buyback;
 
 
             // ---------------------------------------------
@@ -1127,19 +1107,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
-            day.total +=
-                qty +
-                buyback;
-
-
-            day.imoPlant +=
-                imoPlant;
-
-
-            day.liveSale +=
-                liveSale;
-
-
             const remark =
                 String(
                     row.remark || ""
@@ -1158,6 +1125,44 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
             }
+
+        });
+
+
+        // ---------------------------------------------
+        // TOTAL = BUY BACK + (PANNALA + KOTADENIYAWA +
+        //         WEERAPOKUNA + EPALADENIYA quantities)
+        // LIVE SALE = TOTAL BIRDS - IMO PLANT
+        // (calculated fresh here, since the backend does
+        // not send a "live_sale" field of its own, and
+        // buyback/imo_plant must only be counted once per
+        // date — same approach as user3-report.js)
+        // ---------------------------------------------
+
+        function sumQty(list) {
+
+            return list.reduce(
+                (sum, item) => sum + item.qty,
+                0
+            );
+
+        }
+
+        Object.values(grouped).forEach(day => {
+
+            const farmTotal =
+                sumQty(day.pannala) +
+                sumQty(day.kotadeniyawa) +
+                sumQty(day.weerapokuna) +
+                sumQty(day.epaladeniya);
+
+            day.total =
+                day.buyback +
+                farmTotal;
+
+            day.liveSale =
+                day.total -
+                day.imoPlant;
 
         });
 
@@ -1188,71 +1193,40 @@ document.addEventListener("DOMContentLoaded", () => {
         let liveSale = 0;
 
 
-        data.forEach(row => {
+        // ---------------------------------------------
+        // Reuse groupForecastByDate() so buyback / imo
+        // plant are only counted ONCE per date, even when
+        // a date has several cage rows across farms —
+        // same dedup approach as user3-report.js.
+        // ---------------------------------------------
 
-            const location =
-                normalizeText(
-                    row.location
-                );
-
-
-            const qty =
-                safeNumber(
-                    row.qty
-                );
+        const grouped =
+            groupForecastByDate(data);
 
 
-            buyback +=
-                safeNumber(
-                    row.buyback
-                );
+        function sumQty(list) {
+
+            return list.reduce(
+                (sum, item) => sum + item.qty,
+                0
+            );
+
+        }
 
 
-            imoPlant +=
-                safeNumber(
-                    row.imo_plant
-                );
+        Object.values(grouped).forEach(day => {
 
+            buyback += day.buyback;
 
-            liveSale +=
-                safeNumber(
-                    row.live_sale
-                );
+            imoPlant += day.imoPlant;
 
+            pannala += sumQty(day.pannala);
 
-            if (
-                location.includes(
-                    "pannala"
-                )
-            ) {
+            kotadeniyawa += sumQty(day.kotadeniyawa);
 
-                pannala += qty;
+            weerapokuna += sumQty(day.weerapokuna);
 
-            } else if (
-                location.includes(
-                    "kotadeniyawa"
-                )
-            ) {
-
-                kotadeniyawa += qty;
-
-            } else if (
-                location.includes(
-                    "weerapokuna"
-                )
-            ) {
-
-                weerapokuna += qty;
-
-            } else if (
-                location.includes(
-                    "epaladeniya"
-                )
-            ) {
-
-                epaladeniya += qty;
-
-            }
+            epaladeniya += sumQty(day.epaladeniya);
 
         });
 
@@ -1263,6 +1237,12 @@ document.addEventListener("DOMContentLoaded", () => {
             kotadeniyawa +
             weerapokuna +
             epaladeniya;
+
+
+        // LIVE SALE = TOTAL BIRDS - IMO PLANT
+        liveSale =
+            total -
+            imoPlant;
 
 
         setText(
