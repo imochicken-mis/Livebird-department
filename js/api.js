@@ -1307,3 +1307,104 @@ document.addEventListener("DOMContentLoaded", function () {
     setInterval(updateClock, 1000);
 
 });
+document.addEventListener("DOMContentLoaded", () => {
+
+    const sidebar =
+        document.querySelector(".sidebar");
+
+    if (!sidebar) {
+        return;
+    }
+
+    const toggleBtn =
+        document.createElement("button");
+
+    toggleBtn.id = "sidebarToggleBtn";
+    toggleBtn.className = "sidebar-toggle-btn";
+    toggleBtn.title = "Toggle sidebar";
+    toggleBtn.textContent = "‹";
+
+    document.body.insertBefore(
+        toggleBtn,
+        document.body.firstChild
+    );
+
+    if (localStorage.getItem("sidebarCollapsed") === "true") {
+        document.body.classList.add("sidebar-collapsed");
+    }
+
+    const mainEl =
+        document.querySelector(".dashboard-main");
+
+    let chartResizeFrame = null;
+
+    const resizeAllCharts = () => {
+
+        chartResizeFrame = null;
+
+        if (typeof echarts === "undefined") {
+            return;
+        }
+
+        document.querySelectorAll(".analytics-chart").forEach(el => {
+
+            const chart =
+                echarts.getInstanceByDom(el);
+
+            chart?.resize({ silent: true });
+
+        });
+
+    };
+
+    const scheduleChartResize = () => {
+
+        // Resize once per browser paint, even if several layout events fire.
+        if (chartResizeFrame !== null) {
+            return;
+        }
+
+        chartResizeFrame = requestAnimationFrame(
+            resizeAllCharts
+        );
+
+    };
+
+    const supportsResizeObserver =
+        typeof ResizeObserver !== "undefined";
+
+    if (mainEl && supportsResizeObserver) {
+
+        const chartResizeObserver =
+            new ResizeObserver(scheduleChartResize);
+
+        // Tracks the main panel while its width transitions with the sidebar.
+        chartResizeObserver.observe(mainEl);
+
+    }
+
+    toggleBtn.addEventListener("click", () => {
+
+        document.body.classList.toggle("sidebar-collapsed");
+
+        localStorage.setItem(
+            "sidebarCollapsed",
+            document.body.classList.contains("sidebar-collapsed")
+        );
+
+        scheduleChartResize();
+
+        // Fallback for older browsers without ResizeObserver support.
+        if (mainEl && !supportsResizeObserver) {
+
+            mainEl.addEventListener(
+                "transitionend",
+                scheduleChartResize,
+                { once: true }
+            );
+
+        }
+
+    });
+
+});

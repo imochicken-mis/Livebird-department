@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
 
@@ -9,11 +8,12 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>1) Live Bird Catching Report</title>
+    <title>9) Bird Quality Status Report</title>
 
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/dashboard.css">
     <link rel="stylesheet" href="../css/admin-analytics.css">
+    <link rel="stylesheet" href="../css/report.css">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
@@ -21,6 +21,7 @@
 
     <!-- ECharts -->
     <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+
 </head>
 
 
@@ -40,38 +41,40 @@
                 alt="Imo Chicken Logo"
             >
 
-            <h2>Live Bird Department</h2>
+            <h2>
+                Live Bird Department
+            </h2>
 
         </div>
 
 
-    <div class="sidebar-divider"></div>
+        <div class="sidebar-divider"></div>
 
-    <p class="sidebar-section-title">
-        
-    </p>
+        <p class="sidebar-section-title">
 
-    <nav class="sidebar-nav">
+        </p>
 
-        <a
-            href="user4-kpis.html"
-            class="sidebar-link"
-        >
-            KPI's
-        </a>
+        <nav class="sidebar-nav">
 
-    </nav>
+            <a
+                href="user4-kpis.html"
+                class="sidebar-link"
+            >
+                KPI's
+            </a>
+
+        </nav>
 
 
-    <p class="sidebar-section-title">
-        REPORT MODULES
-    </p>
+        <p class="sidebar-section-title">
+            REPORT MODULES
+        </p>
 
-    <nav class="sidebar-nav">
+        <nav class="sidebar-nav">
 
             <a
                 href="admin-analytics.html"
-                class="sidebar-link active"
+                class="sidebar-link"
             >
                 1) Live Bird Catching Report
             </a>
@@ -106,15 +109,15 @@
                 class="sidebar-link"
             >
                 5) Plant Received & DOA Report
-            </a>              
+            </a>
 
             <a
                 href="bird-condition-analytics.html"
                 class="sidebar-link"
             >
                 6) Bird Condition Report
-            </a> 
-            
+            </a>
+
             <a
                 href="vehicle-expenses-monthly-report.html"
                 class="sidebar-link"
@@ -122,19 +125,16 @@
                 7) Catching Team Expens Report
             </a>
 
-            <a 
-                href="forecast-actual-report.html" 
+            <a
+                href="forecast-actual-report.html"
                 class="sidebar-link">
                 8) Forecast vs Actual Report
             </a>
 
             <a
                 href="admin-catching-breakdown-report.html"
-                class="sidebar-link">
+                class="sidebar-link active">
                 9) Bird Quality Status Report
-            </a>
-
-
             </a>
 
         </nav>
@@ -163,11 +163,11 @@
                     <div>
 
                         <h1>
-                            Daily live Bird Catching & Live Sale Dashboard
+                            Bird Quality Status Dashboard
                         </h1>
 
                         <p class="analytics-subtitle">
-                            Live Bird Department Performance Overview
+                            Full healthy &amp; disable birds breakdown per catching record
                         </p>
 
                     </div>
@@ -197,9 +197,8 @@
             </header>
 
 
-
             <!-- =================================================
-                 GLOBAL DATE FILTER
+                 MONTHLY KPI FILTER
             ================================================== -->
 
             <section class="analytics-card analytics-fade-in">
@@ -209,11 +208,11 @@
                     <div>
 
                         <div class="analytics-filter-title">
-                            Global Date Filters
+                            Monthly Overview Filter
                         </div>
 
                         <p class="analytics-subtitle">
-                            Filter dashboard analytics and detailed records
+                            Select a month to analyze scorecards and charts below
                         </p>
 
                     </div>
@@ -222,36 +221,26 @@
                     <div class="analytics-filter-controls">
 
                         <input
-                            type="date"
-                            id="fromDate"
-                            title="From Date"
+                            type="month"
+                            id="kpiMonthFilter"
                         >
-
-                        <input
-                            type="date"
-                            id="toDate"
-                            title="To Date"
-                        >
-
 
                         <button
-                            id="filterBtn"
+                            id="kpiFilterBtn"
                             class="analytics-pill-btn"
                         >
                             Filter
                         </button>
 
-
                         <button
-                            id="clearBtn"
+                            id="kpiClearBtn"
                             class="analytics-pill-btn"
                         >
                             Clear
                         </button>
 
-
                         <button
-                            id="refreshBtn"
+                            id="kpiRefreshBtn"
                             class="analytics-pill-btn"
                         >
                             Refresh
@@ -263,15 +252,15 @@
 
 
                 <div
-                    id="analyticsLoader"
+                    id="kpiLoader"
                     class="analytics-loader"
                 >
-                    Loading analytics data...
+                    Loading monthly overview...
                 </div>
 
 
                 <div
-                    id="analyticsMessage"
+                    id="kpiMessage"
                     class="analytics-message"
                 ></div>
 
@@ -320,11 +309,11 @@
                         <div class="analytics-kpi-breakdown-item">
 
                             <span class="analytics-kpi-breakdown-label">
-                                Own Farm
+                                Healthy Birds
                             </span>
 
                             <span
-                                id="kpiBirdsOwn"
+                                id="kpiBirdsHealthy"
                                 class="analytics-kpi-breakdown-value"
                             >
                                 0
@@ -336,11 +325,11 @@
                         <div class="analytics-kpi-breakdown-item">
 
                             <span class="analytics-kpi-breakdown-label">
-                                BuyBack
+                                Disable Birds
                             </span>
 
                             <span
-                                id="kpiBirdsBuyback"
+                                id="kpiBirdsDisable"
                                 class="analytics-kpi-breakdown-value"
                             >
                                 0
@@ -388,11 +377,11 @@
                         <div class="analytics-kpi-breakdown-item">
 
                             <span class="analytics-kpi-breakdown-label">
-                                Own Farm
+                                Healthy Weight
                             </span>
 
                             <span
-                                id="kpiWeightOwn"
+                                id="kpiWeightHealthy"
                                 class="analytics-kpi-breakdown-value"
                             >
                                 0.00 kg
@@ -404,11 +393,11 @@
                         <div class="analytics-kpi-breakdown-item">
 
                             <span class="analytics-kpi-breakdown-label">
-                                BuyBack
+                                Disable Weight
                             </span>
 
                             <span
-                                id="kpiWeightBuyback"
+                                id="kpiWeightDisable"
                                 class="analytics-kpi-breakdown-value"
                             >
                                 0.00 kg
@@ -422,7 +411,7 @@
 
 
 
-                <!-- REJECTION -->
+                <!-- USABLE RATE -->
 
                 <article class="analytics-kpi-card analytics-fade-in">
 
@@ -431,21 +420,21 @@
                         <div>
 
                             <div class="analytics-kpi-label">
-                                Total Rejection Weight
+                                Live Bird Usable Rate %
                             </div>
 
                             <div
-                                id="kpiTotalRejection"
+                                id="kpiUsableRate"
                                 class="analytics-kpi-value"
                             >
-                                0.00 kg
+                                0.00%
                             </div>
 
                         </div>
 
 
                         <div class="analytics-kpi-icon analytics-icon-pulse">
-                            R
+                            A
                         </div>
 
                     </div>
@@ -456,14 +445,14 @@
                         <div class="analytics-kpi-breakdown-item">
 
                             <span class="analytics-kpi-breakdown-label">
-                                Own Farm
+                                Healthy Rate
                             </span>
 
                             <span
-                                id="kpiRejectionOwn"
+                                id="kpiRateHealthy"
                                 class="analytics-kpi-breakdown-value"
                             >
-                                0.00 kg
+                                0.00%
                             </span>
 
                         </div>
@@ -472,14 +461,14 @@
                         <div class="analytics-kpi-breakdown-item">
 
                             <span class="analytics-kpi-breakdown-label">
-                                BuyBack
+                                Disable Rate
                             </span>
 
                             <span
-                                id="kpiRejectionBuyback"
+                                id="kpiRateDisable"
                                 class="analytics-kpi-breakdown-value"
                             >
-                                0.00 kg
+                                0.00%
                             </span>
 
                         </div>
@@ -490,7 +479,7 @@
 
 
 
-                <!-- AMOUNT -->
+                <!-- TOTAL AMOUNT -->
 
                 <article class="analytics-kpi-card analytics-fade-in">
 
@@ -524,11 +513,11 @@
                         <div class="analytics-kpi-breakdown-item">
 
                             <span class="analytics-kpi-breakdown-label">
-                                Own Farm
+                                Healthy Amount
                             </span>
 
                             <span
-                                id="kpiAmountOwn"
+                                id="kpiAmountHealthy"
                                 class="analytics-kpi-breakdown-value"
                             >
                                 0.00
@@ -540,11 +529,11 @@
                         <div class="analytics-kpi-breakdown-item">
 
                             <span class="analytics-kpi-breakdown-label">
-                                BuyBack
+                                Disable Amount
                             </span>
 
                             <span
-                                id="kpiAmountBuyback"
+                                id="kpiAmountDisable"
                                 class="analytics-kpi-breakdown-value"
                             >
                                 0.00
@@ -561,7 +550,7 @@
 
 
             <!-- =================================================
-                 CHART ROW 1
+                 CHART ROW 1 — CUSTOMER SPLIT + WEIGHT SHARE
             ================================================== -->
 
             <section class="analytics-chart-grid-2">
@@ -572,14 +561,14 @@
                     <div class="analytics-chart-header">
 
                         <div class="analytics-chart-title">
-                             Live Bird Catching By Farm Type (NOB & Weight)
+                            Imo Plant vs Other Live Sale — NOB &amp; Weight
                         </div>
 
                     </div>
 
 
                     <div
-                        id="farmTypeChart"
+                        id="customerNobWeightChart"
                         class="analytics-chart"
                     ></div>
 
@@ -592,14 +581,14 @@
                     <div class="analytics-chart-header">
 
                         <div class="analytics-chart-title">
-                            Rejection Weights Overview
+                            Healthy vs Disable Weight Share
                         </div>
 
                     </div>
 
 
                     <div
-                        id="rejectionChart"
+                        id="weightSplitPieChart"
                         class="analytics-chart"
                     ></div>
 
@@ -610,7 +599,7 @@
 
 
             <!-- =================================================
-                 DAILY TREND
+                 CHART ROW 2 — DAY-WISE HEALTHY / DISABLE BIRDS
             ================================================== -->
 
             <section class="analytics-chart-card analytics-fade-in">
@@ -620,11 +609,11 @@
                     <div>
 
                         <div class="analytics-chart-title">
-                            Daily Trend (Current Month) — Catching NOB, Weight & Avg Weight
+                            Day-wise Healthy &amp; Disable Birds (NOB)
                         </div>
 
                         <p class="analytics-subtitle">
-                            Current calendar month operational movement
+                            Daily movement for the selected month
                         </p>
 
                     </div>
@@ -633,7 +622,7 @@
 
 
                 <div
-                    id="dailyTrendChart"
+                    id="dailyBirdsChart"
                     class="analytics-chart tall"
                 ></div>
 
@@ -642,159 +631,71 @@
 
 
             <!-- =================================================
-                 CUSTOMER SHARE + SUMMARY
+                 REPORT DETAIL FILTER
             ================================================== -->
 
-            <section class="analytics-chart-grid-2">
+            <section class="analytics-card analytics-fade-in">
 
+                <div class="analytics-filter-card">
 
-                <article class="analytics-chart-card analytics-fade-in">
+                    <div>
 
-                    <div class="analytics-chart-header">
-
-                        <div class="analytics-chart-title">
-                            Distribution — Imo Plant vs Others
+                        <div class="analytics-filter-title">
+                            Bird Quality Status Detail
                         </div>
+
+                        <p class="analytics-subtitle">
+                            Filter the detailed bird quality breakdown by date range
+                        </p>
 
                     </div>
 
 
-                    <div
-                        id="customerShareChart"
-                        class="analytics-chart"
-                    ></div>
+                    <div class="analytics-filter-controls">
 
-                </article>
+                        <input
+                            type="date"
+                            id="fromDate"
+                            title="From Date"
+                        >
 
+                        <input
+                            type="date"
+                            id="toDate"
+                            title="To Date"
+                        >
 
+                        <button
+                            id="filterBtn"
+                            class="analytics-pill-btn"
+                        >
+                            Filter
+                        </button>
 
-                <article class="analytics-card analytics-summary-card analytics-fade-in">
+                        <button
+                            id="clearBtn"
+                            class="analytics-pill-btn"
+                        >
+                            Clear
+                        </button>
 
-                    <div class="analytics-section-heading">
-
-                        <div>
-
-                            <h3>
-                                Operational Performance Summary
-                            </h3>
-
-                            <p class="analytics-subtitle">
-                                Current operational indicators
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="analytics-summary-grid">
-
-
-                        <div class="analytics-summary-item">
-
-                            <span class="analytics-summary-label">
-                                Total NOB
-                            </span>
-
-                            <span
-                                id="summaryNob"
-                                class="analytics-summary-value"
-                            >
-                                0
-                            </span>
-
-                        </div>
-
-
-                        <div class="analytics-summary-item">
-
-                            <span class="analytics-summary-label">
-                                Total Weight
-                            </span>
-
-                            <span
-                                id="summaryWeight"
-                                class="analytics-summary-value"
-                            >
-                                0.00 kg
-                            </span>
-
-                        </div>
-
-
-                        <div class="analytics-summary-item">
-
-                            <span class="analytics-summary-label">
-                                Total Amount
-                            </span>
-
-                            <span
-                                id="summaryAmount"
-                                class="analytics-summary-value"
-                            >
-                                0.00
-                            </span>
-
-                        </div>
-
-
-                        <div class="analytics-summary-item">
-
-                            <span class="analytics-summary-label">
-                                Avg Weight (kg)
-                            </span>
-
-                            <span
-                                id="summaryAvgWeight"
-                                class="analytics-summary-value"
-                            >
-                                0.00 kg
-                            </span>
-
-                        </div>
-
-
-                        <div class="analytics-summary-item">
-
-                            <span class="analytics-summary-label">
-                                Avg Amount (Rs.)
-                            </span>
-
-                            <span
-                                id="summaryAvgAmount"
-                                class="analytics-summary-value"
-                            >
-                                0.00
-                            </span>
-
-                        </div>
-
-
-                        <div class="analytics-summary-item">
-
-                            <span class="analytics-summary-label">
-                                Current Month Rej. WT
-                            </span>
-
-                            <span
-                                id="summaryMonthRejection"
-                                class="analytics-summary-value"
-                            >
-                                0.00 kg
-                            </span>
-
-                        </div>
+                        <button
+                            id="refreshBtn"
+                            class="analytics-pill-btn"
+                        >
+                            Refresh
+                        </button>
 
                     </div>
 
-                </article>
+                </div>
 
             </section>
 
 
 
             <!-- =================================================
-                 MASTER TABLE
+                 REPORT CARD (DETAILED TABLE)
             ================================================== -->
 
             <section class="analytics-card analytics-fade-in">
@@ -804,11 +705,11 @@
                     <div>
 
                         <h2>
-                            Live Bird Catching Details
+                            Bird Quality Status Report
                         </h2>
 
                         <p class="analytics-subtitle">
-                            Complete operational transaction records
+                            Full healthy &amp; disable NOB, weight and amount breakdown
                         </p>
 
                     </div>
@@ -816,108 +717,79 @@
                 </div>
 
 
-                <div class="analytics-table-wrapper">
+                <div
+                    id="reportMessage"
+                    class="save-message"
+                ></div>
+
+
+                <div
+                    id="reportLoading"
+                    class="report-loading hidden"
+                >
+                    Loading report data...
+                </div>
+
+
+                <div class="report-table-wrapper">
 
                     <table class="analytics-table">
 
                         <thead>
-
                             <tr>
-
                                 <th>DATE</th>
                                 <th>TYPE</th>
-                                <th>FARMER / LOCATION</th>
+                                <th>FARMER/LOCATION</th>
                                 <th>CAGE NO</th>
                                 <th>BATCH NO</th>
                                 <th>CUSTOMER</th>
-                                <th>NOB</th>
-                                <th>FINAL WEIGHT (KG)</th>
-                                <th>PRICE (RS.)</th>
                                 <th>BILL NO</th>
-                                <th>AMOUNT (RS.)</th>
-                                <th>AVG WEIGHT (KG)</th>
-                                <th>REJECTION WT</th>
-                                <th>REASON</th>
-
+                                <th>DISABLE NOB</th>
+                                <th>DISABLE WEIGHT</th>
+                                <th>DISABLE PRICE</th>
+                                <th>DISABLE AMOUNT</th>
+                                <th>HEALTHY NOB</th>
+                                <th>HEALTHY WEIGHT</th>
+                                <th>HEALTHY PRICE</th>
+                                <th>HEALTHY AMOUNT</th>
+                                <th>TOTAL NOB</th>
+                                <th>TOTAL WEIGHT</th>
+                                <th>TOTAL PRICE</th>
+                                <th>TOTAL AMOUNT</th>
                             </tr>
-
                         </thead>
 
-
-                        <tbody id="analyticsTableBody">
-
-                            <tr>
-
-                                <td
-                                    colspan="14"
-                                    class="analytics-empty-state"
-                                >
-                                    Loading records...
-                                </td>
-
-                            </tr>
-
+                        <tbody id="reportTableBody">
                         </tbody>
 
-
                         <tfoot>
+                            <tr class="grand-total-row">
 
-                            <tr>
-
-                                <td>
-                                    GRAND TOTAL:
-                                </td>
-
+                                
+                                <td>GRAND TOTAL:</td>
+                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
 
-
-                                <td
-                                    id="tableTotalNob"
-                                    class="numeric"
-                                >
-                                    0
-                                </td>
-
-
-                                <td
-                                    id="tableTotalWeight"
-                                    class="numeric"
-                                >
-                                    0.00
-                                </td>
-
-
+                                <td id="totalDisableNob">0</td>
+                                <td id="totalDisableWeight">0.00</td>
                                 <td></td>
+                                <td id="totalDisableAmount">0.00</td>
+
+                                <td id="totalHealthyNob">0</td>
+                                <td id="totalHealthyWeight">0.00</td>
                                 <td></td>
+                                <td id="totalHealthyAmount">0.00</td>
 
-
-                                <td
-                                    id="tableTotalAmount"
-                                    class="numeric"
-                                >
-                                    0.00
-                                </td>
-
-
+                                <td id="totalNob">0</td>
+                                <td id="totalWeight">0.00</td>
                                 <td></td>
-
-
-                                <td
-                                    id="tableTotalRejection"
-                                    class="numeric"
-                                >
-                                    0.00
-                                </td>
-
-
-                                <td></td>
+                                <td id="totalAmount">0.00</td>
 
                             </tr>
-
                         </tfoot>
 
                     </table>
@@ -926,21 +798,15 @@
 
             </section>
 
-
         </div>
 
     </main>
 
 
-    <!-- =====================================================
-         SCRIPTS
-    ====================================================== -->
-
     <script src="../js/api.js"></script>
     <script src="../js/admin-common.js"></script>
-    <script src="../js/admin-analytics.js"></script>
+    <script src="../js/admin-catching-breakdown.js"></script>
     <script src="../js/admin-export.js"></script>
 
 </body>
-
 </html>

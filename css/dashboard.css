@@ -280,7 +280,7 @@
 .readonly-field {
     background: #eef2f6 !important;
     font-weight: 700;
-    color: #0f172a !important;
+    color: #1f2a0f !important;
 }
 
 
@@ -964,4 +964,47 @@
 
 .form-grid + .form-grid {
     margin-top: 26px;
+}
+.sidebar {
+    transition: transform 0.18s ease;
+}
+
+.dashboard-main {
+    transition:
+        margin-left 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+        width 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-toggle-btn {
+    position: fixed;
+    top: 24px;
+    left: 246px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #0574e4;
+    color: #fff;
+    border: 2px solid #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 21px;
+    z-index: 40;
+    transition: left 0.25s ease, transform 0.25s ease;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+}
+
+body.sidebar-collapsed .sidebar {
+    transform: translateX(-260px);
+}
+
+body.sidebar-collapsed .dashboard-main {
+    margin-left: 0;
+    width: 100%;
+}
+
+body.sidebar-collapsed .sidebar-toggle-btn {
+    left: 12px;
+    transform: rotate(180deg);
 }
