@@ -760,7 +760,7 @@ function renderTable(data) {
             record.reasons.length > 0
                 ? record.reasons
                 : [{
-                    reason: record.reason || "—",
+                    reason: record.reason || "-",
                     weight: record.rejection_weight || 0
                 }];
 
@@ -781,7 +781,7 @@ function renderTable(data) {
                     </td>
 
                     <td rowspan="${rowCount}" style="vertical-align: middle;">
-                        ${escapeHtml(record.farmer || "—")}
+                        ${escapeHtml(record.farmer || "-")}
                     </td>
 
                     <td rowspan="${rowCount}" class="numeric" style="vertical-align: middle;">
@@ -797,7 +797,7 @@ function renderTable(data) {
                     </td>
 
                     <td>
-                        ${escapeHtml(item.reason || "—")}
+                        ${escapeHtml(item.reason || "-")}
                     </td>
 
                     <td class="numeric">
@@ -819,7 +819,7 @@ function renderTable(data) {
 
                 row.innerHTML = `
                     <td>
-                        ${escapeHtml(item.reason || "—")}
+                        ${escapeHtml(item.reason || "-")}
                     </td>
 
                     <td class="numeric">
@@ -1185,7 +1185,7 @@ function renderTable(data) {
 
         if (!normalized) {
 
-            return value || "—";
+            return value || "-";
 
         }
 

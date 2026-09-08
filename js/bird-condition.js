@@ -176,7 +176,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // =========================================================
-    // CATCHING INFO LOOKUP (display only — Date + Farmer + Batch No 2)
+    // CATCHING INFO LOOKUP (display only - Date + Farmer + Batch No 2)
     // =========================================================
 
     conditionDate.addEventListener(

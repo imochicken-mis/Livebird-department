@@ -977,7 +977,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     <td>
                         ${escapeHtml(
-                            row.vehicle || "—"
+                            row.vehicle || "-"
                         )}
                     </td>
 
@@ -1249,7 +1249,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         if (!date) {
-            return "—";
+            return "-";
         }
 
 

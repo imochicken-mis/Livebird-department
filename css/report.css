@@ -1,3 +1,11 @@
+
+.sticky-page-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+}
+
+
 /* ===============================
    REPORT TOOLBAR
 ================================ */
@@ -123,7 +131,7 @@
     word-wrap: break-word;
 }
 
-/* Serial No & Date are short fixed-format values —
+/* Serial No & Date are short fixed-format values -
    never let them wrap, even if other text columns do */
 .pdf-capture-mode th:nth-child(1),
 .pdf-capture-mode td:nth-child(1),

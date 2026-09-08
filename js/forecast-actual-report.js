@@ -952,7 +952,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         <td>
                             ${escapeHtml(
                                 day.remarks.join(", ") ||
-                                "—"
+                                "-"
                             )}
                         </td>
 
@@ -1051,14 +1051,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 cage:
                     String(
-                        row.cage_no || "—"
+                        row.cage_no || "-"
                     ).trim(),
 
                 qty,
 
                 size:
                     String(
-                        row.size || "—"
+                        row.size || "-"
                     ).trim()
 
             };
@@ -1136,7 +1136,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // (calculated fresh here, since the backend does
         // not send a "live_sale" field of its own, and
         // buyback/imo_plant must only be counted once per
-        // date — same approach as user3-report.js)
+        // date - same approach as user3-report.js)
         // ---------------------------------------------
 
         function sumQty(list) {
@@ -1196,7 +1196,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // ---------------------------------------------
         // Reuse groupForecastByDate() so buyback / imo
         // plant are only counted ONCE per date, even when
-        // a date has several cage rows across farms —
+        // a date has several cage rows across farms -
         // same dedup approach as user3-report.js.
         // ---------------------------------------------
 
@@ -1302,7 +1302,7 @@ document.addEventListener("DOMContentLoaded", () => {
             !records.length
         ) {
 
-            return "—";
+            return "-";
 
         }
 
@@ -1320,7 +1320,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                 return escapeHtml(
-                    item[field] || "—"
+                    item[field] || "-"
                 );
 
             })
@@ -1565,7 +1565,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!date) {
 
-            return "—";
+            return "-";
 
         }
 
@@ -1765,6 +1765,39 @@ document.addEventListener("DOMContentLoaded", () => {
                 "../index.html";
 
         }
+    );
+
+
+    // =========================================================
+    // KEEP 2-ROW STICKY HEADER PERFECTLY ALIGNED
+    // =========================================================
+
+    function alignStickyHeaderRows() {
+
+        const mainHeaderRow =
+            document.querySelector(".main-header-row");
+
+        const subHeaderCells =
+            document.querySelectorAll(".sub-header-row th");
+
+        if (!mainHeaderRow || subHeaderCells.length === 0) {
+            return;
+        }
+
+        const mainHeaderHeight =
+            mainHeaderRow.getBoundingClientRect().height;
+
+        subHeaderCells.forEach(cell => {
+            cell.style.top = `${mainHeaderHeight}px`;
+        });
+
+    }
+
+    alignStickyHeaderRows();
+
+    window.addEventListener(
+        "resize",
+        alignStickyHeaderRows
     );
 
 });

@@ -309,7 +309,7 @@ function renderTable(data) {
             record.reasons.length > 0
                 ? record.reasons
                 : [{
-                    reason: record.reason || "—",
+                    reason: record.reason || "-",
                     weight: record.rejection_weight || 0
                 }];
 
@@ -343,7 +343,7 @@ function renderTable(data) {
                     </td>
 
                     <td>
-                        ${escapeHtml(item.reason || "—")}
+                        ${escapeHtml(item.reason || "-")}
                     </td>
 
                     <td>
@@ -363,7 +363,7 @@ function renderTable(data) {
 
                 row.innerHTML = `
                     <td>
-                        ${escapeHtml(item.reason || "—")}
+                        ${escapeHtml(item.reason || "-")}
                     </td>
 
                     <td>

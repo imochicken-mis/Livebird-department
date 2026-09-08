@@ -1227,4 +1227,37 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     );
 
+
+    // =========================================================
+    // KEEP 2-ROW STICKY HEADER PERFECTLY ALIGNED
+    // =========================================================
+
+    function alignStickyHeaderRows() {
+
+        const mainHeaderRow =
+            document.querySelector(".main-header-row");
+
+        const subHeaderCells =
+            document.querySelectorAll(".sub-header-row th");
+
+        if (!mainHeaderRow || subHeaderCells.length === 0) {
+            return;
+        }
+
+        const mainHeaderHeight =
+            mainHeaderRow.getBoundingClientRect().height;
+
+        subHeaderCells.forEach(cell => {
+            cell.style.top = `${mainHeaderHeight}px`;
+        });
+
+    }
+
+    alignStickyHeaderRows();
+
+    window.addEventListener(
+        "resize",
+        alignStickyHeaderRows
+    );
+
 });

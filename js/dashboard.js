@@ -342,7 +342,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 clearEditBtn.classList.remove("hidden");
 
                 showMessage(
-                    "Record loaded — editing " + result.serialNo,
+                    "Record loaded - editing " + result.serialNo,
                     "success"
                 );
 
@@ -1054,7 +1054,7 @@ document.addEventListener("DOMContentLoaded", () => {
             ],
 
             [
-                "— Disable Birds —",
+                "- Disable Birds -",
                 ""
             ],
 
@@ -1089,7 +1089,7 @@ document.addEventListener("DOMContentLoaded", () => {
             ],
 
             [
-                "— Healthy Birds —",
+                "- Healthy Birds -",
                 ""
             ],
 
@@ -1119,7 +1119,7 @@ document.addEventListener("DOMContentLoaded", () => {
             ],
 
             [
-                "— Total Birds —",
+                "- Total Birds -",
                 ""
             ],
 
@@ -1455,6 +1455,8 @@ document.addEventListener("DOMContentLoaded", () => {
         billInput.value = "";
 
         disableNobInput.value = "";
+
+        disableBillInput.value = "";
 
         disableWeightInput.value = "";
 

@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!wrapper) {
             console.warn(
-                "Export buttons not added — table is missing a '.analytics-card' wrapper:",
+                "Export buttons not added - table is missing a '.analytics-card' wrapper:",
                 table
             );
             return;
@@ -309,7 +309,7 @@ async function exportTableToPDF(table, tableTitle) {
         doc.setTextColor(0, 0, 0);
     }
 
-    // Temporarily disable "position: sticky" — otherwise
+    // Temporarily disable "position: sticky" - otherwise
     // html2canvas freezes header/footer rows at their current
     // scroll position instead of their true row position.
 

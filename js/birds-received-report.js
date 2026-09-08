@@ -1088,7 +1088,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const text = String(value || "").trim();
 
     if (!text) {
-        return "—";
+        return "-";
     }
 
     const match =
@@ -1115,7 +1115,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const text = String(value || "").trim();
 
         if (!text) {
-            return "—";
+            return "-";
         }
 
         const match =

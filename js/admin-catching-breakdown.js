@@ -246,7 +246,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function setupMonthlyCharts() {
 
         // -------------------------------------------------
-        // CUSTOMER SPLIT — NOB (bars) & WEIGHT (lines)
+        // CUSTOMER SPLIT - NOB (bars) & WEIGHT (lines)
         // -------------------------------------------------
 
         customerNobWeightChart?.setOption({
@@ -396,7 +396,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         // -------------------------------------------------
-        // WEIGHT SHARE — PIE
+        // WEIGHT SHARE - PIE
         // -------------------------------------------------
 
         weightSplitPieChart?.setOption({
@@ -682,7 +682,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function updateMonthlyCharts(data, selectedMonth) {
 
         // -------------------------------------------------
-        // CUSTOMER SPLIT — IMO PLANT vs OTHER LIVE SALE
+        // CUSTOMER SPLIT - IMO PLANT vs OTHER LIVE SALE
         // -------------------------------------------------
 
         let imoHealthyNob = 0;
@@ -773,7 +773,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         // -------------------------------------------------
-        // WEIGHT SHARE — PIE
+        // WEIGHT SHARE - PIE
         // -------------------------------------------------
 
         weightSplitPieChart?.setOption({
@@ -889,7 +889,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!selectedMonth) {
 
-            // No month selected — fall back to the distinct
+            // No month selected - fall back to the distinct
             // dates already present in the filtered data.
 
             const distinctDates =

@@ -1382,7 +1382,7 @@ function updateTripChart(data) {
     function formatDisplayDate(date) {
 
         if (!date) {
-            return "—";
+            return "-";
         }
 
 
