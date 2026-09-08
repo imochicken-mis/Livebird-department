@@ -134,6 +134,8 @@
 
 #reportTable thead th {
     position: sticky;
+    top: 0;
+    z-index: 5;
     background: #010853;
     color: white;
     font-weight: 700;
@@ -259,6 +261,8 @@
 
 .buyback-report-table thead th {
     position: sticky;
+    top: 0;
+    z-index: 5;
 
     background: #010853;
     color: #ffffff;
