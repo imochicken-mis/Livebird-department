@@ -354,17 +354,12 @@ async function exportTableToPDF(table, tableTitle) {
         })
         : null;
 
-    // Restore sticky positioning
-    stickyElements.forEach((el, index) => {
-        el.style.position = originalPositions[index];
-    });
-
-    table.classList.remove("pdf-capture-mode");
-
-
     // ==========================================
     // WORK OUT SAFE ROW-BOUNDARY CUT POINTS
     // (so a page break never slices a row in half)
+    // NOTE: must run BEFORE we restore normal styles —
+    // row heights change while pdf-capture-mode is on,
+    // and the canvas was captured using those heights.
     // ==========================================
 
     const contentWidth = pageWidth - marginLeft - marginRight;
@@ -379,6 +374,13 @@ async function exportTableToPDF(table, tableTitle) {
             );
         })
         : [bodyCanvas.height];
+
+    // Restore sticky positioning
+    stickyElements.forEach((el, index) => {
+        el.style.position = originalPositions[index];
+    });
+
+    table.classList.remove("pdf-capture-mode");
 
     const headHeightPt = headCanvas
         ? headCanvas.height / pxPerPt

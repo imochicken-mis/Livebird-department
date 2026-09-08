@@ -140,10 +140,15 @@
     white-space: nowrap !important;
 }
 
-#reportTable thead th {
+
+#reportTable thead tr {
     position: sticky;
     top: 0;
     z-index: 5;
+    background: #010853;
+}
+
+#reportTable thead th {
     background: #010853;
     color: white;
     font-weight: 700;
@@ -491,7 +496,7 @@
 
 .buyback-report-table .grand-total-row td:first-child {
     background: #010853;
-    color: #262424;
+    color: #f0e9e9;
 
     text-align: left;
 
@@ -662,4 +667,23 @@
 
 .export-btn:active {
     transform: translateY(0);
+}
+
+/* ===============================
+   BIRD QUALITY STATUS REPORT - COLUMN COLOUR GROUPS
+================================ */
+
+/* Red — BILL NO + DISABLE NOB/WEIGHT/PRICE/AMOUNT */
+.bird-quality-table tbody td:nth-last-child(n+9):nth-last-child(-n+13) {
+    background: #fdecea !important;
+}
+
+/* Green — HEALTHY NOB/WEIGHT/PRICE/AMOUNT */
+.bird-quality-table tbody td:nth-last-child(n+5):nth-last-child(-n+8) {
+    background: #e8f5e9 !important;
+}
+
+/* Blue — TOTAL NOB/WEIGHT/PRICE/AMOUNT */
+.bird-quality-table tbody td:nth-last-child(-n+4) {
+    background: #e3edfb !important;
 }
