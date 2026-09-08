@@ -52,6 +52,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const disableAmountInput =
         document.getElementById("disableAmount");
 
+    const disableBillInput =
+        document.getElementById("disableBillNo");
+
     const healthyNobInput =
         document.getElementById("healthyNob");
 
@@ -396,6 +399,7 @@ document.addEventListener("DOMContentLoaded", () => {
         billInput.value = data.bill || "";
 
         disableNobInput.value = data.disable.nob || "0";
+        disableBillInput.value = data.disable.bill || "";
         disableWeightInput.value = data.disable.weight || "0.00";
         disableAvgWeightInput.value = data.disable.avgWeight || "0.000";
         disablePriceInput.value = data.disable.price || "0.00";
@@ -936,7 +940,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 amount:
                     disableAmountInput.value
                         .replace(/,/g, "") ||
-                    "0.00"
+                    "0.00",
+
+                bill:
+                    disableBillInput.value.trim()
 
             },
 
@@ -1074,6 +1081,11 @@ document.addEventListener("DOMContentLoaded", () => {
             [
                 "Disable Amount (Rs.)",
                 record.disable.amount || "0.00"
+            ],
+
+            [
+                "Disable Bill No",
+                record.disable.bill || "-"
             ],
 
             [

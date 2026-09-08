@@ -1099,7 +1099,7 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
             row.innerHTML = `
-                <td colspan="19">
+                <td colspan="20">
                     No report records found.
                 </td>
             `;
@@ -1134,6 +1134,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 <td>${escapeHtml(record.customer)}</td>
 
                 <td>${escapeHtml(record.bill)}</td>
+
+                <td>${escapeHtml(record.disable_bill)}</td>
 
                 <td>${formatNumber(record.disable_nob, 0)}</td>
 
