@@ -117,17 +117,17 @@
 #reportTable th,
 #reportTable td {
     padding: 10px 12px;
-    text-align: center;
+    text-align: left;
     border-bottom: 1px solid #e2e8f0;
     white-space: nowrap;
 }
 .pdf-capture-mode {
-    min-width: 1250px !important;
+    min-width: 1500px !important;
 }
 
 .pdf-capture-mode th,
 .pdf-capture-mode td {
-    white-space: normal !important;
+    white-space: nowrap !important;
     word-wrap: break-word;
 }
 
@@ -686,4 +686,8 @@
 /* Blue — TOTAL NOB/WEIGHT/PRICE/AMOUNT */
 .bird-quality-table tbody td:nth-last-child(-n+4) {
     background: #e3edfb !important;
+}
+.negative-cell {
+    color: #e13724;
+    font-weight: 500;
 }

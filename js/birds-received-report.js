@@ -553,7 +553,7 @@ document.addEventListener("DOMContentLoaded", () => {
             `${
                 AdminCommon.formatDecimal(
                     metrics.actualAvgOverall,
-                    3
+                    2
                 )
             } kg`;
 
@@ -594,7 +594,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ).textContent =
             AdminCommon.formatDecimal(
                 metrics.actualAvgOverall,
-                3
+                2
             );
 
 
@@ -686,7 +686,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const labels =
             Object.keys(grouped)
                 .map(sNo =>
-                    `Trip ${sNo}`
+                    `Load ${sNo}`
                 );
 
 
@@ -1205,7 +1205,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <td>
                         ${AdminCommon.formatDecimal(
                             row.expected_avg,
-                            3
+                            2
                         )}
                     </td>
 
@@ -1224,7 +1224,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <td>
                         ${AdminCommon.formatDecimal(
                             row.avg_weight,
-                            3
+                            2
                         )}
                     </td>
 

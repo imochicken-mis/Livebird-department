@@ -343,7 +343,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 </td>
 
                 <td>
-                    ${formatNumber(record.expected_avg, 3)}
+                    ${formatNumber(record.expected_avg, 2)}
                 </td>
 
                 <td>
@@ -457,8 +457,8 @@ document.addEventListener("DOMContentLoaded", () => {
             average.toLocaleString(
                 "en-US",
                 {
-                    minimumFractionDigits: 3,
-                    maximumFractionDigits: 3
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
                 }
             );
 

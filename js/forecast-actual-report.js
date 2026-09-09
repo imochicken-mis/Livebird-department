@@ -942,7 +942,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         </td>
 
 
-                        <td>
+                        <td class="${day.liveSale < 0 ? 'negative-cell' : ''}">
                             ${formatWhole(
                                 day.liveSale
                             )}

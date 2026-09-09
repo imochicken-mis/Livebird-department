@@ -306,7 +306,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 type: "category",
                 data: [
                     "Imo Plant",
-                    "Other Live Sale"
+                    "Live Sale"
                 ]
             },
 

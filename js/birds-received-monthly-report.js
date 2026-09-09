@@ -1713,8 +1713,8 @@ function updateTripChart(data) {
         `${actualAvgWeight.toLocaleString(
             "en-US",
             {
-                minimumFractionDigits: 3,
-                maximumFractionDigits: 3
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
             }
         )} kg`;
 
