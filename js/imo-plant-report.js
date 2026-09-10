@@ -145,7 +145,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 {
                     name: "NOB",
                     type: "bar",
-                    barWidth: "50%",
+                    barWidth: "60%",
                     data: [],
                     itemStyle: {
                         borderRadius: [
@@ -391,15 +391,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
         let ownNob = 0;
         let buyNob = 0;
+        let directNob = 0;
 
         let ownWeight = 0;
         let buyWeight = 0;
+        let directWeight = 0;
 
         let ownRejection = 0;
         let buyRejection = 0;
+        let directRejection = 0;
 
         let ownAmount = 0;
         let buyAmount = 0;
+        let directAmount = 0;
 
 
         data.forEach(row => {
@@ -459,6 +463,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
             }
 
+
+            if (type.includes("direct")) {
+
+                directNob +=
+                    AdminCommon.safeNumber(
+                        row.nob
+                    );
+
+                directWeight +=
+                    AdminCommon.safeNumber(
+                        row.weight
+                    );
+
+                directRejection +=
+                    AdminCommon.safeNumber(
+                        row.rejection_weight
+                    );
+
+                directAmount +=
+                    AdminCommon.safeNumber(
+                        row.amount
+                    );
+
+            }
+
         });
 
 
@@ -487,6 +516,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         document.getElementById(
+            "kpiBirdsDirect"
+        ).textContent =
+            AdminCommon.formatWhole(
+                directNob
+            );
+
+
+        document.getElementById(
             "kpiTotalWeight"
         ).textContent =
             AdminCommon.formatWeight(
@@ -511,11 +548,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         document.getElementById(
+            "kpiWeightDirect"
+        ).textContent =
+            AdminCommon.formatWeight(
+                directWeight
+            );
+
+
+        document.getElementById(
             "kpiTotalRejection"
         ).textContent =
-            `${AdminCommon.formatWhole(
+            AdminCommon.formatWeight(
                 totalRejection
-            )} kg`;
+            );
 
 
         document.getElementById(
@@ -531,6 +576,14 @@ document.addEventListener("DOMContentLoaded", () => {
         ).textContent =
             AdminCommon.formatWeight(
                 buyRejection
+            );
+
+
+        document.getElementById(
+            "kpiRejectionDirect"
+        ).textContent =
+            AdminCommon.formatWeight(
+                directRejection
             );
 
 
@@ -555,6 +608,14 @@ document.addEventListener("DOMContentLoaded", () => {
         ).textContent =
             AdminCommon.formatAmount(
                 buyAmount
+            );
+
+
+        document.getElementById(
+            "kpiAmountDirect"
+        ).textContent =
+            AdminCommon.formatAmount(
+                directAmount
             );
 
 
@@ -738,7 +799,7 @@ function getTopFiveDays(data) {
         const palette = [
             "#010853",
             "#f5b700",
-            "#10b981",
+            "#ff006e",
             "#D10909",
             "#8b5cf6",
             "#0891b2"
@@ -749,8 +810,36 @@ function getTopFiveDays(data) {
             groupByType(data);
 
 
+        const typeOrder = [
+            "Own Farm",
+            "Buyback",
+            "Direct Purchase"
+        ];
+
         const types =
-            Object.keys(grouped);
+            Object.keys(grouped).sort(
+                (a, b) => {
+
+                    const indexA =
+                        typeOrder.indexOf(a);
+
+                    const indexB =
+                        typeOrder.indexOf(b);
+
+                    const rankA =
+                        indexA === -1
+                            ? typeOrder.length
+                            : indexA;
+
+                    const rankB =
+                        indexB === -1
+                            ? typeOrder.length
+                            : indexB;
+
+                    return rankA - rankB;
+
+                }
+            );
 
 
         const nobBars =

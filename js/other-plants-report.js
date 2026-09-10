@@ -397,12 +397,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
         let ownNob = 0;
         let buyNob = 0;
+        let directNob = 0;
 
         let ownWeight = 0;
         let buyWeight = 0;
+        let directWeight = 0;
 
         let ownAmount = 0;
         let buyAmount = 0;
+        let directAmount = 0;
 
 
         const allCustomers =
@@ -412,6 +415,9 @@ document.addEventListener("DOMContentLoaded", () => {
             new Set();
 
         const buyCustomers =
+            new Set();
+
+        const directCustomers =
             new Set();
 
 
@@ -480,6 +486,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
             }
 
+
+            if (type.includes("direct")) {
+
+                directNob +=
+                    AdminCommon.safeNumber(
+                        row.nob
+                    );
+
+                directWeight +=
+                    AdminCommon.safeNumber(
+                        row.weight
+                    );
+
+                directAmount +=
+                    AdminCommon.safeNumber(
+                        row.amount
+                    );
+
+                if (customer) {
+                    directCustomers.add(customer);
+                }
+
+            }
+
         });
 
 
@@ -508,6 +538,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         document.getElementById(
+            "kpiBirdsDirect"
+        ).textContent =
+            AdminCommon.formatWhole(
+                directNob
+            );
+
+
+        document.getElementById(
             "kpiTotalWeight"
         ).textContent =
             AdminCommon.formatWeight(
@@ -532,6 +570,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         document.getElementById(
+            "kpiWeightDirect"
+        ).textContent =
+            AdminCommon.formatWeight(
+                directWeight
+            );
+
+
+        document.getElementById(
             "kpiCustomerCount"
         ).textContent =
             allCustomers.size.toLocaleString(
@@ -539,20 +585,7 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
 
-        document.getElementById(
-            "kpiCustomerOwn"
-        ).textContent =
-            ownCustomers.size.toLocaleString(
-                "en-US"
-            );
 
-
-        document.getElementById(
-            "kpiCustomerBuyback"
-        ).textContent =
-            buyCustomers.size.toLocaleString(
-                "en-US"
-            );
 
 
         document.getElementById(
@@ -576,6 +609,14 @@ document.addEventListener("DOMContentLoaded", () => {
         ).textContent =
             AdminCommon.formatAmount(
                 buyAmount
+            );
+
+
+        document.getElementById(
+            "kpiAmountDirect"
+        ).textContent =
+            AdminCommon.formatAmount(
+                directAmount
             );
 
 
@@ -712,11 +753,55 @@ document.addEventListener("DOMContentLoaded", () => {
         const palette = [
             "#010853",
             "#ffc900",
-            "#10b981",
+            "#ff006e",
             "#D10909",
             "#8b5cf6",
             "#0891b2"
         ];
+
+
+        function getTypeRank(type) {
+
+            const lower =
+                String(type || "").toLowerCase();
+
+            if (lower.includes("own")) {
+                return 0;
+            }
+
+            if (lower.includes("buy")) {
+                return 1;
+            }
+
+            if (lower.includes("direct")) {
+                return 2;
+            }
+
+            return 3;
+
+        }
+
+
+        function getTypeColor(type) {
+
+            const lower =
+                String(type || "").toLowerCase();
+
+            if (lower.includes("own")) {
+                return "#010853";
+            }
+
+            if (lower.includes("buy")) {
+                return "#ffc900";
+            }
+
+            if (lower.includes("direct")) {
+                return "#ff006e";
+            }
+
+            return "#8b5cf6";
+
+        }
 
 
         // TYPE CHARTS
@@ -728,12 +813,16 @@ document.addEventListener("DOMContentLoaded", () => {
         const types =
             Object.keys(
                 typeGrouped
+            ).sort(
+                (a, b) =>
+                    getTypeRank(a) -
+                    getTypeRank(b)
             );
 
 
         const nobBars =
             types.map(
-                (type, index) => ({
+                (type) => ({
 
                     value:
                         Number(
@@ -744,10 +833,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     itemStyle: {
                         color:
-                            palette[
-                                index %
-                                palette.length
-                            ]
+                            getTypeColor(type)
                     }
 
                 })
@@ -792,7 +878,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 {
                     data:
                         types.map(
-                            (type, index) => ({
+                            (type) => ({
 
                                 name:
                                     type,
@@ -806,10 +892,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                                 itemStyle: {
                                     color:
-                                        palette[
-                                            index %
-                                            palette.length
-                                        ]
+                                        getTypeColor(type)
                                 }
 
                             })

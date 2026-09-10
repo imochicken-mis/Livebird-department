@@ -22,6 +22,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const cageInput =
         document.getElementById("cageNo");
 
+    const batchNoContainer =
+        document.getElementById("batchNoContainer");
+
     const batchInput =
         document.getElementById("batchNo");
 
@@ -230,6 +233,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     "hidden"
                 );
 
+                batchNoContainer.classList.remove(
+                    "hidden"
+                );
+
                 loadFarmers(
                     "Ownfarm"
                 );
@@ -244,8 +251,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 cageInput.value = "";
 
+                batchNoContainer.classList.remove(
+                    "hidden"
+                );
+
                 loadFarmers(
                     "Buyback"
+                );
+
+            } else if (
+                selectedType === "Direct Purchase"
+            ) {
+
+                cageContainer.classList.add(
+                    "hidden"
+                );
+
+                cageInput.value = "";
+
+                batchNoContainer.classList.add(
+                    "hidden"
+                );
+
+                batchInput.value = "";
+
+                loadFarmers(
+                    "Direct Purchase"
                 );
 
             } else {
@@ -255,6 +286,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
                 cageInput.value = "";
+
+                batchNoContainer.classList.remove(
+                    "hidden"
+                );
 
             }
 
@@ -659,6 +694,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 buyback:
                     result.buyback || [],
 
+                directPurchase:
+                    result.directPurchase || [],
+
                 customers:
                     result.customers || []
 
@@ -717,6 +755,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
             farmers =
                 window.livebirdLists.buyback || [];
+
+        } else if (
+            type === "Direct Purchase"
+        ) {
+
+            farmers =
+                window.livebirdLists.directPurchase || [];
 
         }
 
@@ -865,6 +910,65 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 showMessage(
                     "Please enter Batch No 2.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            if (
+                typeSelect.value !==
+                    "Direct Purchase" &&
+                !batchInput.value.trim()
+            ) {
+
+                showMessage(
+                    "Please enter the batch number.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            if (!billInput.value.trim()) {
+
+                showMessage(
+                    "Please enter the bill number.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            if (!healthyNobInput.value.trim()) {
+
+                showMessage(
+                    "Please enter Healthy Birds NOB.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            if (!healthyWeightInput.value.trim()) {
+
+                showMessage(
+                    "Please enter Healthy Birds weight.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            if (!healthyPriceInput.value.trim()) {
+
+                showMessage(
+                    "Please enter Healthy Birds price.",
                     "error"
                 );
 
@@ -1497,6 +1601,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         cageContainer.classList.add(
+            "hidden"
+        );
+
+        batchNoContainer.classList.remove(
             "hidden"
         );
 

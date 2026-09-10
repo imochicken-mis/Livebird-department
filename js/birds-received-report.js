@@ -686,7 +686,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const labels =
             Object.keys(grouped)
                 .map(sNo =>
-                    `Load ${sNo}`
+                    `L ${sNo}`
                 );
 
 

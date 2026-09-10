@@ -116,7 +116,41 @@ document.addEventListener("DOMContentLoaded", () => {
             animationEasing: "cubicOut",
 
             tooltip: {
-                trigger: "axis"
+                trigger: "axis",
+                formatter: function (params) {
+
+                    let html =
+                        `<div style="font-weight:600;margin-bottom:4px;">${params[0].axisValueLabel || params[0].axisValue}</div>`;
+
+                    params.forEach(function (item) {
+
+                        const rawValue =
+                            (item.value && typeof item.value === "object")
+                                ? item.value.value
+                                : item.value;
+
+                        const isWeight =
+                            item.seriesName.indexOf("Weight") !== -1;
+
+                        const formatted =
+                            isWeight
+                                ? Number(rawValue).toLocaleString(
+                                    "en-US",
+                                    {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2
+                                    }
+                                )
+                                : Number(rawValue).toLocaleString("en-US");
+
+                        html +=
+                            `${item.marker} ${item.seriesName}: <b>${formatted}</b><br/>`;
+
+                    });
+
+                    return html;
+
+                }
             },
 
             legend: {
@@ -136,10 +170,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             xAxis: {
                 type: "category",
-                data: [
-                    "Ownfarm",
-                    "Buyback"
-                ]
+                data: []
             },
 
             yAxis: [
@@ -240,7 +271,26 @@ document.addEventListener("DOMContentLoaded", () => {
             animationDuration: 1400,
 
             tooltip: {
-                trigger: "axis"
+                trigger: "axis",
+                formatter: function (params) {
+
+                    const item = params[0];
+
+                    const formatted =
+                        Number(item.value).toLocaleString(
+                            "en-US",
+                            {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            }
+                        );
+
+                    return (
+                        `<div style="font-weight:600;margin-bottom:4px;">${item.axisValueLabel || item.axisValue}</div>` +
+                        `${item.marker} ${item.seriesName}: <b>${formatted} kg</b>`
+                    );
+
+                }
             },
 
             grid: {
@@ -255,7 +305,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 type: "category",
                 data: [],
                 axisLabel: {
-                    rotate: 35
+                    rotate: 35,
+                    formatter: function (value) {
+                        return value
+                            ? value.slice(-2)
+                            : value;
+                    }
                 }
             },
 
@@ -333,7 +388,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 data: [],
 
-                boundaryGap: false
+                boundaryGap: false,
+
+                axisLabel: {
+                    formatter: function (value) {
+                        return value
+                            ? value.slice(-2)
+                            : value;
+                    }
+                }
             },
 
             yAxis: [
@@ -538,7 +601,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             value: 0,
 
                             name:
-                                "Others",
+                                "Live Sales",
 
                             itemStyle: {
                                 color:
@@ -749,15 +812,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
         let ownNob = 0;
         let buyNob = 0;
+        let directNob = 0;
 
         let ownWeight = 0;
         let buyWeight = 0;
+        let directWeight = 0;
 
         let ownRejection = 0;
         let buyRejection = 0;
+        let directRejection = 0;
 
         let ownAmount = 0;
         let buyAmount = 0;
+        let directAmount = 0;
 
 
         data.forEach(row => {
@@ -817,6 +884,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
             }
 
+
+            if (type.includes("direct")) {
+
+                directNob +=
+                    AdminCommon.safeNumber(
+                        row.nob
+                    );
+
+                directWeight +=
+                    AdminCommon.safeNumber(
+                        row.weight
+                    );
+
+                directRejection +=
+                    AdminCommon.safeNumber(
+                        row.rejection_weight
+                    );
+
+                directAmount +=
+                    AdminCommon.safeNumber(
+                        row.amount
+                    );
+
+            }
+
         });
 
 
@@ -845,6 +937,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         document.getElementById(
+            "kpiBirdsDirect"
+        ).textContent =
+            AdminCommon.formatWhole(
+                directNob
+            );
+
+
+        document.getElementById(
             "kpiTotalWeight"
         ).textContent =
             AdminCommon.formatWeight(
@@ -869,11 +969,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         document.getElementById(
+            "kpiWeightDirect"
+        ).textContent =
+            AdminCommon.formatWeight(
+                directWeight
+            );
+
+
+        document.getElementById(
             "kpiTotalRejection"
         ).textContent =
-            `${AdminCommon.formatWhole(
+            AdminCommon.formatWeight(
                 totalRejection
-            )} kg`;
+            );
 
 
         document.getElementById(
@@ -889,6 +997,14 @@ document.addEventListener("DOMContentLoaded", () => {
         ).textContent =
             AdminCommon.formatWeight(
                 buyRejection
+            );
+
+
+        document.getElementById(
+            "kpiRejectionDirect"
+        ).textContent =
+            AdminCommon.formatWeight(
+                directRejection
             );
 
 
@@ -916,6 +1032,14 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
 
+        document.getElementById(
+            "kpiAmountDirect"
+        ).textContent =
+            AdminCommon.formatAmount(
+                directAmount
+            );
+
+
         return {
 
             totalNob,
@@ -925,9 +1049,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
             ownNob,
             buyNob,
+            directNob,
 
             ownWeight,
-            buyWeight
+            buyWeight,
+            directWeight
 
         };
 
@@ -945,41 +1071,63 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // FARM TYPE
 
+        const farmTypeCategories = [];
+        const farmTypeNobData = [];
+        const farmTypeWeightData = [];
+
+        if (metrics.ownNob > 0) {
+
+            farmTypeCategories.push("Ownfarm");
+
+            farmTypeNobData.push({
+                value: metrics.ownNob,
+                itemStyle: { color: "#010853" }
+            });
+
+            farmTypeWeightData.push(metrics.ownWeight);
+
+        }
+
+        if (metrics.buyNob > 0) {
+
+            farmTypeCategories.push("Buyback");
+
+            farmTypeNobData.push({
+                value: metrics.buyNob,
+                itemStyle: { color: "#f5b700" }
+            });
+
+            farmTypeWeightData.push(metrics.buyWeight);
+
+        }
+
+        if (metrics.directNob > 0) {
+
+            farmTypeCategories.push("Direct Purchase");
+
+            farmTypeNobData.push({
+                value: metrics.directNob,
+                itemStyle: { color: "#fb0064" }
+            });
+
+            farmTypeWeightData.push(metrics.directWeight);
+
+        }
+
         farmTypeChart?.setOption({
+
+            xAxis: {
+                data: farmTypeCategories
+            },
 
             series: [
 
                 {
-                    data: [
-
-                        {
-                            value:
-                                metrics.ownNob,
-
-                            itemStyle: {
-                                color:
-                                    "#010853"
-                            }
-                        },
-
-                        {
-                            value:
-                                metrics.buyNob,
-
-                            itemStyle: {
-                                color:
-                                    "#f5b700"
-                            }
-                        }
-
-                    ]
+                    data: farmTypeNobData
                 },
 
                 {
-                    data: [
-                        metrics.ownWeight,
-                        metrics.buyWeight
-                    ]
+                    data: farmTypeWeightData
                 }
 
             ]
@@ -988,21 +1136,42 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         // REJECTION CHART
+        // Group by date first — otherwise a date with more
+        // than one record shows as duplicate x-axis labels.
 
-        const dates =
-            data.map(row =>
+        const rejectionByDate = {};
+
+        data.forEach(function (row) {
+
+            const rowDate =
                 AdminCommon.normalizeDate(
                     row.date
-                )
-            );
+                );
 
+            if (!rowDate) {
+                return;
+            }
 
-        const rejection =
-            data.map(row =>
+            const weight =
                 AdminCommon.safeNumber(
                     row.rejection_weight
-                )
-            );
+                );
+
+            rejectionByDate[rowDate] =
+                (rejectionByDate[rowDate] || 0) + weight;
+
+        });
+
+
+        const dates =
+            Object.keys(rejectionByDate).sort();
+
+        const rejection =
+            dates.map(function (rowDate) {
+                return Number(
+                    rejectionByDate[rowDate].toFixed(2)
+                );
+            });
 
 
         rejectionChart?.setOption({
@@ -1132,7 +1301,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 ),
 
                             name:
-                                "Others",
+                                "Live Sales",
 
                             itemStyle: {
                                 color:
