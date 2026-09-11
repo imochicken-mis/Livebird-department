@@ -534,6 +534,33 @@ document.addEventListener("DOMContentLoaded", () => {
         let buyback = 0;
 
 
+        // ---------------------------------------------
+        // BUY BACK
+        //
+        // Buyback qty is a per-DATE value, repeated on
+        // every cage/location row saved for that date.
+        // Must be counted ONCE per date — reuse the same
+        // dedup grouping already used by updateDetailTotals().
+        // ---------------------------------------------
+
+        const grouped =
+            groupForecastByDate(
+                data
+            );
+
+
+        Object.values(grouped).forEach(day => {
+
+            buyback += day.buyback;
+
+        });
+
+
+        // ---------------------------------------------
+        // FARM FORECAST (unaffected — qty is per row,
+        // safe to sum directly)
+        // ---------------------------------------------
+
         data.forEach(row => {
 
             const location =
@@ -547,23 +574,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     row.qty
                 );
 
-
-            const buybackQty =
-                safeNumber(
-                    row.buyback
-                );
-
-
-            // ---------------------------------------------
-            // BUY BACK
-            // ---------------------------------------------
-
-            buyback += buybackQty;
-
-
-            // ---------------------------------------------
-            // FARM FORECAST
-            // ---------------------------------------------
 
             if (
                 location.includes(

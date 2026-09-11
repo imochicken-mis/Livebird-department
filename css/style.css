@@ -743,6 +743,89 @@ footer {
 
 .login-card {
     max-width: 460px;
+    position: relative;
+}
+
+.login-loading-overlay {
+    display: none;
+    position: absolute;
+    inset: 0;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    background: linear-gradient(
+        160deg,
+        rgba(240, 246, 252, 0.85),
+        rgba(255, 255, 255, 0.78)
+    );
+    backdrop-filter: blur(6px) saturate(1.1);
+    -webkit-backdrop-filter: blur(6px) saturate(1.1);
+    z-index: 5;
+    border-radius: 16px;
+}
+
+.login-loading-overlay.show {
+    display: flex;
+}
+
+.loader {
+    position: relative;
+    width: 74px;
+    height: 74px;
+}
+
+.loader::before,
+.loader::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 5px solid transparent;
+}
+
+.loader::before {
+    border-top-color: #1767b8;
+    border-right-color: #1767b8;
+    filter: drop-shadow(0 0 6px rgba(23, 103, 184, 0.45));
+    animation: loader-spin 1s cubic-bezier(0.5, 0.1, 0.5, 0.9) infinite;
+}
+
+.loader::after {
+    inset: 12px;
+    border-bottom-color: #0e4a85;
+    border-left-color: #0e4a85;
+    opacity: 0.65;
+    animation: loader-spin-reverse 0.8s cubic-bezier(0.5, 0.1, 0.5, 0.9) infinite;
+}
+
+.login-loading-text {
+    font-size: 13.5px;
+    font-weight: 650;
+    letter-spacing: 0.4px;
+    color: #1767b8;
+    animation: loader-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes loader-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes loader-spin-reverse {
+    to {
+        transform: rotate(-360deg);
+    }
+}
+
+@keyframes loader-pulse {
+    0%, 100% {
+        opacity: 0.45;
+    }
+    50% {
+        opacity: 1;
+    }
 }
 
 
@@ -1442,4 +1525,49 @@ footer {
     height: auto;
 
     display: block;
+}
+
+/* =========================================================
+   SHARED LOADING ANIMATION (css-loaders.com style)
+   Applies to every report/analytics page automatically
+========================================================= */
+
+.analytics-loader.show,
+.report-loading:not(.hidden) {
+    font-size: 0;
+    line-height: 0;
+
+    width: fit-content;
+    margin: 0 auto;
+
+    background: radial-gradient(circle closest-side, #4f46e5 94%, #0000)
+        right / calc(200% - 16px) 100%;
+
+    animation: sharedLoaderReveal 1s infinite alternate linear;
+}
+
+.analytics-loader.show::before,
+.report-loading:not(.hidden)::before {
+    content: "Loading...";
+
+    display: inline-block;
+
+    font-weight: bold;
+    font-family: monospace;
+    font-size: 16px;
+    line-height: 1.2em;
+
+    color: #0000;
+
+    background: inherit;
+    background-image: radial-gradient(circle closest-side, #fff 94%, #000);
+
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+@keyframes sharedLoaderReveal {
+    100% {
+        background-position: left;
+    }
 }

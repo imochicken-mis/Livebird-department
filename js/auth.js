@@ -27,6 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const usernameInput = document.getElementById("username");
     const passwordInput = document.getElementById("password");
     const loginMessage = document.getElementById("loginMessage");
+    const loginLoadingOverlay = document.getElementById("loginLoadingOverlay");
 
     signInBtn.addEventListener("click", handleLogin);
 
@@ -51,6 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         signInBtn.disabled = true;
         signInBtn.textContent = "Signing In...";
+        loginLoadingOverlay.classList.add("show");
 
         try {
 
@@ -93,6 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             signInBtn.disabled = false;
             signInBtn.textContent = "Sign In";
+            loginLoadingOverlay.classList.remove("show");
 
         }
 
