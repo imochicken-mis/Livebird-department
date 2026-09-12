@@ -1316,6 +1316,72 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
+    // ---------------------------------------------
+    // SIDEBAR FOOTER TEXT (added via JS so it shows
+    // on every page without editing each HTML file)
+    // ---------------------------------------------
+
+    // Shimmer animation (inject once — shared across all pages)
+    if (!document.getElementById("sidebarGlowStyle")) {
+
+        const glowStyle =
+            document.createElement("style");
+
+        glowStyle.id = "sidebarGlowStyle";
+
+        glowStyle.textContent =
+            "@keyframes sidebarTextShimmer {" +
+            "0% { background-position: 0% 50%; }" +
+            "100% { background-position: 200% 50%; }" +
+            "}";
+
+        document.head.appendChild(glowStyle);
+
+    }
+
+    const sidebarFooter =
+        document.createElement("div");
+
+    sidebarFooter.className = "sidebar-powered-by";
+
+    sidebarFooter.style.cssText =
+        "position: absolute;" +
+        "bottom: 0;" +
+        "left: 0;" +
+        "width: 100%;" +
+        "padding: 14px 0;" +
+        "text-align: center;" +
+        "border-top: 1px solid rgba(255,255,255,0.12);" +
+        "box-sizing: border-box;";
+
+    const poweredText =
+        document.createElement("span");
+
+    poweredText.textContent = "- Powered By MIS -";
+
+    poweredText.style.cssText =
+        "font-size: 11px;" +
+        "font-weight: 600;" +
+        "letter-spacing: 0.4px;" +
+        "background: linear-gradient(" +
+            "90deg," +
+            "#4fa3ff 0%," +
+            "#8ee7ff 25%," +
+            "#4fa3ff 50%," +
+            "#8ee7ff 75%," +
+            "#4fa3ff 100%" +
+        ");" +
+        "background-size: 200% auto;" +
+        "-webkit-background-clip: text;" +
+        "background-clip: text;" +
+        "-webkit-text-fill-color: transparent;" +
+        "color: transparent;" +
+        "animation: sidebarTextShimmer 3s linear infinite;";
+
+    sidebarFooter.appendChild(poweredText);
+
+    sidebar.appendChild(sidebarFooter);
+
     const toggleBtn =
         document.createElement("button");
 
