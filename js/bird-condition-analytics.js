@@ -748,8 +748,8 @@ function renderTable(data) {
 
     const sortedData = [...data].sort(
         (a, b) =>
-            normalizeDate(b.date).localeCompare(
-                normalizeDate(a.date)
+            normalizeDate(a.date).localeCompare(
+                normalizeDate(b.date)
             )
     );
 

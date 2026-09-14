@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Bird Flow Analytics</title>
+
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/admin-analytics.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+</head>
+
+<body class="dashboard-page admin-analytics-page bf-professional">
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-brand">
+            <img src="../assets/Logo.png" alt="Imo Chicken Logo">
+            <h2>Live Bird Department</h2>
+        </div>
+
+        <div class="sidebar-divider"></div>
+
+        <nav class="sidebar-nav">
+            <a href="user4-kpis.html" class="sidebar-link">KPI's</a>
+        </nav>
+
+        <p class="sidebar-section-title">REPORT MODULES</p>
+
+        <nav class="sidebar-nav">
+
+            <a href="admin-analytics.html" class="sidebar-link">1) Live Bird Catching Report</a>
+            <a href="imo-plant-report.html" class="sidebar-link">2) Processing P.Received Report</a>
+            <a href="other-plants-report.html" class="sidebar-link">3) Live Bird Sales Report</a>
+            <a href="own-farm-report.html" class="sidebar-link">4) Own farm Movement Report</a>
+            <a href="birds-received-report.html" class="sidebar-link">5) Plant Received & DOA Report</a>
+            <a href="bird-condition-analytics.html" class="sidebar-link">6) Bird Condition Report</a>
+            <a href="vehicle-expenses-monthly-report.html" class="sidebar-link">7) Catching Team Expens Report</a>
+            <a href="forecast-actual-report.html" class="sidebar-link">8) Forecast vs Actual Report</a>
+            <a href="admin-catching-breakdown-report.html" class="sidebar-link">9) Bird Quality Status Report</a>
+            <a href="bird-flow-analytics.html" class="sidebar-link active">10) Bird Flow Analytics</a>
+
+        </nav>
+
+    </aside>
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <main class="dashboard-main">
+
+        <div class="admin-main">
+
+            <header class="admin-header analytics-fade-in">
+                <div class="admin-header-left">
+                    <div>
+                        <h1>Bird Flow Analytics</h1>
+                        <p class="analytics-subtitle">
+                            Total birds broken down from disable/healthy through own farm, buyback and direct, down to imo plant and live sale
+                        </p>
+                    </div>
+                </div>
+
+                <div class="admin-header-user">
+                    <span id="loggedUser" class="admin-user-badge">Logged in as:</span>
+                    <button id="logoutBtn" class="logout-btn">Logout</button>
+                </div>
+            </header>
+
+            <!-- FILTERS -->
+            <section class="analytics-card analytics-fade-in">
+                <div class="analytics-filter-card">
+                    <div>
+                        <div class="analytics-filter-title">Report Period</div>
+                        <p class="analytics-subtitle">Select a month and value type to see the bird flow breakdown</p>
+                    </div>
+
+                    <div class="analytics-filter-controls">
+                        <input type="month" id="monthFilter" title="Month">
+
+                        <div id="metricToggle" class="bf-metric-toggle">
+                            <button type="button" data-metric="nob" class="bf-metric-btn active">NOB</button>
+                            <button type="button" data-metric="weight" class="bf-metric-btn">Weight</button>
+                            <button type="button" data-metric="amount" class="bf-metric-btn">Amount</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TREE -->
+            <section class="analytics-card analytics-fade-in">
+
+                <ul class="bf-tree">
+                    <li>
+                        <div class="bf-box" id="node-total"><div class="bf-label">Total Birds</div><div class="bf-value" id="v-total">-</div></div>
+                        <ul id="branch-disable-healthy">
+                            <li>
+                                <div class="bf-box bf-coral" id="node-disable"><div class="bf-label">Disable</div><div class="bf-value" id="v-disable">-</div></div>
+                            </li>
+                            <li>
+                                <div class="bf-box bf-green" id="node-healthy"><div class="bf-label">Healthy</div><div class="bf-value" id="v-healthy">-</div></div>
+                                <ul>
+
+                                    <li>
+                                        <div class="bf-box" id="node-own"><div class="bf-label">Own Farm</div></div>
+                                        <ul><li>
+                                            <div class="bf-box"><div class="bf-label">Total</div><div class="bf-value" id="v-own-total">-</div></div>
+                                            <ul><li>
+                                                <div class="bf-box bf-coral"><div class="bf-label">Rejection</div><div class="bf-value" id="v-own-reject">-</div></div>
+                                                <ul><li>
+                                                    <div class="bf-box"><div class="bf-label">Final</div><div class="bf-value" id="v-own-final">-</div></div>
+                                                    <ul>
+                                                        <li><div class="bf-box bf-teal"><div class="bf-label">Imo Plant</div><div class="bf-value" id="v-own-imo">-</div></div></li>
+                                                        <li><div class="bf-box bf-purple"><div class="bf-label">Live Sale</div><div class="bf-value" id="v-own-live">-</div></div></li>
+                                                    </ul>
+                                                </li></ul>
+                                            </li></ul>
+                                        </li></ul>
+                                    </li>
+
+                                    <li>
+                                        <div class="bf-box" id="node-buyback"><div class="bf-label">Buyback</div></div>
+                                        <ul><li>
+                                            <div class="bf-box"><div class="bf-label">Total</div><div class="bf-value" id="v-buy-total">-</div></div>
+                                            <ul><li>
+                                                <div class="bf-box bf-coral"><div class="bf-label">Rejection</div><div class="bf-value" id="v-buy-reject">-</div></div>
+                                                <ul><li>
+                                                    <div class="bf-box"><div class="bf-label">Final</div><div class="bf-value" id="v-buy-final">-</div></div>
+                                                    <ul>
+                                                        <li><div class="bf-box bf-teal"><div class="bf-label">Imo Plant</div><div class="bf-value" id="v-buy-imo">-</div></div></li>
+                                                        <li><div class="bf-box bf-purple"><div class="bf-label">Live Sale</div><div class="bf-value" id="v-buy-live">-</div></div></li>
+                                                    </ul>
+                                                </li></ul>
+                                            </li></ul>
+                                        </li></ul>
+                                    </li>
+
+                                    <li>
+                                        <div class="bf-box" id="node-direct"><div class="bf-label">Direct</div></div>
+                                        <ul><li>
+                                            <div class="bf-box"><div class="bf-label">Total</div><div class="bf-value" id="v-direct-total">-</div></div>
+                                            <ul><li>
+                                                <div class="bf-box bf-coral"><div class="bf-label">Rejection</div><div class="bf-value" id="v-direct-reject">-</div></div>
+                                                <ul><li>
+                                                    <div class="bf-box"><div class="bf-label">Final</div><div class="bf-value" id="v-direct-final">-</div></div>
+                                                    <ul>
+                                                        <li><div class="bf-box bf-teal"><div class="bf-label">Imo Plant</div><div class="bf-value" id="v-direct-imo">-</div></div></li>
+                                                        <li><div class="bf-box bf-purple"><div class="bf-label">Live Sale</div><div class="bf-value" id="v-direct-live">-</div></div></li>
+                                                    </ul>
+                                                </li></ul>
+                                            </li></ul>
+                                        </li></ul>
+                                    </li>
+
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+
+            </section>
+
+        </div>
+
+    </main>
+
+    <style>
+
+        body.bf-professional .admin-header {
+            background:
+                linear-gradient(#ffffff, #ffffff) padding-box,
+                linear-gradient(
+                    90deg,
+                    #0f172a 0%,
+                    #475569 50%,
+                    #0f172a 100%
+                ) border-box;
+        }
+
+        body.bf-professional .admin-header::before {
+            background:
+                linear-gradient(
+                    90deg,
+                    #0f172a 0%,
+                    #475569 50%,
+                    #0f172a 100%
+                );
+            background-size: 200% auto;
+        }
+
+        body.bf-professional .analytics-card {
+            border: 0px solid transparent;
+            border-top: 4px solid transparent;
+            background:
+                linear-gradient(#ffffff, #ffffff) padding-box,
+                linear-gradient(
+                    90deg,
+                    #0f172a 0%,
+                    #475569 50%,
+                    #0f172a 100%
+                ) border-box;
+        }
+
+        .bf-metric-toggle { display: inline-flex; gap: 6px; }
+        .bf-metric-btn { padding: 8px 14px; border: 1px solid #cbd5e1; border-radius: 6px; background: #fff; cursor: pointer; font-size: 13px; color: #334155; font-weight: 500; transition: all 0.15s ease; }
+        .bf-metric-btn:hover { border-color: #94a3b8; }
+        .bf-metric-btn.active { border-color: #0f172a; background: #0f172a; color: #fff; font-weight: 600; }
+
+        .bf-tree, .bf-tree ul, .bf-tree li { list-style: none; margin: 0; padding: 0; position: relative; }
+        .bf-tree { text-align: center; padding: 20px 10px; overflow-x: auto; }
+        .bf-tree ul { padding-top: 20px; position: relative; white-space: nowrap; }
+        .bf-tree li { display: inline-block; vertical-align: top; text-align: center; padding: 20px 10px 0 10px; position: relative; white-space: normal; }
+        .bf-tree li::before, .bf-tree li::after {
+            content: ''; position: absolute; top: 0; right: 50%;
+            border-top: 1px solid #cbd5e1; width: 50%; height: 20px;
+        }
+        .bf-tree li::after { right: auto; left: 50%; border-left: 1px solid #cbd5e1; }
+        .bf-tree li:only-child::after, .bf-tree li:only-child::before { display: none; }
+        .bf-tree li:only-child { padding-top: 0; }
+        .bf-tree li:first-child::before, .bf-tree li:last-child::after { border: 0 none; }
+        .bf-tree li:last-child::before { border-right: 1px solid #cbd5e1; border-radius: 0 5px 0 0; }
+        .bf-tree li:first-child::after { border-radius: 5px 0 0 0; }
+        .bf-tree ul ul::before {
+            content: ''; position: absolute; top: 0; left: 50%;
+            border-left: 1px solid #cbd5e1; width: 0; height: 20px;
+        }
+
+        .bf-box { display: inline-block; background: #ffffff; border: 1px solid #e2e8f0; border-left: 4px solid #94a3b8; border-radius: 8px; padding: 10px 16px; min-width: 100px; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06); }
+        .bf-label { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.3px; }
+        .bf-value { font-size: 16px; font-weight: 700; color: #0f172a; margin-top: 2px; }
+
+        .bf-coral { background: #fafafa; border-left-color: #9f1239; }
+        .bf-coral .bf-value { color: #9f1239; }
+        .bf-green { background: #fafafa; border-left-color: #166534; }
+        .bf-green .bf-value { color: #166534; }
+        .bf-teal { background: #fafafa; border-left-color: #155e75; }
+        .bf-teal .bf-value { color: #155e75; }
+        .bf-purple { background: #fafafa; border-left-color: #5b21b6; }
+        .bf-purple .bf-value { color: #5b21b6; }
+
+    </style>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/admin-common.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/bird-flow-analytics.js"></script>
+
+</body>
+
+</html>

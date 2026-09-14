@@ -928,10 +928,10 @@ document.addEventListener("DOMContentLoaded", () => {
             [...data].sort(
                 (a, b) =>
                     normalizeDate(
-                        b.date
+                        a.date
                     ).localeCompare(
                         normalizeDate(
-                            a.date
+                            b.date
                         )
                     )
             );
@@ -1180,60 +1180,31 @@ document.addEventListener("DOMContentLoaded", () => {
             return "";
         }
 
+        const text = String(value).trim();
 
-        const text =
-            String(value).trim();
-
-
-        if (
-            /^\d{4}-\d{2}-\d{2}/
-                .test(text)
-        ) {
-
-            return text.substring(
-                0,
-                10
-            );
-
+        // Already in YYYY-MM-DD format
+        if (/^\d{4}-\d{2}-\d{2}/.test(text)) {
+            return text.substring(0, 10);
         }
 
+        // DD/MM/YYYY or DD-MM-YYYY format (avoid ambiguous Date() parsing)
+        const dmyMatch = text.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+        if (dmyMatch) {
+            const day = dmyMatch[1].padStart(2, "0");
+            const month = dmyMatch[2].padStart(2, "0");
+            const year = dmyMatch[3];
+            return `${year}-${month}-${day}`;
+        }
 
-        const parsed =
-            new Date(text);
+        const parsed = new Date(text);
 
-
-        if (
-            Number.isNaN(
-                parsed.getTime()
-            )
-        ) {
-
+        if (Number.isNaN(parsed.getTime())) {
             return "";
-
         }
 
-
-        const year =
-            parsed.getFullYear();
-
-
-        const month =
-            String(
-                parsed.getMonth() + 1
-            ).padStart(
-                2,
-                "0"
-            );
-
-
-        const day =
-            String(
-                parsed.getDate()
-            ).padStart(
-                2,
-                "0"
-            );
-
+        const year = parsed.getFullYear();
+        const month = String(parsed.getMonth() + 1).padStart(2, "0");
+        const day = String(parsed.getDate()).padStart(2, "0");
 
         return `${year}-${month}-${day}`;
 
