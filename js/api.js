@@ -1001,6 +1001,47 @@ function initializeUser4SidebarAccordion() {
 
 
     // =====================================================
+    // ANALYTICS GROUP (Bird Flow Analytics)
+    // It is not a report, so it stays out of REPORT
+    // MODULES — but it still gets the same collapsible
+    // group treatment instead of a static label.
+    // =====================================================
+
+    const flowLink =
+        sidebar.querySelector(
+            'a[href="bird-flow-analytics.html"]'
+        );
+
+    let analyticsGroup = null;
+
+    if (flowLink) {
+
+        const flowNav =
+            flowLink.closest(".sidebar-nav") ||
+            flowLink.parentNode;
+
+        analyticsGroup =
+            createUser4SidebarGroup(
+                "ANALYTICS",
+                "user4-analytics-group"
+            );
+
+        reportGroup.group
+            .insertAdjacentElement(
+                "afterend",
+                analyticsGroup.group
+            );
+
+        analyticsGroup.panel
+            .appendChild(
+                flowNav
+            );
+
+    }
+
+
+
+    // =====================================================
     // DETECT CURRENT PAGE
     // =====================================================
 
@@ -1021,6 +1062,18 @@ function initializeUser4SidebarAccordion() {
             );
 
 
+    const isFlowPage =
+        !!flowLink &&
+        (
+            currentPage ===
+                "bird-flow-analytics.html" ||
+            flowLink.classList
+                .contains(
+                    "active"
+                )
+        );
+
+
 
     // =====================================================
     // OPEN CURRENT GROUP
@@ -1034,8 +1087,48 @@ function initializeUser4SidebarAccordion() {
 
     setUser4SidebarGroupState(
         reportGroup.group,
-        !isKpiPage
+        !isKpiPage && !isFlowPage
     );
+
+
+    if (analyticsGroup) {
+
+        setUser4SidebarGroupState(
+            analyticsGroup.group,
+            isFlowPage
+        );
+
+    }
+
+
+
+    // =====================================================
+    // CLOSE THE OTHER GROUPS (accordion behaviour)
+    // =====================================================
+
+    function closeOtherGroups(openedGroup) {
+
+        [
+            kpiGroup,
+            reportGroup,
+            analyticsGroup
+        ].forEach(group => {
+
+            if (
+                group &&
+                group !== openedGroup
+            ) {
+
+                setUser4SidebarGroupState(
+                    group.group,
+                    false
+                );
+
+            }
+
+        });
+
+    }
 
 
 
@@ -1064,9 +1157,8 @@ function initializeUser4SidebarAccordion() {
 
                 if (shouldOpen) {
 
-                    setUser4SidebarGroupState(
-                        reportGroup.group,
-                        false
+                    closeOtherGroups(
+                        kpiGroup
                     );
 
                 }
@@ -1101,15 +1193,54 @@ function initializeUser4SidebarAccordion() {
 
                 if (shouldOpen) {
 
-                    setUser4SidebarGroupState(
-                        kpiGroup.group,
-                        false
+                    closeOtherGroups(
+                        reportGroup
                     );
 
                 }
 
             }
         );
+
+
+
+    // =====================================================
+    // ANALYTICS CLICK
+    // =====================================================
+
+    if (analyticsGroup) {
+
+        analyticsGroup.header
+            .addEventListener(
+                "click",
+                () => {
+
+                    const shouldOpen =
+                        !analyticsGroup.group
+                            .classList
+                            .contains(
+                                "open"
+                            );
+
+
+                    setUser4SidebarGroupState(
+                        analyticsGroup.group,
+                        shouldOpen
+                    );
+
+
+                    if (shouldOpen) {
+
+                        closeOtherGroups(
+                            analyticsGroup
+                        );
+
+                    }
+
+                }
+            );
+
+    }
 
 }
 
@@ -1408,18 +1539,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
         chartResizeFrame = null;
 
-        if (typeof echarts === "undefined") {
-            return;
+        if (typeof echarts !== "undefined") {
+
+            document.querySelectorAll(".analytics-chart").forEach(el => {
+
+                const chart =
+                    echarts.getInstanceByDom(el);
+
+                chart?.resize({ silent: true });
+
+            });
+
         }
 
-        document.querySelectorAll(".analytics-chart").forEach(el => {
-
-            const chart =
-                echarts.getInstanceByDom(el);
-
-            chart?.resize({ silent: true });
-
-        });
+        // Some pages (e.g. Bird Flow Analytics) draw their own
+        // absolutely-positioned connector lines using
+        // getBoundingClientRect() and only recompute them on the
+        // window "resize" event. The sidebar toggle changes
+        // .dashboard-main's width without firing that event, so we
+        // fire one ourselves here to keep those layouts in sync.
+        window.dispatchEvent(new Event("resize"));
 
     };
 

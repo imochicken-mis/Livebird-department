@@ -32,6 +32,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const metricButtons =
         document.querySelectorAll(".bf-metric-btn");
 
+    const loader =
+        document.getElementById("bfLoader");
+
+    const analyticsCard =
+        document.querySelector(".analytics-card");
+
 
     // =====================================================
     // STATE
@@ -40,6 +46,8 @@ document.addEventListener("DOMContentLoaded", () => {
     let allCatchingData = [];
     let allOperationsData = [];
     let currentMetric = "nob";
+
+    const FARM_NAMES = ["Epaladeniya", "Pannala", "Kotadeniyawa", "Weerapokuna"];
 
 
     // =====================================================
@@ -56,8 +64,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     window.addEventListener(
         "resize",
-        () => requestAnimationFrame(alignTotalNode)
+        () => requestAnimationFrame(() => drawAllConnectors(false))
     );
+
+    setMetricAccent(currentMetric);
 
     metricButtons.forEach(btn => {
 
@@ -71,6 +81,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             currentMetric = btn.dataset.metric;
 
+            setMetricAccent(currentMetric);
+
             render();
 
         });
@@ -79,12 +91,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
     loadData();
 
+    setupNodeHoverHighlights();
+
+
+    // =====================================================
+    // METRIC ACCENT COLOR
+    // =====================================================
+
+    function setMetricAccent(metric) {
+
+        if (!analyticsCard) return;
+
+        analyticsCard.dataset.metric = metric;
+
+    }
+
 
     // =====================================================
     // LOAD DATA
     // =====================================================
 
     async function loadData() {
+
+        AdminCommon.setLoading(
+            loader,
+            true
+        );
 
         try {
 
@@ -119,6 +151,13 @@ document.addEventListener("DOMContentLoaded", () => {
             allOperationsData = [];
 
             render();
+
+        } finally {
+
+            AdminCommon.setLoading(
+                loader,
+                false
+            );
 
         }
 
@@ -240,11 +279,82 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
+    function computeSourceBreakdown(rows) {
+
+        const result = {
+            own: { nob: 0, weight: 0, amount: 0 },
+            buy: { nob: 0, weight: 0, amount: 0 },
+            direct: { nob: 0, weight: 0, amount: 0 },
+            farms: {}
+        };
+
+        FARM_NAMES.forEach(name => {
+            result.farms[name] = { nob: 0, weight: 0, amount: 0 };
+        });
+
+        rows.forEach(row => {
+
+            const type = String(row.type || "").toLowerCase();
+            const farmer = String(row.farmer || "").trim();
+
+            const nob = AdminCommon.safeNumber(row.total_nob);
+            const weight = AdminCommon.safeNumber(row.total_weight);
+            const amount = AdminCommon.safeNumber(row.total_amount);
+
+            let bucket = null;
+
+            if (type.includes("own")) {
+
+                bucket = result.own;
+
+                const farmMatch = FARM_NAMES.find(name =>
+                    name.toLowerCase() === farmer.toLowerCase()
+                );
+
+                if (farmMatch) {
+                    result.farms[farmMatch].nob += nob;
+                    result.farms[farmMatch].weight += weight;
+                    result.farms[farmMatch].amount += amount;
+                }
+
+            } else if (type.includes("buy")) {
+                bucket = result.buy;
+            } else if (type.includes("direct")) {
+                bucket = result.direct;
+            }
+
+            if (bucket) {
+                bucket.nob += nob;
+                bucket.weight += weight;
+                bucket.amount += amount;
+            }
+
+        });
+
+        return result;
+
+    }
+
     function metricPick(metrics, nobField, weightField, amountField) {
 
         if (currentMetric === "nob") return metrics[nobField];
         if (currentMetric === "weight") return metrics[weightField];
         return metrics[amountField];
+
+    }
+
+    function setBarFill(id, part, whole) {
+
+        const el = document.getElementById(id);
+
+        if (!el) return;
+
+        const pct =
+            whole > 0
+                ? Math.max(0, Math.min(100, (part / whole) * 100))
+                : 0;
+
+        el.style.width = pct + "%";
 
     }
 
@@ -264,21 +374,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
         setValue(
             `v-${prefix}-final`,
-            currentMetric === "weight" ? metrics.finalWeight : null,
+            currentMetric === "weight" ? metrics.finalWeight : metricPick(metrics, "totalNob", "totalWeight", "totalAmount"),
             currentMetric
         );
 
+        const imoValue =
+            metricPick(metrics, "imoNob", "imoFinalWeight", "imoAmount");
+
+        const liveValue =
+            metricPick(metrics, "otherNob", "otherFinalWeight", "otherAmount");
+
         setValue(
             `v-${prefix}-imo`,
-            metricPick(metrics, "imoNob", "imoFinalWeight", "imoAmount"),
+            imoValue,
             currentMetric
         );
 
         setValue(
             `v-${prefix}-live`,
-            metricPick(metrics, "otherNob", "otherFinalWeight", "otherAmount"),
+            liveValue,
             currentMetric
         );
+
+        const splitTotal =
+            (imoValue || 0) + (liveValue || 0);
+
+        setBarFill(`bar-${prefix}-imo`, imoValue || 0, splitTotal);
+        setBarFill(`bar-${prefix}-live`, liveValue || 0, splitTotal);
 
     }
 
@@ -298,7 +420,7 @@ document.addEventListener("DOMContentLoaded", () => {
             AdminCommon.filterByMonth(allOperationsData, month);
 
 
-        // TOP: TOTAL BIRDS / DISABLE / HEALTHY
+        // TOTAL BIRDS / DISABLE / HEALTHY
 
         const healthyNob = AdminCommon.sumBy(catchRows, "healthy_nob");
         const disableNob = AdminCommon.sumBy(catchRows, "disable_nob");
@@ -334,52 +456,475 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-        // BRANCHES: OWN FARM / BUYBACK / DIRECT
+        // DISTRIBUTION BRANCHES: OWN FARM / BUYBACK / DIRECT
 
         renderBranch("own", computeTypeMetrics(opsRows, "own"));
         renderBranch("buy", computeTypeMetrics(opsRows, "buy"));
         renderBranch("direct", computeTypeMetrics(opsRows, "direct"));
 
-        requestAnimationFrame(alignTotalNode);
+
+        // CATCHING SOURCES: FARMS -> OWNFARM / BUYBACK / DIRECT
+
+        const sourceBreakdown = computeSourceBreakdown(catchRows);
+
+        setValue("v-ownsrc-total", sourceBreakdown.own[currentMetric], currentMetric);
+        setValue("v-buysrc-total", sourceBreakdown.buy[currentMetric], currentMetric);
+        setValue("v-directsrc-total", sourceBreakdown.direct[currentMetric], currentMetric);
+
+        setValue("v-farm-epaladeniya", sourceBreakdown.farms["Epaladeniya"][currentMetric], currentMetric);
+        setValue("v-farm-pannala", sourceBreakdown.farms["Pannala"][currentMetric], currentMetric);
+        setValue("v-farm-kotadeniyawa", sourceBreakdown.farms["Kotadeniyawa"][currentMetric], currentMetric);
+        setValue("v-farm-weerapokuna", sourceBreakdown.farms["Weerapokuna"][currentMetric], currentMetric);
+
+        requestAnimationFrame(() => drawAllConnectors(true));
 
     }
 
 
     // =====================================================
-    // ALIGN TOTAL NODE
+    // CONNECTOR LINES (many boxes converging into one box,
+    // drawn with real measured pixel positions - works
+    // regardless of how wide/uneven the boxes are)
     // =====================================================
 
-    function alignTotalNode() {
+    function createLine(container, styles, group, animate) {
 
+        const el = document.createElement("div");
+
+        el.className = "bf-total-line";
+
+        if (group) {
+            el.dataset.group = group;
+        }
+
+        el.style.left = styles.left;
+        el.style.top = styles.top;
+
+        const isHorizontal = styles.height === "1px";
+
+        if (animate) {
+
+            el.style.width = isHorizontal ? "0px" : styles.width;
+            el.style.height = isHorizontal ? styles.height : "0px";
+
+            container.appendChild(el);
+
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    el.style.width = styles.width;
+                    el.style.height = styles.height;
+                });
+            });
+
+        } else {
+
+            el.style.width = styles.width;
+            el.style.height = styles.height;
+
+            container.appendChild(el);
+
+        }
+
+    }
+
+    function drawConvergeDown(sourceIds, targetId, container, group, animate) {
+
+        const sourceEls = sourceIds
+            .map(id => document.getElementById(id))
+            .filter(Boolean);
+
+        const targetEl = document.getElementById(targetId);
+
+        if (!targetEl || sourceEls.length === 0) return;
+
+        const containerRect = container.getBoundingClientRect();
+
+        if (containerRect.width === 0) return;
+
+        const sourceCenters = sourceEls.map(el => {
+
+            const r = el.getBoundingClientRect();
+
+            return {
+                centerX: (r.left + r.width / 2) - containerRect.left,
+                bottomY: r.bottom - containerRect.top
+            };
+
+        });
+
+        const targetRect = targetEl.getBoundingClientRect();
+
+        const targetCenterX =
+            (targetRect.left + targetRect.width / 2) - containerRect.left;
+
+        const targetTopY =
+            targetRect.top - containerRect.top;
+
+        const maxSourceBottom =
+            Math.max(...sourceCenters.map(s => s.bottomY));
+
+        const busY =
+            maxSourceBottom + Math.max((targetTopY - maxSourceBottom) / 2, 10);
+
+        function line(styles) {
+            createLine(container, styles, group, animate);
+        }
+
+        sourceCenters.forEach(s => {
+            line({
+                left: s.centerX + "px",
+                top: s.bottomY + "px",
+                width: "1px",
+                height: Math.max(busY - s.bottomY, 0) + "px"
+            });
+        });
+
+        const xs = sourceCenters.map(s => s.centerX).concat([targetCenterX]);
+        const minX = Math.min(...xs);
+        const maxX = Math.max(...xs);
+
+        line({
+            left: minX + "px",
+            top: busY + "px",
+            width: Math.max(maxX - minX, 0) + "px",
+            height: "1px"
+        });
+
+        line({
+            left: targetCenterX + "px",
+            top: busY + "px",
+            width: "1px",
+            height: Math.max(targetTopY - busY, 0) + "px"
+        });
+
+    }
+
+    function drawConvergeRight(sourceIds, targetId, container, group, animate) {
+
+        const sourceEls = sourceIds
+            .map(id => document.getElementById(id))
+            .filter(Boolean);
+
+        const targetEl = document.getElementById(targetId);
+
+        if (!targetEl || sourceEls.length === 0) return;
+
+        const containerRect = container.getBoundingClientRect();
+
+        if (containerRect.width === 0) return;
+
+        const sourceEdges = sourceEls.map(el => {
+
+            const r = el.getBoundingClientRect();
+
+            return {
+                centerY: (r.top + r.height / 2) - containerRect.top,
+                rightX: r.right - containerRect.left
+            };
+
+        });
+
+        const targetRect = targetEl.getBoundingClientRect();
+
+        const targetCenterY =
+            (targetRect.top + targetRect.height / 2) - containerRect.top;
+
+        const targetLeftX =
+            targetRect.left - containerRect.left;
+
+        const maxSourceRight =
+            Math.max(...sourceEdges.map(s => s.rightX));
+
+        const busX =
+            maxSourceRight + Math.max((targetLeftX - maxSourceRight) / 2, 10);
+
+        function line(styles) {
+            createLine(container, styles, group, animate);
+        }
+
+        sourceEdges.forEach(s => {
+            line({
+                left: s.rightX + "px",
+                top: s.centerY + "px",
+                height: "1px",
+                width: Math.max(busX - s.rightX, 0) + "px"
+            });
+        });
+
+        const ys = sourceEdges.map(s => s.centerY).concat([targetCenterY]);
+        const minY = Math.min(...ys);
+        const maxY = Math.max(...ys);
+
+        line({
+            left: busX + "px",
+            top: minY + "px",
+            width: "1px",
+            height: Math.max(maxY - minY, 0) + "px"
+        });
+
+        line({
+            left: busX + "px",
+            top: targetCenterY + "px",
+            height: "1px",
+            width: Math.max(targetLeftX - busX, 0) + "px"
+        });
+
+    }
+
+    function positionSectionLabels(wrapper) {
+
+        const dhCol = document.getElementById("bfDhCol");
+        const childrenRow = document.getElementById("bfChildrenRow");
+
+        if (!dhCol || !childrenRow) return;
+
+        wrapper.querySelectorAll(".bf-section-label")
+            .forEach(el => el.remove());
+
+        const wrapperRect = wrapper.getBoundingClientRect();
+        const dhRect = dhCol.getBoundingClientRect();
+        const childrenRect = childrenRow.getBoundingClientRect();
+
+        function label(text, styles) {
+            const el = document.createElement("div");
+            el.className = "bf-section-label";
+            el.textContent = text;
+            Object.assign(el.style, styles);
+            wrapper.appendChild(el);
+        }
+
+        const farmsCol = document.getElementById("bfFarmsCol");
         const totalBox = document.getElementById("node-total");
-        const disableBox = document.getElementById("node-disable");
-        const healthyBox = document.getElementById("node-healthy");
-        const branchUl = document.getElementById("branch-disable-healthy");
-        const treeEl = document.querySelector(".bf-tree");
 
-        if (!totalBox || !disableBox || !healthyBox || !branchUl || !treeEl) return;
+        if (farmsCol) {
 
-        totalBox.style.transform = "";
-        branchUl.style.removeProperty("--stem-left");
+            const farmsRect = farmsCol.getBoundingClientRect();
 
-        const treeRect = treeEl.getBoundingClientRect();
-        const disableRect = disableBox.getBoundingClientRect();
-        const healthyRect = healthyBox.getBoundingClientRect();
-        const branchRect = branchUl.getBoundingClientRect();
+            label("BIRD INTAKE", {
+                left: (farmsRect.left - wrapperRect.left) + "px",
+                top: (farmsRect.top - wrapperRect.top) - 26 + "px"
+            });
 
-        const disableCenter = (disableRect.left + disableRect.width / 2) - treeRect.left;
-        const healthyCenter = (healthyRect.left + healthyRect.width / 2) - treeRect.left;
-        const midpoint = (disableCenter + healthyCenter) / 2;
+        }
 
-        const midpointPercent = (midpoint / branchRect.width) * 100;
-        branchUl.style.setProperty("--stem-left", midpointPercent + "%");
+        if (totalBox) {
 
-        const totalLi = totalBox.parentElement;
-        const totalLiRect = totalLi.getBoundingClientRect();
-        const totalLiCenter = (totalLiRect.left + totalLiRect.width / 2) - treeRect.left;
+            const totalRect = totalBox.getBoundingClientRect();
 
-        const offset = midpoint - totalLiCenter;
-        totalBox.style.transform = `translateX(${offset}px)`;
+            label("SOURCE-WISE DISPOSITION", {
+                left: (totalRect.right - wrapperRect.left) + 20 + 60 + "px",
+                top: (totalRect.top - wrapperRect.top) + (totalRect.height / 2) - 7 + 75 + "px"
+            });
+
+        }
+
+    }
+
+    function positionDisableHealthy(wrapper) {
+
+        const dhCol = document.getElementById("bfDhCol");
+        const totalBox = document.getElementById("node-total");
+
+        if (!dhCol || !totalBox) return;
+
+        const wrapperRect = wrapper.getBoundingClientRect();
+        const totalRect = totalBox.getBoundingClientRect();
+        const dhRect = dhCol.getBoundingClientRect();
+
+        const gap = 40;
+
+        const left = (totalRect.left - wrapperRect.left) - dhRect.width - gap;
+        const top = (totalRect.top - wrapperRect.top) + (totalRect.height / 2) - (dhRect.height / 2) - 5;
+
+        dhCol.style.left = Math.max(left, 0) + "px";
+        dhCol.style.top = Math.max(top, 0) + "px";
+
+    }
+
+    function drawDivergeDown(sourceId, targetIds, container, group, animate) {
+
+        const sourceEl = document.getElementById(sourceId);
+
+        const targetEls = targetIds
+            .map(id => document.getElementById(id))
+            .filter(Boolean);
+
+        if (!sourceEl || targetEls.length === 0) return;
+
+        const containerRect = container.getBoundingClientRect();
+
+        if (containerRect.width === 0) return;
+
+        const sourceRect = sourceEl.getBoundingClientRect();
+
+        const sourceCenterX =
+            (sourceRect.left + sourceRect.width / 2) - containerRect.left;
+
+        const sourceBottomY =
+            sourceRect.bottom - containerRect.top;
+
+        const targetCenters = targetEls.map(el => {
+
+            const r = el.getBoundingClientRect();
+
+            return {
+                centerX: (r.left + r.width / 2) - containerRect.left,
+                topY: r.top - containerRect.top
+            };
+
+        });
+
+        const minTargetTop =
+            Math.min(...targetCenters.map(t => t.topY));
+
+        const busY =
+            sourceBottomY + Math.max((minTargetTop - sourceBottomY) / 2, 10);
+
+        function line(styles) {
+            createLine(container, styles, group, animate);
+        }
+
+        line({
+            left: sourceCenterX + "px",
+            top: sourceBottomY + "px",
+            width: "1px",
+            height: Math.max(busY - sourceBottomY, 0) + "px"
+        });
+
+        const xs = targetCenters.map(t => t.centerX).concat([sourceCenterX]);
+        const minX = Math.min(...xs);
+        const maxX = Math.max(...xs);
+
+        line({
+            left: minX + "px",
+            top: busY + "px",
+            width: Math.max(maxX - minX, 0) + "px",
+            height: "1px"
+        });
+
+        targetCenters.forEach(t => {
+            line({
+                left: t.centerX + "px",
+                top: busY + "px",
+                width: "1px",
+                height: Math.max(t.topY - busY, 0) + "px"
+            });
+        });
+
+    }
+
+    function drawAllConnectors(animate) {
+
+        const wrapper = document.getElementById("bfFlowWrapper");
+
+        if (!wrapper) return;
+
+        positionDisableHealthy(wrapper);
+
+        wrapper.querySelectorAll(".bf-total-line")
+            .forEach(el => el.remove());
+
+        drawDivergeDown(
+            "node-total",
+            ["node-own", "node-buyback", "node-direct"],
+            wrapper,
+            "split",
+            animate
+        );
+
+        positionSectionLabels(wrapper);
+
+        // Farms -> OwnFarm (left to right)
+        drawConvergeRight(
+            ["farm-kotadeniyawa", "farm-epaladeniya", "farm-pannala", "farm-weerapokuna"],
+            "node-own-src",
+            wrapper,
+            "farms",
+            animate
+        );
+
+        // OwnFarm / BuyBack / Direct -> Total (top to bottom)
+        drawConvergeDown(
+            ["node-own-src", "node-buy-src", "node-direct-src"],
+            "node-total",
+            wrapper,
+            "sources",
+            animate
+        );
+
+        // Disable / Healthy -> Total (left to right)
+        drawConvergeRight(
+            ["node-disable", "node-healthy"],
+            "node-total",
+            wrapper,
+            "disablehealthy",
+            animate
+        );
+
+    }
+
+
+    // =====================================================
+    // HOVER HIGHLIGHT (box + its connector lines)
+    // =====================================================
+
+    function setupNodeHoverHighlights() {
+
+        const wrapper = document.getElementById("bfFlowWrapper");
+
+        if (!wrapper) return;
+
+        const nodeGroups = {
+            "farm-kotadeniyawa": ["farms"],
+            "farm-epaladeniya": ["farms"],
+            "farm-pannala": ["farms"],
+            "farm-weerapokuna": ["farms"],
+            "node-own-src": ["farms", "sources"],
+            "node-buy-src": ["sources"],
+            "node-direct-src": ["sources"],
+            "node-disable": ["disablehealthy"],
+            "node-healthy": ["disablehealthy"],
+            "node-total": ["sources", "disablehealthy", "split"],
+            "node-own": ["split"],
+            "node-buyback": ["split"],
+            "node-direct": ["split"]
+        };
+
+        Object.keys(nodeGroups).forEach(nodeId => {
+
+            const box = document.getElementById(nodeId);
+
+            if (!box) return;
+
+            box.addEventListener("mouseenter", () => {
+
+                box.classList.add("bf-node-active");
+
+                nodeGroups[nodeId].forEach(group => {
+
+                    wrapper
+                        .querySelectorAll(`.bf-total-line[data-group="${group}"]`)
+                        .forEach(line =>
+                            line.classList.add("bf-line-active")
+                        );
+
+                });
+
+            });
+
+            box.addEventListener("mouseleave", () => {
+
+                box.classList.remove("bf-node-active");
+
+                wrapper
+                    .querySelectorAll(".bf-total-line.bf-line-active")
+                    .forEach(line =>
+                        line.classList.remove("bf-line-active")
+                    );
+
+            });
+
+        });
 
     }
 
