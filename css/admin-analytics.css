@@ -538,6 +538,49 @@ body.admin-analytics-page {
     margin-bottom: 12px;
 }
 
+.analytics-target-control {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+
+    background: #eef4fb;
+    border: 1px solid #dbe7f5;
+    border-radius: 10px;
+
+    padding: 8px 14px;
+}
+
+.analytics-target-control label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: #64748b;
+}
+
+.analytics-target-control input#targetWeight {
+    width: 70px;
+    text-align: right;
+
+    font-size: 18px;
+    font-weight: 700;
+    color: #104f8d;
+
+    border: none;
+    border-bottom: 2px solid #104f8d;
+    background: transparent;
+
+    padding: 2px 4px;
+    outline: none;
+
+    transition: border-color 0.2s ease;
+}
+
+.analytics-target-control input#targetWeight:focus {
+    border-bottom-color: #f4ad24;
+}
+
 .analytics-chart-title {
     color: #1e293b;
 

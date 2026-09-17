@@ -136,11 +136,11 @@
                                 <li>
                                     <div class="bf-box" id="node-own"><div class="bf-label">Own Farm</div></div>
                                     <ul><li>
-                                        <div class="bf-box"><div class="bf-label">Total</div><div class="bf-value" id="v-own-total">-</div></div>
+                                        <div class="bf-box" id="box-own-total"><div class="bf-label">Total</div><div class="bf-value" id="v-own-total">-</div></div>
                                         <ul><li>
                                             <div class="bf-box bf-coral"><div class="bf-label">Rejection</div><div class="bf-value" id="v-own-reject">-</div></div>
                                             <ul><li>
-                                                <div class="bf-box"><div class="bf-label">Final</div><div class="bf-value" id="v-own-final">-</div></div>
+                                                <div class="bf-box" id="box-own-final"><div class="bf-label">Final</div><div class="bf-value" id="v-own-final">-</div></div>
                                                 <ul>
                                                     <li><div class="bf-box bf-teal"><div class="bf-label">Imo Plant</div><div class="bf-value" id="v-own-imo">-</div><div class="bf-bar"><div class="bf-bar-fill" id="bar-own-imo"></div></div></div></li>
                                                     <li><div class="bf-box bf-purple"><div class="bf-label">Live Sale</div><div class="bf-value" id="v-own-live">-</div><div class="bf-bar"><div class="bf-bar-fill" id="bar-own-live"></div></div></div></li>
@@ -153,11 +153,11 @@
                                 <li>
                                     <div class="bf-box" id="node-buyback"><div class="bf-label">Buyback</div></div>
                                     <ul><li>
-                                        <div class="bf-box"><div class="bf-label">Total</div><div class="bf-value" id="v-buy-total">-</div></div>
+                                        <div class="bf-box" id="box-buy-total"><div class="bf-label">Total</div><div class="bf-value" id="v-buy-total">-</div></div>
                                         <ul><li>
                                             <div class="bf-box bf-coral"><div class="bf-label">Rejection</div><div class="bf-value" id="v-buy-reject">-</div></div>
                                             <ul><li>
-                                                <div class="bf-box"><div class="bf-label">Final</div><div class="bf-value" id="v-buy-final">-</div></div>
+                                                <div class="bf-box" id="box-buy-final"><div class="bf-label">Final</div><div class="bf-value" id="v-buy-final">-</div></div>
                                                 <ul>
                                                     <li><div class="bf-box bf-teal"><div class="bf-label">Imo Plant</div><div class="bf-value" id="v-buy-imo">-</div><div class="bf-bar"><div class="bf-bar-fill" id="bar-buy-imo"></div></div></div></li>
                                                     <li><div class="bf-box bf-purple"><div class="bf-label">Live Sale</div><div class="bf-value" id="v-buy-live">-</div><div class="bf-bar"><div class="bf-bar-fill" id="bar-buy-live"></div></div></div></li>
@@ -170,11 +170,11 @@
                                 <li>
                                     <div class="bf-box" id="node-direct"><div class="bf-label">Direct</div></div>
                                     <ul><li>
-                                        <div class="bf-box"><div class="bf-label">Total</div><div class="bf-value" id="v-direct-total">-</div></div>
+                                        <div class="bf-box" id="box-direct-total"><div class="bf-label">Total</div><div class="bf-value" id="v-direct-total">-</div></div>
                                         <ul><li>
                                             <div class="bf-box bf-coral"><div class="bf-label">Rejection</div><div class="bf-value" id="v-direct-reject">-</div></div>
                                             <ul><li>
-                                                <div class="bf-box"><div class="bf-label">Final</div><div class="bf-value" id="v-direct-final">-</div></div>
+                                                <div class="bf-box" id="box-direct-final"><div class="bf-label">Final</div><div class="bf-value" id="v-direct-final">-</div></div>
                                                 <ul>
                                                     <li><div class="bf-box bf-teal"><div class="bf-label">Imo Plant</div><div class="bf-value" id="v-direct-imo">-</div><div class="bf-bar"><div class="bf-bar-fill" id="bar-direct-imo"></div></div></div></li>
                                                     <li><div class="bf-box bf-purple"><div class="bf-label">Live Sale</div><div class="bf-value" id="v-direct-live">-</div><div class="bf-bar"><div class="bf-bar-fill" id="bar-direct-live"></div></div></div></li>
@@ -303,23 +303,104 @@
             pointer-events: none;
         }
 
+        /* =====================================================
+           TREE CONNECTOR LINES (Own Farm / Buyback / Direct ->
+           Total -> Rejection -> Final -> Imo Plant / Live Sale)
+           Drawn with animated flowing-dash backgrounds instead
+           of solid borders, so the "current flowing" look
+           matches the JS-drawn connectors above.
+        ===================================================== */
+
         .bf-tree, .bf-tree ul, .bf-tree li { list-style: none; margin: 0; padding: 0; position: relative; }
-        .bf-tree { text-align: center; padding: 0 10px; }
+
+        .bf-tree {
+            text-align: center; padding: 0 10px;
+            --bf-dash-h: repeating-linear-gradient(90deg, rgba(30,90,168,0.6) 0px, rgba(30,90,168,0.6) 4px, transparent 4px, transparent 8px);
+            --bf-dash-v: repeating-linear-gradient(180deg, rgba(30,90,168,0.6) 0px, rgba(30,90,168,0.6) 4px, transparent 4px, transparent 8px);
+        }
+
         .bf-tree ul { padding-top: 20px; position: relative; white-space: nowrap; }
         .bf-tree li { display: inline-block; vertical-align: top; text-align: center; padding: 20px 10px 0 10px; position: relative; white-space: normal; }
-        .bf-tree li::before, .bf-tree li::after {
+
+        /* right branch: horizontal segment only (top edge, running toward center) */
+        .bf-tree li::before {
             content: ''; position: absolute; top: 0; right: 50%;
-            border-top: 1px solid #cbd5e1; width: 50%; height: 20px;
+            width: 50%; height: 20px;
+            background-image: var(--bf-dash-h);
+            background-size: 8px 1px;
+            background-repeat: repeat-x;
+            background-position: 0 0;
+            animation: bf-tree-flow-x 0.4s linear infinite;
         }
-        .bf-tree li::after { right: auto; left: 50%; border-left: 1px solid #cbd5e1; }
+
+        /* left branch: horizontal segment (top edge) + vertical segment (left edge, anchored at x=0) */
+        .bf-tree li::after {
+            content: ''; position: absolute; top: 0; right: auto; left: 50%;
+            width: 50%; height: 20px;
+            background-image: var(--bf-dash-h), var(--bf-dash-v);
+            background-size: 8px 1px, 1px 8px;
+            background-repeat: repeat-x, repeat-y;
+            background-position: 0 0, 0 0;
+            animation: bf-tree-flow-hv 0.4s linear infinite;
+        }
+
         .bf-tree li:only-child::after, .bf-tree li:only-child::before { display: none; }
         .bf-tree li:only-child { padding-top: 0; }
-        .bf-tree li:first-child::before, .bf-tree li:last-child::after { border: 0 none; }
-        .bf-tree li:last-child::before { border-right: 1px solid #cbd5e1; border-radius: 0 5px 0 0; }
-        .bf-tree li:first-child::after { border-radius: 5px 0 0 0; }
+
+        .bf-tree li:first-child::before, .bf-tree li:last-child::after {
+            background-image: none;
+            animation: none;
+            width: 0;
+            height: 0;
+            top: 14px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 6px solid #1E5AA8;
+        }
+
+        /* last child: horizontal segment (top edge) + vertical segment anchored at right edge (x=100%) */
+        .bf-tree li:last-child::before {
+            background-image: var(--bf-dash-h), var(--bf-dash-v);
+            background-size: 8px 1px, 1px 8px;
+            background-repeat: repeat-x, repeat-y;
+            background-position: 0 0, 100% 0;
+            animation: bf-tree-flow-hv-right 0.4s linear infinite;
+        }
+
         .bf-tree ul ul::before {
             content: ''; position: absolute; top: 0; left: 50%;
-            border-left: 1px solid #cbd5e1; width: 0; height: 20px;
+            width: 1px; height: 20px;
+            background-image: var(--bf-dash-v);
+            background-size: 1px 8px;
+            background-repeat: repeat-y;
+            background-position: 0 0;
+            animation: bf-tree-flow-y 0.4s linear infinite;
+        }
+
+        /* single-layer: only horizontal movement */
+        @keyframes bf-tree-flow-x {
+            from { background-position: 0 0; }
+            to   { background-position: 8px 0; }
+        }
+
+        /* single-layer: only vertical movement */
+        @keyframes bf-tree-flow-y {
+            from { background-position: 0 0; }
+            to   { background-position: 0 8px; }
+        }
+
+        /* two-layer: h-layer moves in x only, v-layer (anchored left) moves in y only */
+        @keyframes bf-tree-flow-hv {
+            from { background-position: 0 0, 0 0; }
+            to   { background-position: 8px 0, 0 8px; }
+        }
+
+        /* two-layer: h-layer moves in x only, v-layer (anchored right/100%) moves in y only */
+        @keyframes bf-tree-flow-hv-right {
+            from { background-position: 0 0, 100% 0; }
+            to   { background-position: 8px 0, 100% 8px; }
         }
 
         #bfChildrenRow > li::before,
@@ -421,6 +502,101 @@
                     #5b21b6 50%,
                     #0f172a 100%
                 ) border-box;
+        }
+
+        /* ==============================================
+           CONTINUOUS "CURRENT FLOW" ANIMATION (JS driven)
+           A JS sequencer (setupCurrentFlowSequencer in
+           bird-flow-analytics.js) turns these one-shot
+           classes on and off in order: bf-current-on for
+           a line's single sweep, bf-flow-glow for a box's
+           single glow pulse. No animation-delay math here -
+           timing lives entirely in the JS step list, so it
+           can never drift or fall out of sync.
+           ============================================== */
+
+        @media (prefers-reduced-motion: no-preference) {
+
+            /* Continuous flowing dashed line - always animating, no glow */
+            .bf-line-h {
+                background-image: repeating-linear-gradient(
+                    90deg,
+                    #1E5AA8 0px,
+                    #1E5AA8 6px,
+                    transparent 6px,
+                    transparent 14px
+                );
+                background-size: 20px 100%;
+                animation: bf-flow-dash-h 0.7s linear infinite;
+                opacity: 0.6;
+            }
+
+            .bf-line-v {
+                background-image: repeating-linear-gradient(
+                    180deg,
+                    #1E5AA8 0px,
+                    #1E5AA8 6px,
+                    transparent 6px,
+                    transparent 14px
+                );
+                background-size: 100% 20px;
+                animation: bf-flow-dash-v 0.7s linear infinite;
+                opacity: 0.6;
+            }
+
+            @keyframes bf-flow-dash-h {
+                0%   { background-position: 0 0; }
+                100% { background-position: 20px 0; }
+            }
+
+            @keyframes bf-flow-dash-v {
+                0%   { background-position: 0 0; }
+                100% { background-position: 0 20px; }
+            }
+
+            /* Farms -> OwnFarm bus line should flow upward, opposite of other verticals */
+            .bf-total-line[data-group="farms"][data-seq="bus"] {
+                animation-direction: reverse;
+            }
+
+        }     
+        
+        .bf-total-line[data-group="farms"][data-seq="final"]::after {
+            content: '';
+            position: absolute;
+            right: -1px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0; height: 0;
+            border-top: 4px solid transparent;
+            border-bottom: 4px solid transparent;
+            border-left: 6px solid #1E5AA8;
+        }
+
+        .bf-total-line[data-group="sources"][data-seq="final"]::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0; height: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 6px solid #1E5AA8;
+        }
+
+        .bf-total-line[data-group="split"][data-seq="0"]::after,
+        .bf-total-line[data-group="split"][data-seq="1"]::after,
+        .bf-total-line[data-group="split"][data-seq="2"]::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0; height: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 6px solid #1E5AA8;
         }
 
     </style>

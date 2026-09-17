@@ -93,6 +93,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     setupNodeHoverHighlights();
 
+    setupCurrentFlowSequencer();
+
 
     // =====================================================
     // METRIC ACCENT COLOR
@@ -487,7 +489,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // regardless of how wide/uneven the boxes are)
     // =====================================================
 
-    function createLine(container, styles, group, animate) {
+    function createLine(container, styles, group, seq, animate) {
 
         const el = document.createElement("div");
 
@@ -497,10 +499,16 @@ document.addEventListener("DOMContentLoaded", () => {
             el.dataset.group = group;
         }
 
+        if (seq !== undefined && seq !== null) {
+            el.dataset.seq = seq;
+        }
+
         el.style.left = styles.left;
         el.style.top = styles.top;
 
         const isHorizontal = styles.height === "1px";
+
+        el.classList.add(isHorizontal ? "bf-line-h" : "bf-line-v");
 
         if (animate) {
 
@@ -566,17 +574,17 @@ document.addEventListener("DOMContentLoaded", () => {
         const busY =
             maxSourceBottom + Math.max((targetTopY - maxSourceBottom) / 2, 10);
 
-        function line(styles) {
-            createLine(container, styles, group, animate);
+        function line(styles, seq) {
+            createLine(container, styles, group, seq, animate);
         }
 
-        sourceCenters.forEach(s => {
+        sourceCenters.forEach((s, i) => {
             line({
                 left: s.centerX + "px",
                 top: s.bottomY + "px",
                 width: "1px",
                 height: Math.max(busY - s.bottomY, 0) + "px"
-            });
+            }, i);
         });
 
         const xs = sourceCenters.map(s => s.centerX).concat([targetCenterX]);
@@ -588,14 +596,14 @@ document.addEventListener("DOMContentLoaded", () => {
             top: busY + "px",
             width: Math.max(maxX - minX, 0) + "px",
             height: "1px"
-        });
+        }, "bus");
 
         line({
             left: targetCenterX + "px",
             top: busY + "px",
             width: "1px",
             height: Math.max(targetTopY - busY, 0) + "px"
-        });
+        }, "final");
 
     }
 
@@ -638,17 +646,17 @@ document.addEventListener("DOMContentLoaded", () => {
         const busX =
             maxSourceRight + Math.max((targetLeftX - maxSourceRight) / 2, 10);
 
-        function line(styles) {
-            createLine(container, styles, group, animate);
+        function line(styles, seq) {
+            createLine(container, styles, group, seq, animate);
         }
 
-        sourceEdges.forEach(s => {
+        sourceEdges.forEach((s, i) => {
             line({
                 left: s.rightX + "px",
                 top: s.centerY + "px",
                 height: "1px",
                 width: Math.max(busX - s.rightX, 0) + "px"
-            });
+            }, i);
         });
 
         const ys = sourceEdges.map(s => s.centerY).concat([targetCenterY]);
@@ -660,14 +668,14 @@ document.addEventListener("DOMContentLoaded", () => {
             top: minY + "px",
             width: "1px",
             height: Math.max(maxY - minY, 0) + "px"
-        });
+        }, "bus");
 
         line({
             left: busX + "px",
             top: targetCenterY + "px",
             height: "1px",
             width: Math.max(targetLeftX - busX, 0) + "px"
-        });
+        }, "final");
 
     }
 
@@ -780,8 +788,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const busY =
             sourceBottomY + Math.max((minTargetTop - sourceBottomY) / 2, 10);
 
-        function line(styles) {
-            createLine(container, styles, group, animate);
+        function line(styles, seq) {
+            createLine(container, styles, group, seq, animate);
         }
 
         line({
@@ -789,7 +797,7 @@ document.addEventListener("DOMContentLoaded", () => {
             top: sourceBottomY + "px",
             width: "1px",
             height: Math.max(busY - sourceBottomY, 0) + "px"
-        });
+        }, "source");
 
         const xs = targetCenters.map(t => t.centerX).concat([sourceCenterX]);
         const minX = Math.min(...xs);
@@ -800,15 +808,15 @@ document.addEventListener("DOMContentLoaded", () => {
             top: busY + "px",
             width: Math.max(maxX - minX, 0) + "px",
             height: "1px"
-        });
+        }, "bus");
 
-        targetCenters.forEach(t => {
+        targetCenters.forEach((t, i) => {
             line({
                 left: t.centerX + "px",
                 top: busY + "px",
                 width: "1px",
                 height: Math.max(t.topY - busY, 0) + "px"
-            });
+            }, i);
         });
 
     }
@@ -925,6 +933,137 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
         });
+
+    }
+
+
+    // =====================================================
+    // CURRENT FLOW SEQUENCER (JS-driven, not CSS delays)
+    // Runs one step at a time. Each step lights up a line
+    // (one sweep) or glows a box (one pulse), then after
+    // its own "advance" time the next step starts. When
+    // the list ends, pause, then start again from step 0
+    // (Farm 1). All timing lives in STEPS below - nothing
+    // to keep in sync elsewhere.
+    // =====================================================
+
+    function setupCurrentFlowSequencer() {
+
+        const wrapper = document.getElementById("bfFlowWrapper");
+
+        if (!wrapper) return;
+
+        const LINE_ON_MS = 900;
+        const BOX_ON_MS = 500;
+        const END_PAUSE_MS = 1200;
+
+        const STEPS = [
+
+            // Farm 1 -> 2 -> 3 -> 4, in order, then merge into OwnFarm
+            { type: "line", group: "farms", seq: "0", advance: 400 },
+            { type: "line", group: "farms", seq: "1", advance: 400 },
+            { type: "line", group: "farms", seq: "2", advance: 400 },
+            { type: "line", group: "farms", seq: "3", advance: 500 },
+            { type: "line", group: "farms", seq: "bus", advance: 500 },
+            { type: "line", group: "farms", seq: "final", advance: 500 },
+
+            // OwnFarm / Buyback / Direct glow together
+            { type: "box", selector: "#node-own-src, #node-buy-src, #node-direct-src", advance: 600 },
+
+            // Own/Buyback/Direct + Disable/Healthy -> Total Birds
+            { type: "line", group: "sources", seq: "0", advance: 400 },
+            { type: "line", group: "sources", seq: "1", advance: 400 },
+            { type: "line", group: "sources", seq: "2", advance: 500 },
+            { type: "line", group: "sources", seq: "bus", advance: 500 },
+            { type: "line", group: "sources", seq: "final", advance: 500 },
+            { type: "line", group: "disablehealthy", seq: "0", advance: 400 },
+            { type: "line", group: "disablehealthy", seq: "1", advance: 500 },
+            { type: "line", group: "disablehealthy", seq: "bus", advance: 500 },
+            { type: "line", group: "disablehealthy", seq: "final", advance: 500 },
+
+            // Total Birds glows
+            { type: "box", selector: "#node-total", advance: 600 },
+
+            // Total Birds -> Own Farm / Buyback / Direct (lower row)
+            { type: "line", group: "split", seq: "source", advance: 500 },
+            { type: "line", group: "split", seq: "bus", advance: 500 },
+            { type: "line", group: "split", seq: "0", advance: 300 },
+            { type: "line", group: "split", seq: "1", advance: 300 },
+            { type: "line", group: "split", seq: "2", advance: 500 },
+
+            // Own Farm / Buyback / Direct (lower row) glow
+            { type: "box", selector: "#node-own, #node-buyback, #node-direct", advance: 600 },
+
+            // Cascade on down: Total -> Rejection -> Final -> Imo/Live
+            { type: "box", selector: "#box-own-total, #box-buy-total, #box-direct-total", advance: 600 },
+            { type: "box", selector: "#bfProcessTree .bf-coral", advance: 600 },
+            { type: "box", selector: "#box-own-final, #box-buy-final, #box-direct-final", advance: 600 },
+            { type: "box", selector: "#bfProcessTree .bf-teal, #bfProcessTree .bf-purple", advance: 700 }
+
+        ];
+
+        let stepIndex = 0;
+
+        function runStep() {
+
+            if (stepIndex >= STEPS.length) {
+
+                stepIndex = 0;
+
+                setTimeout(runStep, END_PAUSE_MS);
+
+                return;
+
+            }
+
+            const step = STEPS[stepIndex];
+
+            const isLine = step.type === "line";
+
+            const els =
+                isLine
+                    ? Array.from(
+                        wrapper.querySelectorAll(
+                            `.bf-total-line[data-group="${step.group}"][data-seq="${step.seq}"]`
+                        )
+                    )
+                    : Array.from(
+                        document.querySelectorAll(step.selector)
+                    );
+
+            const activeClass =
+                isLine ? "bf-current-on" : "bf-flow-glow";
+
+            const onDuration =
+                isLine ? LINE_ON_MS : BOX_ON_MS;
+
+            els.forEach(el => {
+
+                el.classList.remove(activeClass);
+
+                // force reflow so the animation restarts even if
+                // this exact element was already mid-pulse
+                void el.offsetWidth;
+
+                el.classList.add(activeClass);
+
+            });
+
+            setTimeout(() => {
+
+                els.forEach(el =>
+                    el.classList.remove(activeClass)
+                );
+
+            }, onDuration);
+
+            stepIndex += 1;
+
+            setTimeout(runStep, step.advance);
+
+        }
+
+        runStep();
 
     }
 
