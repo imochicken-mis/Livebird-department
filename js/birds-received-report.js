@@ -393,20 +393,39 @@ document.addEventListener("DOMContentLoaded", () => {
             String(value).trim();
 
 
-        if (!text.includes(":")) {
+        if (!text) {
             return 0;
         }
 
 
-        const parts =
-            text.split(":");
+        // total_time sometimes comes through as a plain "HH:MM:SS"
+        // string, but when the sheet cell is Time-formatted it can
+        // arrive as a stringified Date instead, e.g.
+        // "Sat Dec 30 1899 04:40:00 GMT+0530 (India Standard Time)".
+        // Naively splitting on ":" then treats everything before the
+        // first colon ("Sat Dec 30 1899 04") as "hours", which is not
+        // a number, so the hour component was silently dropped and
+        // only the minutes survived. Extract HH:MM(:SS) with a regex
+        // instead — this is the same approach formatTripTime() already
+        // uses for the detail table below, applied here too so the
+        // summary totals stay in sync with it.
+
+        const match =
+            text.match(
+                /(?:^|\D)(\d{1,2}):(\d{2})(?::(\d{2}))?/
+            );
+
+
+        if (!match) {
+            return 0;
+        }
 
 
         const hours =
-            parseInt(parts[0], 10) || 0;
+            parseInt(match[1], 10) || 0;
 
         const minutes =
-            parseInt(parts[1], 10) || 0;
+            parseInt(match[2], 10) || 0;
 
 
         return (
@@ -758,6 +777,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 ).trim() || "Unknown";
 
 
+            const date =
+                String(
+                    row.date || ""
+                ).trim();
+
+
             const tripNo =
                 String(
                     row.trip_no || ""
@@ -779,16 +804,28 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
+            // Vehicle Trip No (trip_no) restarts at 1 every day
+            // for each vehicle (see getNextVehicleTripNoJS in the
+            // backend). So "Trip 1" on 2 different dates are two
+            // DIFFERENT trips. The key MUST include the date,
+            // otherwise trips with the same trip_no on different
+            // dates collapse into one and both the trip count and
+            // the total run time come out too low.
+
+            const tripKey =
+                date + "||" + tripNo;
+
+
             if (
                 tripNo &&
                 !Object.prototype.hasOwnProperty.call(
                     vehicleMap[vehicle].trips,
-                    tripNo
+                    tripKey
                 )
             ) {
 
                 vehicleMap[vehicle]
-                    .trips[tripNo] =
+                    .trips[tripKey] =
                     parseTimeToMinutes(
                         totalTime
                     );
@@ -854,6 +891,8 @@ document.addEventListener("DOMContentLoaded", () => {
                             trips:
                                 uniqueTripCount,
 
+                            totalMinutes,
+
                             runtime
 
                         };
@@ -880,6 +919,42 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
+        // ---------------------------------------------
+        // GRAND TOTAL ROW
+        // ---------------------------------------------
+
+        const grandTotalTrips =
+            rows.reduce(
+                (sum, row) =>
+                    sum + row.trips,
+                0
+            );
+
+        const grandTotalMinutes =
+            rows.reduce(
+                (sum, row) =>
+                    sum + row.totalMinutes,
+                0
+            );
+
+        const grandTotalHours =
+            Math.floor(
+                grandTotalMinutes / 60
+            );
+
+        const grandTotalRemainderMinutes =
+            grandTotalMinutes % 60;
+
+        const grandTotalRuntime =
+            grandTotalMinutes > 0
+                ? (
+                    grandTotalHours > 0
+                        ? `${grandTotalHours}h ${grandTotalRemainderMinutes}m`
+                        : `${grandTotalRemainderMinutes}m`
+                  )
+                : "N/A";
+
+
         vehicleSummaryTableBody.innerHTML =
             rows.map(row => `
 
@@ -903,7 +978,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 </tr>
 
-            `).join("");
+            `).join("") + `
+
+                <tr class="analytics-total-row" style="font-weight:700; background:rgba(0,0,0,0.04);">
+
+                    <td>Total</td>
+
+                    <td>${grandTotalTrips}</td>
+
+                    <td>${AdminCommon.escapeHtml(
+                        grandTotalRuntime
+                    )}</td>
+
+                </tr>
+
+            `;
 
     }
 

@@ -1114,6 +1114,8 @@ function updateTripChart(data) {
 
                             tripCount,
 
+                            totalMinutes,
+
                             runtime
 
                         };
@@ -1150,6 +1152,42 @@ function updateTripChart(data) {
         }
 
 
+        // ---------------------------------------------
+        // GRAND TOTAL ROW
+        // ---------------------------------------------
+
+        const grandTotalTrips =
+            rows.reduce(
+                (sum, row) =>
+                    sum + row.tripCount,
+                0
+            );
+
+        const grandTotalMinutes =
+            rows.reduce(
+                (sum, row) =>
+                    sum + row.totalMinutes,
+                0
+            );
+
+        const grandTotalHours =
+            Math.floor(
+                grandTotalMinutes / 60
+            );
+
+        const grandTotalRemainderMinutes =
+            grandTotalMinutes % 60;
+
+        const grandTotalRuntime =
+            grandTotalMinutes > 0
+                ? (
+                    grandTotalHours > 0
+                        ? `${grandTotalHours}h ${grandTotalRemainderMinutes}m`
+                        : `${grandTotalRemainderMinutes}m`
+                  )
+                : "N/A";
+
+
         vehicleSummaryTableBody.innerHTML =
             rows.map(row => `
 
@@ -1173,7 +1211,21 @@ function updateTripChart(data) {
 
                 </tr>
 
-            `).join("");
+            `).join("") + `
+
+                <tr class="analytics-total-row" style="font-weight:700; background:rgba(0,0,0,0.04);">
+
+                    <td>Total</td>
+
+                    <td>${grandTotalTrips}</td>
+
+                    <td>${escapeHtml(
+                        grandTotalRuntime
+                    )}</td>
+
+                </tr>
+
+            `;
 
     }
 
@@ -1190,25 +1242,42 @@ function updateTripChart(data) {
             ).trim();
 
 
-        if (!text.includes(":")) {
+        if (!text) {
             return 0;
         }
 
 
-        const parts =
-            text.split(":");
+        // total_time sometimes arrives as a plain "HH:MM:SS" string,
+        // but when the sheet cell is Time-formatted it can come
+        // through as a stringified Date instead, e.g.
+        // "Sat Dec 30 1899 04:40:00 GMT+0530 (India Standard Time)".
+        // Naively splitting on ":" then treats everything before the
+        // first colon as "hours", which is not a number, so the hour
+        // component was silently dropped and only the minutes
+        // survived. Extract HH:MM(:SS) with a regex instead, so it
+        // works no matter which format the value arrives in.
+
+        const match =
+            text.match(
+                /(?:^|\D)(\d{1,2}):(\d{2})(?::(\d{2}))?/
+            );
+
+
+        if (!match) {
+            return 0;
+        }
 
 
         const hours =
             parseInt(
-                parts[0],
+                match[1],
                 10
             ) || 0;
 
 
         const minutes =
             parseInt(
-                parts[1],
+                match[2],
                 10
             ) || 0;
 
