@@ -82,6 +82,16 @@ document.addEventListener("DOMContentLoaded", () => {
     let ownFarmData = [];
 
 
+    /*
+     * Bird Quality Status (catching breakdown) data for the
+     * two detail tables - Own Farm type records only.
+     */
+
+    let breakdownAllData = [];
+
+    let ownBreakdownData = [];
+
+
     // =====================================================
     // CHARTS
     // =====================================================
@@ -1344,231 +1354,106 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // =====================================================
-    // GENERIC DETAIL TABLE
+    // DETAIL TABLES (BIRD QUALITY STATUS)
     // =====================================================
 
-    function renderDetailTable(
-        tbody,
-        data
-    ) {
+    function updateDestinationTables() {
 
-        if (!data.length) {
+        /*
+         * Both detail tables now show the Bird Quality Status
+         * (catching breakdown) dataset - same structure and logic
+         * as user1's report table. This report's own criteria:
+         * month filter + type contains "own", then the tables are
+         * split by destination (Imo Plant vs outside customers).
+         */
 
-            AdminCommon.renderEmptyRow(
-                tbody,
-                14,
-                "No records found."
+        const filtered =
+            AdminCommon.filterByMonth(
+                ownBreakdownData,
+                monthFilter.value
             );
 
-            return;
+
+        const breakdownSplit =
+            splitDestination(filtered);
+
+
+        // Imo Plant supplies table
+
+        if (!breakdownSplit.imoData.length) {
+
+            AdminCommon.renderEmptyRow(
+                imoSupplyTableBody,
+                23,
+                "No Imo Plant supply records found."
+            );
+
+        } else {
+
+            AdminCommon.renderBreakdownRows(
+                imoSupplyTableBody,
+                breakdownSplit.imoData
+            );
+
         }
 
 
-        tbody.innerHTML =
-            data.map(row => `
+        // Outside customers table
 
-                <tr>
+        if (!breakdownSplit.outsideData.length) {
 
-                    <td>
-                        ${AdminCommon.escapeHtml(
-                            AdminCommon.normalizeDate(
-                                row.date
-                            )
-                        )}
-                    </td>
+            AdminCommon.renderEmptyRow(
+                outsideSupplyTableBody,
+                23,
+                "No outside customer supply records found."
+            );
 
-                    <td>
-                        ${AdminCommon.escapeHtml(
-                            row.type
-                        )}
-                    </td>
+        } else {
 
-                    <td class="wrap-cell">
-                        ${AdminCommon.escapeHtml(
-                            row.farmer
-                        )}
-                    </td>
+            AdminCommon.renderBreakdownRows(
+                outsideSupplyTableBody,
+                breakdownSplit.outsideData
+            );
 
-                    <td>
-                        ${AdminCommon.escapeHtml(
-                            row.cage
-                        )}
-                    </td>
-
-                    <td>
-                        ${AdminCommon.escapeHtml(
-                            row.batch
-                        )}
-                    </td>
-
-                    <td class="wrap-cell">
-                        ${AdminCommon.escapeHtml(
-                            row.customer
-                        )}
-                    </td>
-
-                    <td>
-                        ${AdminCommon.formatWhole(
-                            row.nob
-                        )}
-                    </td>
-
-                    <td>
-                        ${AdminCommon.formatDecimal(
-                            row.weight,
-                            2
-                        )}
-                    </td>
-
-                    <td>
-                        ${AdminCommon.formatDecimal(
-                            row.price,
-                            2
-                        )}
-                    </td>
-
-                    <td>
-                        ${AdminCommon.escapeHtml(
-                            row.bill
-                        )}
-                    </td>
-
-                    <td>
-                        ${AdminCommon.formatDecimal(
-                            row.amount,
-                            2
-                        )}
-                    </td>
-
-                    <td>
-                        ${AdminCommon.formatDecimal(
-                            row.avg_weight,
-                            2
-                        )}
-                    </td>
-
-                    <td>
-                        ${AdminCommon.formatDecimal(
-                            row.rejection_weight,
-                            2
-                        )}
-                    </td>
-
-                    <td class="wrap-cell">
-                        ${AdminCommon.escapeHtml(
-                            row.reason
-                        )}
-                    </td>
-
-                </tr>
-
-            `).join("");
-
-    }
-
-
-    // =====================================================
-    // DETAIL TABLE TOTALS
-    // =====================================================
-
-    function updateDestinationTables(
-        metrics
-    ) {
-
-        renderDetailTable(
-            imoSupplyTableBody,
-            metrics.imoData
-        );
-
-
-        renderDetailTable(
-            outsideSupplyTableBody,
-            metrics.outsideData
-        );
+        }
 
 
         // Imo TOTALS
 
-        document.getElementById(
-            "imoTotalNob"
-        ).textContent =
-            AdminCommon.formatWhole(
-                metrics.imoNob
-            );
-
-
-        document.getElementById(
-            "imoTotalWeight"
-        ).textContent =
-            AdminCommon.formatDecimal(
-                metrics.imoWeight,
-                2
-            );
-
-
-        document.getElementById(
-            "imoTotalAmount"
-        ).textContent =
-            AdminCommon.formatDecimal(
-                metrics.imoAmount,
-                2
-            );
-
-
-        document.getElementById(
-            "imoTotalRejection"
-        ).textContent =
-            AdminCommon.formatDecimal(
-
-                AdminCommon.sumBy(
-                    metrics.imoData,
-                    "rejection_weight"
-                ),
-
-                2
-            );
+        AdminCommon.updateBreakdownTotals(
+            breakdownSplit.imoData,
+            {
+                disableNob: "imoDisableNob",
+                disableWeight: "imoDisableWeight",
+                disableAmount: "imoDisableAmount",
+                healthyNob: "imoHealthyNob",
+                healthyWeight: "imoHealthyWeight",
+                healthyAmount: "imoHealthyAmount",
+                nob: "imoTotalNob",
+                weight: "imoTotalWeight",
+                amount: "imoTotalAmount",
+                rejectionWt: "imoTotalRejectionWt"
+            }
+        );
 
 
         // OUTSIDE TOTALS
 
-        document.getElementById(
-            "outsideTotalNob"
-        ).textContent =
-            AdminCommon.formatWhole(
-                metrics.outsideNob
-            );
-
-
-        document.getElementById(
-            "outsideTotalWeight"
-        ).textContent =
-            AdminCommon.formatDecimal(
-                metrics.outsideWeight,
-                2
-            );
-
-
-        document.getElementById(
-            "outsideTotalAmount"
-        ).textContent =
-            AdminCommon.formatDecimal(
-                metrics.outsideAmount,
-                2
-            );
-
-
-        document.getElementById(
-            "outsideTotalRejection"
-        ).textContent =
-            AdminCommon.formatDecimal(
-
-                AdminCommon.sumBy(
-                    metrics.outsideData,
-                    "rejection_weight"
-                ),
-
-                2
-            );
+        AdminCommon.updateBreakdownTotals(
+            breakdownSplit.outsideData,
+            {
+                disableNob: "outsideDisableNob",
+                disableWeight: "outsideDisableWeight",
+                disableAmount: "outsideDisableAmount",
+                healthyNob: "outsideHealthyNob",
+                healthyWeight: "outsideHealthyWeight",
+                healthyAmount: "outsideHealthyAmount",
+                nob: "outsideTotalNob",
+                weight: "outsideTotalWeight",
+                amount: "outsideTotalAmount",
+                rejectionWt: "outsideTotalRejectionWt"
+            }
+        );
 
     }
 
@@ -1608,9 +1493,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-        updateDestinationTables(
-            metrics
-        );
+        updateDestinationTables();
 
     }
 
@@ -1700,8 +1583,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
 
-            const response =
-                await getDefectReportData();
+            /*
+             * Fetch both datasets in parallel:
+             * - defect report data -> KPIs / charts / summaries
+             * - catching breakdown data -> final detail tables
+             */
+
+            const [response, breakdownResponse] =
+                await Promise.all([
+
+                    getDefectReportData(),
+
+                    getCatchingBreakdownData()
+
+                ]);
 
 
             let rows = [];
@@ -1750,6 +1645,48 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
 
 
+            let breakdownRows = [];
+
+
+            if (
+                Array.isArray(breakdownResponse)
+            ) {
+
+                breakdownRows = breakdownResponse;
+
+            } else if (
+                breakdownResponse &&
+                Array.isArray(breakdownResponse.data)
+            ) {
+
+                breakdownRows = breakdownResponse.data;
+
+            }
+
+
+            breakdownAllData =
+                breakdownRows;
+
+
+            // Same criteria as above:
+            // type contains "own"
+
+            ownBreakdownData =
+                breakdownAllData.filter(row => {
+
+                    const type =
+                        String(
+                            row.type || ""
+                        ).toLowerCase();
+
+
+                    return type.includes(
+                        "own"
+                    );
+
+                });
+
+
             /*
              * IMPORTANT:
              * Python original does NOT default this page
@@ -1778,12 +1715,11 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error(
                 "Own Farm load error:",
                 error
-            );
-
-
-            allReportData = [];
-
+            );            allReportData = [];
             ownFarmData = [];
+
+            breakdownAllData = [];
+            ownBreakdownData = [];
 
 
             updateDashboard([]);

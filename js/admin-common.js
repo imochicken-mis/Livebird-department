@@ -792,6 +792,184 @@ const AdminCommon = (() => {
 
 
     // ---------------------------------------------------------
+    // BIRD QUALITY STATUS (CATCHING BREAKDOWN) TABLE
+    //
+    // Shared 23-column detail table used by user4 reports.
+    // Same structure and logic as user1's Bird Quality Status
+    // report table (catching breakdown), but rendered with the
+    // neutral analytics-table styling - no column colour
+    // highlighting.
+    // ---------------------------------------------------------
+
+    function renderBreakdownRows(
+        tbody,
+        data
+    ) {
+
+        if (!tbody) {
+            return;
+        }
+
+
+        if (
+            !Array.isArray(data) ||
+            data.length === 0
+        ) {
+
+            renderEmptyRow(
+                tbody,
+                23,
+                "No records found."
+            );
+
+            return;
+        }
+
+
+        tbody.innerHTML =
+            data.map(row => `
+
+                <tr>
+
+                    <td>${escapeHtml(row.serial_no)}</td>
+
+                    <td>${escapeHtml(normalizeDate(row.date))}</td>
+
+                    <td>${escapeHtml(row.type)}</td>
+
+                    <td class="wrap-cell">${escapeHtml(row.farmer)}</td>
+
+                    <td>${escapeHtml(row.cage)}</td>
+
+                    <td>${escapeHtml(row.batch)}</td>
+
+                    <td class="wrap-cell">${escapeHtml(row.customer)}</td>
+
+                    <td>${escapeHtml(row.bill)}</td>
+
+                    <td>${escapeHtml(row.disable_bill)}</td>
+
+                    <td class="numeric">${formatWhole(row.disable_nob)}</td>
+
+                    <td class="numeric">${formatDecimal(row.disable_weight, 2)}</td>
+
+                    <td class="numeric">${formatDecimal(row.disable_price, 2)}</td>
+
+                    <td class="numeric">${formatDecimal(row.disable_amount, 2)}</td>
+
+                    <td class="numeric">${formatWhole(row.healthy_nob)}</td>
+
+                    <td class="numeric">${formatDecimal(row.healthy_weight, 2)}</td>
+
+                    <td class="numeric">${formatDecimal(row.healthy_price, 2)}</td>
+
+                    <td class="numeric">${formatDecimal(row.healthy_amount, 2)}</td>
+
+                    <td class="numeric">${formatWhole(row.total_nob)}</td>
+
+                    <td class="numeric">${formatDecimal(row.total_weight, 2)}</td>
+
+                    <td class="numeric">${formatDecimal(row.total_avg_weight, 3)}</td>
+
+                    <td class="numeric">${formatDecimal(row.total_amount, 2)}</td>
+
+                    <td class="numeric">${formatDecimal(row.rejection_weight, 2)}</td>
+
+                    <td class="wrap-cell">${escapeHtml(row.rejection_reason || "-")}</td>
+
+                </tr>
+
+            `).join("");
+
+    }
+
+
+    function updateBreakdownTotals(
+        data,
+        ids
+    ) {
+
+        const totalIds =
+            ids || {
+
+                disableNob: "totalDisableNob",
+
+                disableWeight: "totalDisableWeight",
+
+                disableAmount: "totalDisableAmount",
+
+                healthyNob: "totalHealthyNob",
+
+                healthyWeight: "totalHealthyWeight",
+
+                healthyAmount: "totalHealthyAmount",
+
+                nob: "totalNob",
+
+                weight: "totalWeight",
+
+                amount: "totalAmount",
+
+                rejectionWt: "totalRejectionWt"
+
+            };
+
+
+        const totals = {
+
+            disableNob: sumBy(data, "disable_nob"),
+
+            disableWeight: sumBy(data, "disable_weight"),
+
+            disableAmount: sumBy(data, "disable_amount"),
+
+            healthyNob: sumBy(data, "healthy_nob"),
+
+            healthyWeight: sumBy(data, "healthy_weight"),
+
+            healthyAmount: sumBy(data, "healthy_amount"),
+
+            nob: sumBy(data, "total_nob"),
+
+            weight: sumBy(data, "total_weight"),
+
+            amount: sumBy(data, "total_amount"),
+
+            rejectionWt: sumBy(data, "rejection_weight")
+
+        };
+
+
+        Object.keys(totalIds).forEach(key => {
+
+            const element =
+                document.getElementById(
+                    totalIds[key]
+                );
+
+
+            if (!element) {
+                return;
+            }
+
+
+            const isCount =
+                key === "disableNob" ||
+                key === "healthyNob" ||
+                key === "nob";
+
+
+            element.textContent =
+                isCount
+                    ? formatWhole(totals[key])
+                    : formatDecimal(totals[key], 2);
+
+        });
+
+    }
+
+
+    // ---------------------------------------------------------
     // PUBLIC API
     // ---------------------------------------------------------
 
@@ -834,6 +1012,10 @@ const AdminCommon = (() => {
         escapeHtml,
 
         renderEmptyRow,
+
+        renderBreakdownRows,
+
+        updateBreakdownTotals,
 
         initializeChart,
 

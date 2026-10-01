@@ -943,7 +943,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
-            if (!healthyNobInput.value.trim()) {
+            if (false && !healthyNobInput.value.trim()) {
 
                 showMessage(
                     "Please enter Healthy Birds NOB.",
@@ -954,7 +954,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
-            if (!healthyWeightInput.value.trim()) {
+            if (false && !healthyWeightInput.value.trim()) {
 
                 showMessage(
                     "Please enter Healthy Birds weight.",
@@ -965,7 +965,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
-            if (!healthyPriceInput.value.trim()) {
+            if (false && !healthyPriceInput.value.trim()) {
 
                 showMessage(
                     "Please enter Healthy Birds price.",

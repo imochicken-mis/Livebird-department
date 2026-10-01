@@ -60,6 +60,16 @@ document.addEventListener("DOMContentLoaded", () => {
     let imoPlantData = [];
 
 
+    /*
+     * Bird Quality Status (catching breakdown) data for the
+     * final detail table - Imo Plant customers only.
+     */
+
+    let breakdownAllData = [];
+
+    let imoBreakdownData = [];
+
+
     // =====================================================
     // DEFAULT MONTH
     // =====================================================
@@ -1209,172 +1219,43 @@ function getTopFiveDays(data) {
     // MASTER TABLE
     // =====================================================
 
-    function renderMasterTable(data) {
+    function renderMasterTable() {
 
-        if (!data.length) {
+        /*
+         * Final detail table now shows the Bird Quality Status
+         * (catching breakdown) dataset - same structure and logic
+         * as user1's report table, filtered by this report's own
+         * criteria: month filter + Imo Plant customers only.
+         */
+
+        const filtered =
+            AdminCommon.filterByMonth(
+                imoBreakdownData,
+                monthFilter.value
+            );
+
+
+        if (!filtered.length) {
 
             AdminCommon.renderEmptyRow(
                 imoTableBody,
-                14,
+                23,
                 "No Imo Plant records found."
             );
 
         } else {
 
-            imoTableBody.innerHTML =
-                data.map(row => `
-
-                    <tr>
-
-                        <td>
-                            ${AdminCommon.escapeHtml(
-                                AdminCommon.normalizeDate(
-                                    row.date
-                                )
-                            )}
-                        </td>
-
-                        <td>
-                            ${AdminCommon.escapeHtml(
-                                row.type
-                            )}
-                        </td>
-
-                        <td class="wrap-cell">
-                            ${AdminCommon.escapeHtml(
-                                row.farmer
-                            )}
-                        </td>
-
-                        <td>
-                            ${AdminCommon.escapeHtml(
-                                row.cage
-                            )}
-                        </td>
-
-                        <td>
-                            ${AdminCommon.escapeHtml(
-                                row.batch
-                            )}
-                        </td>
-
-                        <td class="wrap-cell">
-                            ${AdminCommon.escapeHtml(
-                                row.customer
-                            )}
-                        </td>
-
-                        <td>
-                            ${AdminCommon.formatWhole(
-                                row.nob
-                            )}
-                        </td>
-
-                        <td>
-                            ${AdminCommon.formatDecimal(
-                                row.weight,
-                                2
-                            )}
-                        </td>
-
-                        <td>
-                            ${AdminCommon.formatDecimal(
-                                row.price,
-                                2
-                            )}
-                        </td>
-
-                        <td>
-                            ${AdminCommon.escapeHtml(
-                                row.bill
-                            )}
-                        </td>
-
-                        <td>
-                            ${AdminCommon.formatDecimal(
-                                row.amount,
-                                2
-                            )}
-                        </td>
-
-                        <td>
-                            ${AdminCommon.formatDecimal(
-                                row.avg_weight,
-                                2
-                            )}
-                        </td>
-
-                        <td>
-                            ${AdminCommon.formatDecimal(
-                                row.rejection_weight,
-                                2
-                            )}
-                        </td>
-
-                        <td class="wrap-cell">
-                            ${AdminCommon.escapeHtml(
-                                row.reason
-                            )}
-                        </td>
-
-                    </tr>
-
-                `).join("");
+            AdminCommon.renderBreakdownRows(
+                imoTableBody,
+                filtered
+            );
 
         }
 
 
-        document.getElementById(
-            "tableTotalNob"
-        ).textContent =
-            AdminCommon.formatWhole(
-                AdminCommon.sumBy(
-                    data,
-                    "nob"
-                )
-            );
-
-
-        document.getElementById(
-            "tableTotalWeight"
-        ).textContent =
-            AdminCommon.formatDecimal(
-
-                AdminCommon.sumBy(
-                    data,
-                    "weight"
-                ),
-
-                2
-            );
-
-
-        document.getElementById(
-            "tableTotalAmount"
-        ).textContent =
-            AdminCommon.formatDecimal(
-
-                AdminCommon.sumBy(
-                    data,
-                    "amount"
-                ),
-
-                2
-            );
-
-
-        document.getElementById(
-            "tableTotalRejection"
-        ).textContent =
-            AdminCommon.formatDecimal(
-
-                AdminCommon.sumBy(
-                    data,
-                    "rejection_weight"
-                ),
-
-                2
-            );
+        AdminCommon.updateBreakdownTotals(
+            filtered
+        );
 
     }
 
@@ -1478,8 +1359,20 @@ function getTopFiveDays(data) {
 
         try {
 
-            const response =
-                await getDefectReportData();
+            /*
+             * Fetch both datasets in parallel:
+             * - defect report data -> KPIs / charts / summaries
+             * - catching breakdown data -> final detail table
+             */
+
+            const [response, breakdownResponse] =
+                await Promise.all([
+
+                    getDefectReportData(),
+
+                    getCatchingBreakdownData()
+
+                ]);
 
 
             let rows = [];
@@ -1524,6 +1417,48 @@ function getTopFiveDays(data) {
                 });
 
 
+            let breakdownRows = [];
+
+
+            if (
+                Array.isArray(breakdownResponse)
+            ) {
+
+                breakdownRows = breakdownResponse;
+
+            } else if (
+                breakdownResponse &&
+                Array.isArray(breakdownResponse.data)
+            ) {
+
+                breakdownRows = breakdownResponse.data;
+
+            }
+
+
+            breakdownAllData =
+                breakdownRows;
+
+
+            // Same criteria as above:
+            // customer contains "imo plant"
+
+            imoBreakdownData =
+                breakdownAllData.filter(row => {
+
+                    const customer =
+                        String(
+                            row.customer || ""
+                        ).toLowerCase();
+
+
+                    return customer.includes(
+                        "imo plant"
+                    );
+
+                });
+
+
             applyFilter(false);
 
 
@@ -1548,6 +1483,9 @@ function getTopFiveDays(data) {
 
             allReportData = [];
             imoPlantData = [];
+
+            breakdownAllData = [];
+            imoBreakdownData = [];
 
 
             updateDashboard([]);

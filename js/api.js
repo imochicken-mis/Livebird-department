@@ -22,36 +22,143 @@ const API_URL =
     "https://script.google.com/macros/s/AKfycbxmcNomsgsRhz_akI6RlmWGHnDMc2AudiMcri566pKC3cUUtRUPupy2lBbiKRWhI9c/exec";
 
 
-async function sendRequest(payload) {
+async function sendRequestNetwork(payload) {
 
-    const response =
-        await fetch(
-            API_URL,
-            {
-                method: "POST",
+    const action = payload.action || "";
+    const isLogin = /^login/i.test(action);
+    const isRead = /^get/i.test(action);
 
-                headers: {
-                    "Content-Type":
-                        "text/plain;charset=utf-8"
-                },
+    const MAX_TRIES = 3;
+    let lastError = new Error("Server connection failed");
 
-                body:
-                    JSON.stringify(
-                        payload
-                    )
+    for (let attempt = 0; attempt < MAX_TRIES; attempt++) {
+
+        // Reads: try GET first (no redirect problem), then fall back to POST.
+        // Login and saves: always POST (password / data must not go in URL).
+        const useGet = isRead && !isLogin && attempt % 2 === 0;
+
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 45000);
+
+        try {
+
+            let response;
+
+            if (useGet) {
+                response = await fetch(
+                    API_URL + "?payload=" + encodeURIComponent(JSON.stringify(payload)),
+                    { method: "GET", signal: controller.signal }
+                );
+            } else {
+                response = await fetch(API_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify(payload),
+                    signal: controller.signal
+                });
             }
-        );
 
+            if (!response.ok) {
+                throw new Error("Server connection failed");
+            }
 
-    if (!response.ok) {
+            const text = await response.text();
 
-        throw new Error(
-            "Server connection failed"
-        );
+            let json;
+            try {
+                json = JSON.parse(text);
+            } catch (parseError) {
+                // Got the doGet() "API is running" page (or some HTML).
+                // doPost never ran, so retrying is safe even for saves.
+                lastError = new Error("Server returned a non-JSON reply");
+                await new Promise(r => setTimeout(r, 800 * (attempt + 1)));
+                continue;
+            }
+
+            return json;
+
+        } catch (error) {
+
+            lastError = error;
+
+            // Network error / timeout: only retry reads.
+            // A save may already have been written, so never auto-retry it.
+            if (!isRead && !isLogin) {
+                throw error;
+            }
+
+            await new Promise(r => setTimeout(r, 800 * (attempt + 1)));
+
+        } finally {
+            clearTimeout(timer);
+        }
     }
 
+    throw lastError;
+}
 
-    return await response.json();
+
+
+// =========================================================
+// REPORT CACHE (sessionStorage)
+// Read results are kept for CACHE_TTL_MS so going to another
+// page and coming back does not reload everything.
+// Cleared automatically on: any save/add, login, Refresh click.
+// =========================================================
+
+const CACHE_TTL_MS = 5 * 60 * 1000;          // 5 minutes
+const CACHE_PREFIX = "lbcache:";
+const NEVER_CACHE = /^(login|getCatchingRecordLookup|getCatchingRecordBySerial)/i;
+
+function clearApiCache() {
+    try {
+        Object.keys(sessionStorage)
+            .filter(k => k.startsWith(CACHE_PREFIX))
+            .forEach(k => sessionStorage.removeItem(k));
+    } catch (e) {}
+}
+
+// Any button whose id contains "refresh" (refreshBtn, kpiRefreshBtn)
+// clears the cache first, so Refresh always gets live data.
+document.addEventListener("click", (event) => {
+    const btn = event.target.closest && event.target.closest("[id*='efresh']");
+    if (btn) clearApiCache();
+}, true);
+
+
+async function sendRequest(payload) {
+
+    const action = String(payload.action || "");
+    const cacheable = /^get/i.test(action) && !NEVER_CACHE.test(action);
+    const key = CACHE_PREFIX + JSON.stringify(payload);
+
+    if (cacheable) {
+        try {
+            const hit = JSON.parse(sessionStorage.getItem(key) || "null");
+            if (hit && Date.now() - hit.t < CACHE_TTL_MS) {
+                return hit.data;
+            }
+        } catch (e) {}
+    }
+
+    const result = await sendRequestNetwork(payload);
+
+    if (result && result.success) {
+
+        if (/^(save|add|login)/i.test(action)) {
+            clearApiCache();
+        }
+
+        if (cacheable) {
+            try {
+                sessionStorage.setItem(key, JSON.stringify({ t: Date.now(), data: result }));
+            } catch (e) {
+                clearApiCache();   // storage full - drop old entries, skip caching
+            }
+        }
+    }
+
+    return result;
 }
 
 

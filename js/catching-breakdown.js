@@ -55,6 +55,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const totalAmount =
         document.getElementById("totalAmount");
 
+    const totalRejectionWt =
+        document.getElementById("totalRejectionWt");
+
     const loggedUser =
         document.getElementById("loggedUser");
 
@@ -313,7 +316,7 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
             row.innerHTML = `
-                <td colspan="21">
+                <td colspan="23">
                     No report records found.
                 </td>
             `;
@@ -371,9 +374,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 <td>${formatNumber(record.total_weight, 2)}</td>
 
-                <td>${formatNumber(record.total_price, 2)}</td>
+                <td>${formatNumber(record.total_avg_weight, 3)}</td>
 
                 <td>${formatNumber(record.total_amount, 2)}</td>
+
+                <td>${formatNumber(record.rejection_weight, 2)}</td>
+
+                <td>${escapeHtml(record.rejection_reason || "-")}</td>
 
             `;
 
@@ -404,6 +411,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let nob = 0;
         let weight = 0;
         let amount = 0;
+        let rejectionWt = 0;
 
 
         data.forEach(row => {
@@ -419,6 +427,7 @@ document.addEventListener("DOMContentLoaded", () => {
             nob += safeNumber(row.total_nob);
             weight += safeNumber(row.total_weight);
             amount += safeNumber(row.total_amount);
+            rejectionWt += safeNumber(row.rejection_weight);
 
         });
 
@@ -450,6 +459,8 @@ document.addEventListener("DOMContentLoaded", () => {
         totalAmount.textContent =
             formatDisplayNumber(amount, 2);
 
+        totalRejectionWt.textContent =
+            formatDisplayNumber(rejectionWt, 2);
 
     }
 

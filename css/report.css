@@ -673,18 +673,45 @@
    BIRD QUALITY STATUS REPORT - COLUMN COLOUR GROUPS
 ================================ */
 
-/* Red — BILL NO + DISABLE NOB/WEIGHT/PRICE/AMOUNT */
-.bird-quality-table tbody td:nth-last-child(n+9):nth-last-child(-n+13) {
+/* ===============================
+   NOTE: Two table layouts share .bird-quality-table:
+   - Admin "9) Bird Quality Status Report" (20 columns, no REJECTION WT / REASON)
+   - User1 catching-breakdown #reportTable (23 columns, ends with REJECTION WT + REASON)
+   The colour groups are anchored from the right (nth-last-child),
+   so each layout gets its own scoped rules below.
+================================ */
+
+/* ---- Admin 9) report table (20 columns) ---- */
+
+/* Red — D.BILL NO + DISABLE NOB/WEIGHT/PRICE/AMOUNT */
+.admin-analytics-page .bird-quality-table tbody td:nth-last-child(n+9):nth-last-child(-n+13) {
     background: #fdecea !important;
 }
 
 /* Green — HEALTHY NOB/WEIGHT/PRICE/AMOUNT */
-.bird-quality-table tbody td:nth-last-child(n+5):nth-last-child(-n+8) {
+.admin-analytics-page .bird-quality-table tbody td:nth-last-child(n+5):nth-last-child(-n+8) {
     background: #e8f5e9 !important;
 }
 
 /* Blue — TOTAL NOB/WEIGHT/PRICE/AMOUNT */
-.bird-quality-table tbody td:nth-last-child(-n+4) {
+.admin-analytics-page .bird-quality-table tbody td:nth-last-child(-n+4) {
+    background: #e3edfb !important;
+}
+
+/* ---- User1 Bird Quality Status table (23 columns) ---- */
+
+/* Red — D.BILL NO + DISABLE NOB/WEIGHT/PRICE/AMOUNT */
+#reportTable.bird-quality-table tbody td:nth-last-child(n+11):nth-last-child(-n+15) {
+    background: #fdecea !important;
+}
+
+/* Green — HEALTHY NOB/WEIGHT/PRICE/AMOUNT */
+#reportTable.bird-quality-table tbody td:nth-last-child(n+7):nth-last-child(-n+10) {
+    background: #e8f5e9 !important;
+}
+
+/* Blue — TOTAL NOB/WEIGHT/AVG WEIGHT/AMOUNT (REJECTION WT + REASON stay neutral) */
+#reportTable.bird-quality-table tbody td:nth-last-child(n+3):nth-last-child(-n+6) {
     background: #e3edfb !important;
 }
 .negative-cell {

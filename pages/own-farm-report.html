@@ -942,18 +942,27 @@
                         <thead>
 
                             <tr>
+                                <th>SERIAL NO</th>
                                 <th>DATE</th>
                                 <th>TYPE</th>
-                                <th>FARMER / LOCATION</th>
+                                <th>FARMER/LOCATION</th>
                                 <th>CAGE NO</th>
                                 <th>BATCH NO</th>
                                 <th>CUSTOMER</th>
-                                <th>NOB</th>
-                                <th>FINAL WEIGHT (KG)</th>
-                                <th>PRICE (RS.)</th>
                                 <th>BILL NO</th>
-                                <th>AMOUNT (RS.)</th>
-                                <th>AVG WEIGHT (KG)</th>
+                                <th>D.BILL NO</th>
+                                <th>DISABLE NOB</th>
+                                <th>DISABLE WEIGHT</th>
+                                <th>DISABLE PRICE</th>
+                                <th>DISABLE AMOUNT</th>
+                                <th>HEALTHY NOB</th>
+                                <th>HEALTHY WEIGHT</th>
+                                <th>HEALTHY PRICE</th>
+                                <th>HEALTHY AMOUNT</th>
+                                <th>TOTAL NOB</th>
+                                <th>TOTAL WEIGHT</th>
+                                <th>AVG WEIGHT</th>
+                                <th>TOTAL AMOUNT</th>
                                 <th>REJECTION WT</th>
                                 <th>REASON</th>
                             </tr>
@@ -966,7 +975,7 @@
                             <tr>
 
                                 <td
-                                    colspan="14"
+                                    colspan="23"
                                     class="analytics-empty-state"
                                 >
                                     Loading Imo Plant supplies...
@@ -974,43 +983,38 @@
 
                             </tr>
 
-                        </tbody>
-
-
-                        <tfoot>
+                        </tbody>                        <tfoot>
 
                             <tr>
 
-                                <td>
-                                    Imo Plant TOTAL:
-                                </td>
+                                <td></td>
+
+                                <td>Imo Plant TOTAL:</td>
 
                                 <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
-
-                                <td id="imoTotalNob">
-                                    0
-                                </td>
-
-                                <td id="imoTotalWeight">
-                                    0.00
-                                </td>
-
                                 <td></td>
                                 <td></td>
 
-                                <td id="imoTotalAmount">
-                                    0.00
-                                </td>
-
+                                <td id="imoDisableNob" class="numeric">0</td>
+                                <td id="imoDisableWeight" class="numeric">0.00</td>
                                 <td></td>
+                                <td id="imoDisableAmount" class="numeric">0.00</td>
 
-                                <td id="imoTotalRejection">
-                                    0.00
-                                </td>
+                                <td id="imoHealthyNob" class="numeric">0</td>
+                                <td id="imoHealthyWeight" class="numeric">0.00</td>
+                                <td></td>
+                                <td id="imoHealthyAmount" class="numeric">0.00</td>
+
+                                <td id="imoTotalNob" class="numeric">0</td>
+                                <td id="imoTotalWeight" class="numeric">0.00</td>
+                                <td></td>
+                                <td id="imoTotalAmount" class="numeric">0.00</td>
+
+                                <td id="imoTotalRejectionWt" class="numeric">0.00</td>
 
                                 <td></td>
 
@@ -1056,18 +1060,27 @@
                         <thead>
 
                             <tr>
+                                <th>SERIAL NO</th>
                                 <th>DATE</th>
                                 <th>TYPE</th>
-                                <th>FARMER / LOCATION</th>
+                                <th>FARMER/LOCATION</th>
                                 <th>CAGE NO</th>
                                 <th>BATCH NO</th>
                                 <th>CUSTOMER</th>
-                                <th>NOB</th>
-                                <th>FINAL WEIGHT (KG)</th>
-                                <th>PRICE (RS.)</th>
                                 <th>BILL NO</th>
-                                <th>AMOUNT (RS.)</th>
-                                <th>AVG WEIGHT (KG)</th>
+                                <th>D.BILL NO</th>
+                                <th>DISABLE NOB</th>
+                                <th>DISABLE WEIGHT</th>
+                                <th>DISABLE PRICE</th>
+                                <th>DISABLE AMOUNT</th>
+                                <th>HEALTHY NOB</th>
+                                <th>HEALTHY WEIGHT</th>
+                                <th>HEALTHY PRICE</th>
+                                <th>HEALTHY AMOUNT</th>
+                                <th>TOTAL NOB</th>
+                                <th>TOTAL WEIGHT</th>
+                                <th>AVG WEIGHT</th>
+                                <th>TOTAL AMOUNT</th>
                                 <th>REJECTION WT</th>
                                 <th>REASON</th>
                             </tr>
@@ -1080,7 +1093,7 @@
                             <tr>
 
                                 <td
-                                    colspan="14"
+                                    colspan="23"
                                     class="analytics-empty-state"
                                 >
                                     Loading outside customer supplies...
@@ -1088,43 +1101,38 @@
 
                             </tr>
 
-                        </tbody>
-
-
-                        <tfoot>
+                        </tbody>                        <tfoot>
 
                             <tr>
 
-                                <td>
-                                    CUSTOMERS TOTAL:
-                                </td>
+                                <td></td>
+
+                                <td>CUSTOMERS TOTAL:</td>
 
                                 <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
-
-                                <td id="outsideTotalNob">
-                                    0
-                                </td>
-
-                                <td id="outsideTotalWeight">
-                                    0.00
-                                </td>
-
                                 <td></td>
                                 <td></td>
 
-                                <td id="outsideTotalAmount">
-                                    0.00
-                                </td>
-
+                                <td id="outsideDisableNob" class="numeric">0</td>
+                                <td id="outsideDisableWeight" class="numeric">0.00</td>
                                 <td></td>
+                                <td id="outsideDisableAmount" class="numeric">0.00</td>
 
-                                <td id="outsideTotalRejection">
-                                    0.00
-                                </td>
+                                <td id="outsideHealthyNob" class="numeric">0</td>
+                                <td id="outsideHealthyWeight" class="numeric">0.00</td>
+                                <td></td>
+                                <td id="outsideHealthyAmount" class="numeric">0.00</td>
+
+                                <td id="outsideTotalNob" class="numeric">0</td>
+                                <td id="outsideTotalWeight" class="numeric">0.00</td>
+                                <td></td>
+                                <td id="outsideTotalAmount" class="numeric">0.00</td>
+
+                                <td id="outsideTotalRejectionWt" class="numeric">0.00</td>
 
                                 <td></td>
 

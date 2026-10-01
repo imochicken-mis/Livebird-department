@@ -63,6 +63,15 @@ document.addEventListener("DOMContentLoaded", () => {
     let allReportData = [];
 
 
+    /*
+     * Bird Quality Status (catching breakdown) data.
+     * Feeds the final detail table - same dataset as
+     * user1's Bird Quality Status report.
+     */
+
+    let breakdownData = [];
+
+
     // =====================================================
     // CHARTS
     // =====================================================
@@ -1423,13 +1432,32 @@ document.addEventListener("DOMContentLoaded", () => {
     // TABLE
     // =====================================================
 
-    function renderTable(data) {
+    function renderTable() {
 
-        if (!data.length) {
+        /*
+         * Final detail table now shows the Bird Quality Status
+         * (catching breakdown) dataset - same structure and logic
+         * as user1's report table, filtered by this report's own
+         * date range (fromDate / toDate).
+         */
+
+        const filtered =
+            AdminCommon.filterByDateRange(
+
+                breakdownData,
+
+                fromDate.value,
+
+                toDate.value
+
+            );
+
+
+        if (!filtered.length) {
 
             AdminCommon.renderEmptyRow(
                 tableBody,
-                14,
+                23,
                 "No analytics records found."
             );
 
@@ -1439,108 +1467,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        tableBody.innerHTML =
-            data.map(row => `
-
-                <tr>
-
-                    <td>
-                        ${AdminCommon.escapeHtml(
-                            AdminCommon.normalizeDate(
-                                row.date
-                            )
-                        )}
-                    </td>
-
-                    <td>
-                        ${AdminCommon.escapeHtml(
-                            row.type
-                        )}
-                    </td>
-
-                    <td class="wrap-cell">
-                        ${AdminCommon.escapeHtml(
-                            row.farmer
-                        )}
-                    </td>
-
-                    <td>
-                        ${AdminCommon.escapeHtml(
-                            row.cage
-                        )}
-                    </td>
-
-                    <td>
-                        ${AdminCommon.escapeHtml(
-                            row.batch
-                        )}
-                    </td>
-
-                    <td class="wrap-cell">
-                        ${AdminCommon.escapeHtml(
-                            row.customer
-                        )}
-                    </td>
-
-                    <td class="numeric">
-                        ${AdminCommon.formatWhole(
-                            row.nob
-                        )}
-                    </td>
-
-                    <td class="numeric">
-                        ${AdminCommon.formatDecimal(
-                            row.weight,
-                            2
-                        )}
-                    </td>
-
-                    <td class="numeric">
-                        ${AdminCommon.formatDecimal(
-                            row.price,
-                            2
-                        )}
-                    </td>
-
-                    <td>
-                        ${AdminCommon.escapeHtml(
-                            row.bill
-                        )}
-                    </td>
-
-                    <td class="numeric">
-                        ${AdminCommon.formatDecimal(
-                            row.amount,
-                            2
-                        )}
-                    </td>
-
-                    <td class="numeric">
-                        ${AdminCommon.formatDecimal(
-                            row.avg_weight,
-                            2
-                        )}
-                    </td>
-
-                    <td class="numeric">
-                        ${AdminCommon.formatDecimal(
-                            row.rejection_weight,
-                            2
-                        )}
-                    </td>
-
-                    <td class="wrap-cell">
-                        ${AdminCommon.escapeHtml(
-                            row.reason
-                        )}
-                    </td>
-
-                </tr>
-
-            `).join("");
+        AdminCommon.renderBreakdownRows(
+            tableBody,
+            filtered
+        );
 
 
-        updateTableTotals(data);
+        updateTableTotals(filtered);
 
     }
 
@@ -1551,57 +1484,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function updateTableTotals(data) {
 
-        document.getElementById(
-            "tableTotalNob"
-        ).textContent =
-            AdminCommon.formatWhole(
-                AdminCommon.sumBy(
-                    data,
-                    "nob"
-                )
-            );
-
-
-        document.getElementById(
-            "tableTotalWeight"
-        ).textContent =
-            AdminCommon.formatDecimal(
-
-                AdminCommon.sumBy(
-                    data,
-                    "weight"
-                ),
-
-                2
-            );
-
-
-        document.getElementById(
-            "tableTotalAmount"
-        ).textContent =
-            AdminCommon.formatDecimal(
-
-                AdminCommon.sumBy(
-                    data,
-                    "amount"
-                ),
-
-                2
-            );
-
-
-        document.getElementById(
-            "tableTotalRejection"
-        ).textContent =
-            AdminCommon.formatDecimal(
-
-                AdminCommon.sumBy(
-                    data,
-                    "rejection_weight"
-                ),
-
-                2
-            );
+        AdminCommon.updateBreakdownTotals(
+            data
+        );
 
     }
 
@@ -1624,9 +1509,7 @@ document.addEventListener("DOMContentLoaded", () => {
             metrics
         );
 
-        renderTable(
-            data
-        );
+        renderTable();
 
     }
 
@@ -1754,8 +1637,20 @@ document.addEventListener("DOMContentLoaded", () => {
              * Python get_defect_report_data().
              */
 
-            const response =
-                await getDefectReportData();
+            /*
+             * Fetch both datasets in parallel:
+             * - defect report data -> KPIs / charts / summaries
+             * - catching breakdown data -> final detail table
+             */
+
+            const [response, breakdownResponse] =
+                await Promise.all([
+
+                    getDefectReportData(),
+
+                    getCatchingBreakdownData()
+
+                ]);
 
 
             // Supports either:
@@ -1787,6 +1682,31 @@ document.addEventListener("DOMContentLoaded", () => {
                 }));
 
 
+            let breakdownRows = [];
+
+
+            if (
+                Array.isArray(breakdownResponse)
+            ) {
+
+                breakdownRows = breakdownResponse;
+
+            } else if (
+                breakdownResponse &&
+                Array.isArray(breakdownResponse.data)
+            ) {
+
+                breakdownRows = breakdownResponse.data;
+
+            }
+
+
+            breakdownData =
+                breakdownRows.map(row => ({
+                    ...row
+                }));
+
+
             updateDashboard(
                 allReportData
             );
@@ -1812,6 +1732,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             allReportData = [];
+
+            breakdownData = [];
 
 
             updateDashboard([]);
