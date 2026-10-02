@@ -726,6 +726,180 @@ body.admin-analytics-page {
     font-weight: 700;
 }
 
+
+
+/* =========================================================
+   GROUPED TWO-ROW HEADER (matches user1 Bird Quality Status)
+   Row 1: identity labels + HEALTHY / DISABLE / TOTAL groups
+   Row 2: empty identity spacers + NOB / WEIGHT / PRICE / AMOUNT
+   No rowspan anywhere - html2canvas mis-renders rowspan cells
+   during PDF export, so the identity cells are split into a
+   label cell (row 1) and an empty spacer cell (row 2) that the
+   rules below merge visually.
+
+   Row 1 is pinned to exactly 37px (border-box is global) and
+   row 2 sticks at 37px, so the two rows never overlap.
+
+   The stickiness lives on the <tr>, not the <th>: a sticky cell
+   is confined to its containing block (the row), so if the row
+   scrolls away the cell is dragged with it.
+
+   Everything below is scoped to .quality-detail-table, the four
+   admin detail tables rebuilt with this layout. The other admin
+   tables (e.g. admin-catching-breakdown-report, 20 columns,
+   DISABLE-first) keep the plain gradient header above.
+========================================================= */
+
+.analytics-table.quality-detail-table thead tr {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+}
+
+.analytics-table.quality-detail-table thead tr.group-header-row {
+    top: 0;
+    z-index: 6;
+}
+
+.analytics-table.quality-detail-table thead tr.sub-header-row {
+    top: 37px;
+    z-index: 6;
+}
+
+/* Row 1 is pinned to 37px so row 2 can stick at exactly that offset.
+   Row 2 is pinned to the SAME 37px on purpose: the diagonal gradient is
+   sized to its own box, so a shorter row 2 would sample a lighter part of
+   the ramp and the identity block would split into two visibly different
+   rows. Equal heights make the two bands identical. */
+
+.analytics-table.quality-detail-table thead tr.group-header-row th,
+.analytics-table.quality-detail-table thead tr.sub-header-row th {
+    height: 37px;
+    line-height: 17px;
+    border-bottom: none;
+}
+
+/* Header fills use a DIAGONAL gradient (135deg), matching the summary
+   tables on the same pages.
+
+   The identity gradient is painted on the <tr>, not on each <th>, so it
+   spans the full table width as ONE ramp instead of restarting inside
+   every column - which is what made neighbouring identity cells look
+   like separate blocks. The identity cells are then transparent and the
+   row's gradient shows through.
+
+   Group cells keep their own per-cell gradient, but since every cell in
+   the group is the same width and both rows are the same height, the
+   HEALTHY / DISABLE / TOTAL bands read as single continuous blocks. */
+
+.analytics-table.quality-detail-table thead tr {
+    background: linear-gradient(135deg, #010853 0%, #1e5aa8 100%);
+}
+
+.analytics-table.quality-detail-table thead .group-header-row th,
+.analytics-table.quality-detail-table thead .sub-header-row th {
+    background: transparent;
+    border-left: none;
+    border-right: none;
+}
+
+.analytics-table.quality-detail-table thead .group-header-row th {
+    text-align: center;
+    letter-spacing: 0.5px;
+}
+
+.analytics-table.quality-detail-table thead tr.group-header-row th.identity {
+    text-align: left;
+    vertical-align: top;
+    border-bottom: none;
+}
+
+.analytics-table.quality-detail-table thead tr.sub-header-row th.identity-spacer {
+    border-top: none;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+/* Only the boundaries BETWEEN groups get a divider - the coloured
+   band already reads as one block, so sub-columns have no lines. */
+
+.analytics-table.quality-detail-table thead tr.group-header-row th.identity,
+.analytics-table.quality-detail-table thead tr.sub-header-row th.identity-spacer {
+    border-right: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.analytics-table.quality-detail-table thead th.group-start {
+    border-left: 1px solid rgba(255, 255, 255, 0.55) !important;
+}
+
+.analytics-table.quality-detail-table thead th.group-end {
+    border-right: 1px solid rgba(255, 255, 255, 0.55) !important;
+}
+
+.analytics-table.quality-detail-table thead tr.group-header-row th.identity:first-child,
+.analytics-table.quality-detail-table thead tr.sub-header-row th.identity-spacer:first-child {
+    border-left: none;
+}
+
+.analytics-table.quality-detail-table thead tr.group-header-row th.identity:last-child,
+.analytics-table.quality-detail-table thead tr.sub-header-row th.identity-spacer:last-child {
+    border-right: none;
+}
+
+/* Group header tinting - each group keeps its own hue (so HEALTHY still
+   reads green and DISABLE red) but picks up the same diagonal sweep.
+   The top-left stop is a lighter shade of the flat body-column colour,
+   the bottom-right stop is the flat colour itself, so the tint under the
+   band still matches the columns below it. Diagonal, for the seam reason
+   noted above. */
+
+.analytics-table.quality-detail-table thead th.group-healthy {
+    background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+}
+
+.analytics-table.quality-detail-table thead th.group-disable {
+    background: linear-gradient(135deg, #a83428 0%, #8c1c13 100%);
+}
+
+.analytics-table.quality-detail-table thead th.group-total {
+    background: linear-gradient(135deg, #1d4e8f 0%, #12386b 100%);
+}
+
+
+/* ---- Body column colours (23-column detail tables only) ----
+   Anchored from the right so REJECTION WT + REASON stay neutral.
+   Order is HEALTHY (9-12) -> DISABLE (13-17) -> TOTAL (18-21).
+
+   Scoped to .quality-detail-table, which marks ONLY the four
+   admin pages rebuilt with this 23-column layout. Do not reuse
+   .bird-quality-table for this: admin-catching-breakdown-report
+   also carries that class but is a 20-column DISABLE-first
+   table with a different column order. */
+
+.analytics-table.quality-detail-table tbody tr td:nth-last-child(n+7):nth-last-child(-n+11) {
+    background: #fdecea !important;
+}
+
+.analytics-table.quality-detail-table tbody tr td:nth-last-child(n+12):nth-last-child(-n+15) {
+    background: #e8f5e9 !important;
+}
+
+.analytics-table.quality-detail-table tbody tr td:nth-last-child(n+3):nth-last-child(-n+6) {
+    background: #e3edfb !important;
+}
+
+.analytics-table.quality-detail-table tbody tr:nth-child(odd) td {
+    background: #ffffff;
+}
+
+.analytics-table.quality-detail-table tbody tr:nth-child(even) td {
+    background: #f8fafc;
+}
+
+.analytics-table.quality-detail-table tbody tr:hover td {
+    background: #eff6ff;
+}
+
 .analytics-table tbody tr:nth-child(odd) td {
     background: #ffffff;
 }

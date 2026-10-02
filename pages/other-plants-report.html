@@ -1035,34 +1035,89 @@
 
                 <div class="analytics-table-wrapper">
 
-                    <table class="analytics-table">
+                    <table class="analytics-table quality-detail-table">
 
                         <thead>
 
-                            <tr>
-                                <th>SERIAL NO</th>
-                                <th>DATE</th>
-                                <th>TYPE</th>
-                                <th>FARMER/LOCATION</th>
-                                <th>CAGE NO</th>
-                                <th>BATCH NO</th>
-                                <th>CUSTOMER</th>
-                                <th>BILL NO</th>
-                                <th>D.BILL NO</th>
-                                <th>DISABLE NOB</th>
-                                <th>DISABLE WEIGHT</th>
-                                <th>DISABLE PRICE</th>
-                                <th>DISABLE AMOUNT</th>
-                                <th>HEALTHY NOB</th>
-                                <th>HEALTHY WEIGHT</th>
-                                <th>HEALTHY PRICE</th>
-                                <th>HEALTHY AMOUNT</th>
-                                <th>TOTAL NOB</th>
-                                <th>TOTAL WEIGHT</th>
-                                <th>AVG WEIGHT</th>
-                                <th>TOTAL AMOUNT</th>
-                                <th>REJECTION WT</th>
-                                <th>REASON</th>
+                            <tr class="group-header-row">
+
+                                <th class="identity">SERIAL NO</th>
+
+                                <th class="identity">DATE</th>
+
+                                <th class="identity">TYPE</th>
+
+                                <th class="identity">FARMER/LOCATION</th>
+
+                                <th class="identity">CAGE NO</th>
+
+                                <th class="identity">BATCH NO</th>
+
+                                <th class="identity">CUSTOMER</th>
+
+                                <th class="identity">BILL NO</th>
+
+                                <th colspan="4" class="group-healthy group-start">HEALTHY BIRDS</th>
+
+                                <th colspan="5" class="group-disable group-start">DISABLE BIRDS</th>
+
+                                <th colspan="4" class="group-total group-start group-end">TOTAL</th>
+
+                                <th class="identity">REJECTION WT</th>
+
+                                <th class="identity">REASON</th>
+
+                            </tr>
+
+
+                            <tr class="sub-header-row">
+
+                                <th class="identity-spacer"></th>
+
+                                <th class="identity-spacer"></th>
+
+                                <th class="identity-spacer"></th>
+
+                                <th class="identity-spacer"></th>
+
+                                <th class="identity-spacer"></th>
+
+                                <th class="identity-spacer"></th>
+
+                                <th class="identity-spacer"></th>
+
+                                <th class="identity-spacer"></th>
+
+                                <th class="group-healthy group-start">NOB</th>
+
+                                <th class="group-healthy">WEIGHT</th>
+
+                                <th class="group-healthy">PRICE</th>
+
+                                <th class="group-healthy">AMOUNT</th>
+
+                                <th class="group-disable group-start">D.BILL NO</th>
+
+                                <th class="group-disable">NOB</th>
+
+                                <th class="group-disable">WEIGHT</th>
+
+                                <th class="group-disable">PRICE</th>
+
+                                <th class="group-disable">AMOUNT</th>
+
+                                <th class="group-total group-start">NOB</th>
+
+                                <th class="group-total">WEIGHT</th>
+
+                                <th class="group-total">AVG WEIGHT</th>
+
+                                <th class="group-total group-end">AMOUNT</th>
+
+                                <th class="identity-spacer"></th>
+
+                                <th class="identity-spacer"></th>
+
                             </tr>
 
                         </thead>
@@ -1098,17 +1153,18 @@
                                 <td></td>
                                 <td></td>
                                 <td></td>
-                                <td></td>
-
-                                <td id="totalDisableNob" class="numeric">0</td>
-                                <td id="totalDisableWeight" class="numeric">0.00</td>
-                                <td></td>
-                                <td id="totalDisableAmount" class="numeric">0.00</td>
+                                
 
                                 <td id="totalHealthyNob" class="numeric">0</td>
                                 <td id="totalHealthyWeight" class="numeric">0.00</td>
                                 <td></td>
                                 <td id="totalHealthyAmount" class="numeric">0.00</td>
+
+                                <td></td>
+                                <td id="totalDisableNob" class="numeric">0</td>
+                                <td id="totalDisableWeight" class="numeric">0.00</td>
+                                <td></td>
+                                <td id="totalDisableAmount" class="numeric">0.00</td>
 
                                 <td id="totalNob" class="numeric">0</td>
                                 <td id="totalWeight" class="numeric">0.00</td>

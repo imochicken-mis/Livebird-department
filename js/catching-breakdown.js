@@ -348,9 +348,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 <td>${escapeHtml(record.batch)}</td>
 
-                <td>${escapeHtml(record.customer)}</td>
+                <td>${escapeHtml(record.customer)}</td><td>${escapeHtml(record.bill)}</td>
 
-                <td>${escapeHtml(record.bill)}</td>
+                <td>${formatNumber(record.healthy_nob, 0)}</td>
+
+                <td>${formatNumber(record.healthy_weight, 2)}</td>
+
+                <td>${formatNumber(record.healthy_price, 2)}</td>
+
+                <td>${formatNumber(record.healthy_amount, 2)}</td>
 
                 <td>${escapeHtml(record.disable_bill)}</td>
 
@@ -361,14 +367,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 <td>${formatNumber(record.disable_price, 2)}</td>
 
                 <td>${formatNumber(record.disable_amount, 2)}</td>
-
-                <td>${formatNumber(record.healthy_nob, 0)}</td>
-
-                <td>${formatNumber(record.healthy_weight, 2)}</td>
-
-                <td>${formatNumber(record.healthy_price, 2)}</td>
-
-                <td>${formatNumber(record.healthy_amount, 2)}</td>
 
                 <td>${formatNumber(record.total_nob, 0)}</td>
 
@@ -567,8 +565,25 @@ document.addEventListener("DOMContentLoaded", () => {
         decimals
     ) {
 
+        // Blank / missing / zero values are
+        // displayed as "-"
+
+        if (
+            value === null ||
+            value === undefined ||
+            String(value).trim() === ""
+        ) {
+            return "-";
+        }
+
+
         const number =
             safeNumber(value);
+
+
+        if (number === 0) {
+            return "-";
+        }
 
         return number.toLocaleString(
             "en-US",
@@ -585,6 +600,12 @@ document.addEventListener("DOMContentLoaded", () => {
         value,
         decimals
     ) {
+
+        // Zero totals are displayed as "-"
+
+        if (!value || !Number.isFinite(value)) {
+            return "-";
+        }
 
         return value.toLocaleString(
             "en-US",

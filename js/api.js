@@ -108,7 +108,7 @@ async function sendRequestNetwork(payload) {
 
 const CACHE_TTL_MS = 5 * 60 * 1000;          // 5 minutes
 const CACHE_PREFIX = "lbcache:";
-const NEVER_CACHE = /^(login|getCatchingRecordLookup|getCatchingRecordBySerial)/i;
+const NEVER_CACHE = /^(login|getCatchingRecordLookup|getCatchingRecordBySerial|getRefreshReportCache)/i;
 
 function clearApiCache() {
     try {
@@ -118,11 +118,33 @@ function clearApiCache() {
     } catch (e) {}
 }
 
+// A pending backend cache-bust, if a Refresh click started one.
+//
+// The Apps Script backend serves report payloads from CacheService for
+// 10 minutes and only drops that cache on a save/add, so a sheet edit
+// made directly in Google Sheets is invisible until the cache expires.
+// Refresh therefore asks the backend to drop its report caches too.
+//
+// The request is stored here rather than fired and forgotten, because the
+// page's own reload starts on the same click. Without the barrier the
+// report fetch can reach the backend before the clear lands and get the
+// stale payload. Every network read waits on this promise first.
+let pendingCacheBust_ = null;
+
 // Any button whose id contains "refresh" (refreshBtn, kpiRefreshBtn)
-// clears the cache first, so Refresh always gets live data.
+// clears the browser cache and kicks off the backend cache-bust.
 document.addEventListener("click", (event) => {
     const btn = event.target.closest && event.target.closest("[id*='efresh']");
-    if (btn) clearApiCache();
+    if (!btn) return;
+
+    clearApiCache();
+
+    pendingCacheBust_ = sendRequestNetwork({ action: "getRefreshReportCache" })
+        .catch(function () {
+            // Backend unreachable - the reload still runs, it just may
+            // fall back to whatever the backend cache holds.
+        });
+
 }, true);
 
 
@@ -139,6 +161,13 @@ async function sendRequest(payload) {
                 return hit.data;
             }
         } catch (e) {}
+    }
+
+    // Let a Refresh-triggered backend cache-bust finish first, otherwise
+    // this read can be served from the cache we are trying to drop.
+    if (cacheable && pendingCacheBust_) {
+        await pendingCacheBust_;
+        pendingCacheBust_ = null;
     }
 
     const result = await sendRequestNetwork(payload);

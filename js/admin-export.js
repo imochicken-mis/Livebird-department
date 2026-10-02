@@ -312,11 +312,37 @@ async function exportTableToPDF(table, tableTitle) {
     // Temporarily disable "position: sticky" - otherwise
     // html2canvas freezes header/footer rows at their current
     // scroll position instead of their true row position.
+    //
+    // NOTE: css/report.css puts sticky on #reportTable thead TR
+    // (not on th), so "thead tr" must be included here - otherwise
+    // a scrolled table captures an EMPTY header row (verified with
+    // html2canvas 1.4.1: darkRatio 0.922 -> 0.000).
+
+    // html2canvas paints the element at its CURRENT position inside
+    // the scrollable wrapper. If the wrapper is scrolled, the thead /
+    // tfoot boxes sit outside their captured canvas and the header
+    // comes out empty, cut short, or frozen INSIDE the body image.
+    // Scroll the wrapper back to the top for the capture, then give
+    // the user their scroll position back afterwards.
+
+    const scrollWrapper =
+        table.closest(
+            ".report-table-wrapper, .analytics-table-wrapper"
+        ) || table.parentElement;
+
+    const savedScroll = scrollWrapper
+        ? { top: scrollWrapper.scrollTop, left: scrollWrapper.scrollLeft }
+        : null;
+
+    if (scrollWrapper) {
+        scrollWrapper.scrollTop = 0;
+        scrollWrapper.scrollLeft = 0;
+    }
 
     table.classList.add("pdf-capture-mode");
 
     const stickyElements = table.querySelectorAll(
-        "thead th, tfoot td, tfoot th"
+        "thead tr, thead th, tfoot tr, tfoot td, tfoot th, tbody td:first-child"
     );
 
     const originalPositions = [];
@@ -382,12 +408,24 @@ async function exportTableToPDF(table, tableTitle) {
 
     table.classList.remove("pdf-capture-mode");
 
+    // Restore the user's scroll position
+
+    if (scrollWrapper && savedScroll) {
+        scrollWrapper.scrollTop = savedScroll.top;
+        scrollWrapper.scrollLeft = savedScroll.left;
+    }
+
+    // Head/foot images are stretched to contentWidth, so their drawn
+    // height must come from THEIR OWN canvas aspect ratio - using the
+    // body canvas scale (pxPerPt) squashes the header row whenever the
+    // two captures differ in width (header row came out ~40% too short).
+
     const headHeightPt = headCanvas
-        ? headCanvas.height / pxPerPt
+        ? (headCanvas.height * contentWidth) / headCanvas.width
         : 0;
 
     const footHeightPt = footCanvas
-        ? footCanvas.height / pxPerPt
+        ? (footCanvas.height * contentWidth) / footCanvas.width
         : 0;
 
     const firstPageTop = filterText ? 92 : 78;

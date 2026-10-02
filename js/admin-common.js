@@ -148,6 +148,58 @@ const AdminCommon = (() => {
     }
 
 
+    // ---------------------------------------------------------
+    // BLANK / ZERO DISPLAY
+    // A bird record saved without (say) healthy details comes
+    // back from the API with 0 for that whole set. Showing
+    // "0" / "0.00" reads like real data, so blank and zero
+    // values are displayed as "-" instead - same rule as
+    // user1's Birds Quality Status report.
+    // ---------------------------------------------------------
+
+    function isBlankValue(value) {
+
+        if (
+            value === null ||
+            value === undefined ||
+            String(value).trim() === ""
+        ) {
+            return true;
+        }
+
+        return safeNumber(value) === 0;
+
+    }
+
+
+    function formatNob(value) {
+
+        if (isBlankValue(value)) {
+            return "-";
+        }
+
+        return formatWhole(value);
+
+    }
+
+
+    function formatMoney(
+        value,
+        decimals = 2
+    ) {
+
+        if (isBlankValue(value)) {
+            return "-";
+        }
+
+        return formatDecimal(
+            value,
+            decimals
+        );
+
+    }
+
+
     function formatDecimal(
         value,
         decimals = 2
@@ -847,33 +899,33 @@ const AdminCommon = (() => {
 
                     <td>${escapeHtml(row.bill)}</td>
 
+                    <td class="numeric">${formatNob(row.healthy_nob)}</td>
+
+                    <td class="numeric">${formatMoney(row.healthy_weight, 2)}</td>
+
+                    <td class="numeric">${formatMoney(row.healthy_price, 2)}</td>
+
+                    <td class="numeric">${formatMoney(row.healthy_amount, 2)}</td>
+
                     <td>${escapeHtml(row.disable_bill)}</td>
 
-                    <td class="numeric">${formatWhole(row.disable_nob)}</td>
+                    <td class="numeric">${formatNob(row.disable_nob)}</td>
 
-                    <td class="numeric">${formatDecimal(row.disable_weight, 2)}</td>
+                    <td class="numeric">${formatMoney(row.disable_weight, 2)}</td>
 
-                    <td class="numeric">${formatDecimal(row.disable_price, 2)}</td>
+                    <td class="numeric">${formatMoney(row.disable_price, 2)}</td>
 
-                    <td class="numeric">${formatDecimal(row.disable_amount, 2)}</td>
+                    <td class="numeric">${formatMoney(row.disable_amount, 2)}</td>
 
-                    <td class="numeric">${formatWhole(row.healthy_nob)}</td>
+                    <td class="numeric">${formatNob(row.total_nob)}</td>
 
-                    <td class="numeric">${formatDecimal(row.healthy_weight, 2)}</td>
+                    <td class="numeric">${formatMoney(row.total_weight, 2)}</td>
 
-                    <td class="numeric">${formatDecimal(row.healthy_price, 2)}</td>
+                    <td class="numeric">${formatMoney(row.total_avg_weight, 3)}</td>
 
-                    <td class="numeric">${formatDecimal(row.healthy_amount, 2)}</td>
+                    <td class="numeric">${formatMoney(row.total_amount, 2)}</td>
 
-                    <td class="numeric">${formatWhole(row.total_nob)}</td>
-
-                    <td class="numeric">${formatDecimal(row.total_weight, 2)}</td>
-
-                    <td class="numeric">${formatDecimal(row.total_avg_weight, 3)}</td>
-
-                    <td class="numeric">${formatDecimal(row.total_amount, 2)}</td>
-
-                    <td class="numeric">${formatDecimal(row.rejection_weight, 2)}</td>
+                    <td class="numeric">${formatMoney(row.rejection_weight, 2)}</td>
 
                     <td class="wrap-cell">${escapeHtml(row.rejection_reason || "-")}</td>
 
@@ -961,8 +1013,8 @@ const AdminCommon = (() => {
 
             element.textContent =
                 isCount
-                    ? formatWhole(totals[key])
-                    : formatDecimal(totals[key], 2);
+                    ? formatNob(totals[key])
+                    : formatMoney(totals[key], 2);
 
         });
 
@@ -986,6 +1038,12 @@ const AdminCommon = (() => {
         formatWhole,
 
         formatDecimal,
+
+        isBlankValue,
+
+        formatNob,
+
+        formatMoney,
 
         formatAmount,
 
