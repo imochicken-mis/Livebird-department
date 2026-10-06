@@ -106,7 +106,7 @@ async function sendRequestNetwork(payload) {
 // Cleared automatically on: any save/add, login, Refresh click.
 // =========================================================
 
-const CACHE_TTL_MS = 5 * 60 * 1000;          // 5 minutes
+const CACHE_TTL_MS = 30 * 1000;              // 30 seconds (was 5 min - sheet edits showed up late)
 const CACHE_PREFIX = "lbcache:";
 const NEVER_CACHE = /^(login|getCatchingRecordLookup|getCatchingRecordBySerial|getRefreshReportCache)/i;
 
