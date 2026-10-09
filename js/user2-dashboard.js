@@ -13,9 +13,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const driverName =
         document.getElementById("driverName");
 
-    const doa =
-        document.getElementById("doa");
-
     const helper1 =
         document.getElementById("helper1");
 
@@ -666,6 +663,18 @@ function parseTime(value, ampm) {
                     >
                 </div>
 
+
+                <div class="form-group">
+                    <label>DOA (Dead On Arrival)</label>
+
+                    <input
+                        type="number"
+                        class="batch-doa"
+                        placeholder="0"
+                        min="0"
+                    >
+                </div>
+
             </div>
         `;
 
@@ -808,7 +817,11 @@ function parseTime(value, ampm) {
                     weightDiff:
                         card.querySelector(
                             ".batch-weight-diff"
-                        ).value || "0.00"
+                        ).value || "0.00",
+                    doa:
+                        card.querySelector(
+                            ".batch-doa"
+                        ).value || "0"
 
                 };
 
@@ -899,8 +912,13 @@ function parseTime(value, ampm) {
             ],
 
             [
-                "DOA",
-                doa.value || "0"
+                "Total DOA",
+                String(
+                    batches.reduce(
+                        (sum, b) => sum + (parseFloat(b.doa) || 0),
+                        0
+                    )
+                )
             ],
 
             [
@@ -1079,6 +1097,10 @@ function parseTime(value, ampm) {
                     [
                         "Weight Diff",
                         `${batch.weightDiff || "0.00"} KG`
+                    ],
+                    [
+                        "DOA",
+                        batch.doa || "0"
                     ]
 
                 ];
@@ -1261,8 +1283,6 @@ function parseTime(value, ampm) {
                 helpers:
                     helpers,
 
-                doa:
-                    doa.value || "0",
 
                 outTime:
                     outTime.value
@@ -1359,7 +1379,6 @@ function parseTime(value, ampm) {
         vehicleNumber.value = "";
         driverName.value = "";
 
-        doa.value = "";
 
         helper1.value = "";
         helper2.value = "";
