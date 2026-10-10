@@ -306,6 +306,16 @@
             border-top: 4px solid #b017d2;
         }
 
+
+        /* KPI HUB CARDS */
+        .kpi-hub { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:18px; padding:28px 4px; }
+        .kpi-hub-card { display:block; padding:22px; background:#fff; border:1px solid #e2e8f0; border-radius:16px; text-decoration:none; color:#0f172a; box-shadow:0 6px 18px rgba(15,23,42,.06); }
+        .kpi-hub-card.active:hover { transform:translateY(-2px); border-color:#1E5AA8; }
+        .kpi-hub-card.pending { opacity:.55; border-style:dashed; }
+        .kpi-hub-no { font-size:11px; font-weight:800; letter-spacing:1px; color:#b017d2; text-transform:uppercase; }
+        .kpi-hub-card h3 { margin:8px 0; font-size:18px; }
+        .kpi-hub-card p { margin:0 0 12px; font-size:13px; color:#64748b; }
+        .kpi-hub-std { display:inline-block; padding:4px 10px; border-radius:20px; background:#ecfdf5; color:#047857; font-size:11px; font-weight:700; }
     </style>
 
     </style>
@@ -478,123 +488,17 @@
              COMING SOON
         ====================================== -->
 
-        <section class="kpi-coming-soon">
-
-            <div id="questionMarks"></div>
-                <script>
-                document.addEventListener("DOMContentLoaded", function () {
-                    const container = document.getElementById("questionMarks");
-                    const totalMarks = 15;
-                    for (let i = 0; i < totalMarks; i++) {
-                        const mark = document.createElement("span");
-                        mark.className = "question-fall";
-                        mark.textContent = "!";
-                        mark.style.left = Math.random() * 100 + "%";
-                        mark.style.animationDuration = (3 + Math.random() * 4) + "s";
-                        mark.style.animationDelay = (Math.random() * 5) + "s";
-                        mark.style.fontSize = (16 + Math.random() * 16) + "px";
-                        container.appendChild(mark);
-                    }
-                });
-                </script>    
-
-
-            <div class="kpi-coming-card">
-
-
-                <div class="kpi-coming-icon">
-
-                    <span class="material-icons">
-                        priority_high
-                    </span>
-
-                </div>
-
-
-                <div class="coming-badge">
-                    Kpi's Not Define
-                </div>
-
-
-                <h1>
-                    KPI Analytics
-                </h1>
-
-
-                <p class="kpi-coming-description">
-
-                    No data or details have been received for this
-                    section yet. Once the relevant information is
-                    submitted, KPI analytics will be shown here to
-                    provide management with clear, actionable
-                    insights into Live Bird Department operations.
-
-                </p>
-
-
-
-                <!-- FUTURE FEATURES -->
-
-                <div class="kpi-preview-features">
-
-
-                    <div class="kpi-preview-item">
-
-                        <span class="material-icons">
-                            speed
-                        </span>
-
-                        Performance Monitoring
-
-                    </div>
-
-
-                    <div class="kpi-preview-item">
-
-                        <span class="material-icons">
-                            show_chart
-                        </span>
-
-                        KPI Trend Analysis
-
-                    </div>
-
-
-                    <div class="kpi-preview-item">
-
-                        <span class="material-icons">
-                            insights
-                        </span>
-
-                        Operational Insights
-
-                    </div>
-
-
-                    <div class="kpi-preview-item">
-
-                        <span class="material-icons">
-                            dashboard
-                        </span>
-
-                        Management Overview
-
-                    </div>
-
-
-                </div>
-
-
-                <div class="kpi-development-note">
-
-                    No data has been received for this module yet.
-
-                </div>
-
-
-            </div>
-
-
+        <section class="kpi-hub">
+            <a href="kpi1-mortality.html" class="kpi-hub-card active">
+                <span class="kpi-hub-no">KPI 1</span>
+                <h3>Live Bird Mortality Rate</h3>
+                <p>DOA / Total received birds. Batch wise and daily.</p>
+                <span class="kpi-hub-std">Standard: below 0.20%</span>
+            </a>
+            <div class="kpi-hub-card pending"><span class="kpi-hub-no">KPI 2</span><h3>Not defined yet</h3></div>
+            <div class="kpi-hub-card pending"><span class="kpi-hub-no">KPI 3</span><h3>Not defined yet</h3></div>
+            <div class="kpi-hub-card pending"><span class="kpi-hub-no">KPI 4</span><h3>Not defined yet</h3></div>
+            <div class="kpi-hub-card pending"><span class="kpi-hub-no">KPI 5</span><h3>Not defined yet</h3></div>
         </section>
 
 

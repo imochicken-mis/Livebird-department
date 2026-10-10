@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KPI 1 - Live Bird Mortality Rate</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/admin-analytics.css">
+    <link rel="stylesheet" href="../css/report.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        :root { --sidebar-w: 260px; --navy: #010853; }
+
+        /* font: Inter (falls back to Segoe UI). Icons keep their own icon font. */
+        body.dashboard-page, body.dashboard-page input, body.dashboard-page button { font-family:'Inter','Segoe UI',Arial,sans-serif; }
+        .kpi-value strong, .kpi-day-table td { font-variant-numeric: tabular-nums; }
+
+        /* no page-level sideways scrolling */
+        body.dashboard-page { overflow-x:hidden; }
+        .dashboard-main { min-width:0; overflow-x:clip; padding-top:138px !important; }
+        .analytics-card, .kpi-chart-card, .kpi-table-wrap { min-width:0; max-width:100%; }
+
+        /* ===== BANNER HEADER (pinned) ===== */
+        .dashboard-header.kpi-banner {
+            position:fixed !important; top:0 !important; left:var(--sidebar-w) !important; right:0 !important;
+            width:auto !important; margin:0 !important; z-index:30 !important;
+            display:flex; flex-wrap:wrap; gap:16px; overflow:hidden;
+            padding:22px 32px 20px; border:0; border-radius:0 0 28px 28px;
+            background:linear-gradient(120deg,#06214f 0%,#0a3a8f 55%,#0e4fb3 100%);
+            box-shadow:0 10px 26px rgba(6,33,79,.28);
+            transition:left .22s ease, padding-left .22s ease;
+        }
+        body.sidebar-collapsed .dashboard-header.kpi-banner { left:0 !important; padding-left:68px; }
+        .kpi-banner::before { content:""; position:absolute; right:-6%; top:-90%; width:62%; height:260%; border-radius:50%; background:radial-gradient(closest-side, rgba(255,255,255,.10), rgba(255,255,255,0) 72%); pointer-events:none; }
+        .kpi-banner::after { content:""; position:absolute; left:34%; bottom:-120%; width:70%; height:200%; border-radius:50%; border-top:2px solid rgba(120,180,255,.25); pointer-events:none; }
+        .kpi-banner > div { position:relative; z-index:1; }
+        .kpi-banner > div:first-child { display:flex; align-items:center; gap:18px; }
+        .kpi-logo { position:relative; flex:0 0 auto; width:72px; height:72px; display:flex; align-items:center; justify-content:center; }
+        .kpi-logo::before { content:""; position:absolute; inset:0; border-radius:50%; border:3px solid transparent; border-top-color:#38a3ff; border-left-color:#38a3ff; transform:rotate(-25deg); }
+        .kpi-logo img { position:relative; width:54px; height:54px; object-fit:contain; }
+        .dashboard-header.kpi-banner h1 { margin:0; font-size:30px; font-weight:800; letter-spacing:-.2px; color:#fff; }
+        .kpi-titles p { margin:6px 0 0; font-size:14px; font-weight:500; color:#cfe0ff; }
+        .kpi-banner #loggedUser { display:flex; align-items:center; gap:8px; background:none; padding:0; font-size:14px; font-weight:500; color:#dbe7ff; }
+        .kpi-banner #loggedUser b { color:#fff; font-weight:800; }
+        .kpi-banner #loggedUser::before { content:'schedule'; font-family:'Material Icons'; font-size:20px; }
+        .kpi-banner .logout-btn { display:flex; align-items:center; gap:8px; padding:11px 20px; border-radius:12px; background:linear-gradient(135deg,#ff6b6b,#f04b5a); box-shadow:0 6px 14px rgba(240,75,90,.35); font-weight:700; }
+        .kpi-banner .logout-btn::before { content:'logout'; font-family:'Material Icons'; font-size:20px; }
+
+        @media (max-width:768px) {
+            .dashboard-header.kpi-banner { position:static !important; margin:-32px -32px 22px !important; }
+            .dashboard-main { padding-top:32px !important; }
+        }
+
+        /* ===== TOOLBAR: month picker + refresh (right side) ===== */
+        .report-toolbar { justify-content:flex-end; }
+        #kpiMonth { height:44px; padding:0 14px; border:1px solid #dbe3ef; border-radius:12px; background:#fff; color:#0b2a66; font-family:inherit; font-weight:700; cursor:pointer; box-shadow:0 4px 12px rgba(15,23,42,.08); }
+        #refreshBtn { display:flex; align-items:center; gap:8px; height:44px; padding:0 22px; border-radius:12px; background:linear-gradient(135deg,#0b4aa8,#06306f); box-shadow:0 6px 14px rgba(11,74,168,.3); }
+        #refreshBtn::before { content:'refresh'; font-family:'Material Icons'; font-size:20px; }
+
+        /* ===== TOP 3 SCORE CARDS ===== */
+        .kpi-strip { display:flex; flex-wrap:wrap; gap:16px; margin-bottom:16px; }
+        .kpi-tile {
+            position:relative; display:flex; flex-direction:column; flex:1 1 240px;
+            background:#fff; border:1px solid #e2e8f0; border-top:4px solid var(--navy);
+            border-radius:14px; overflow:hidden; box-shadow:0 6px 16px rgba(15,23,42,.06);
+        }
+        .kpi-tile.ok  { border-top-color:#047857; }
+        .kpi-tile.bad { border-top-color:#b91c1c; }
+
+        /* card title bar */
+        .kpi-label {
+            position:relative; display:flex; align-items:center; justify-content:center;
+            min-height:48px; padding:13px 16px;
+            background:#f8fafc; border-bottom:1px solid #e2e8f0;
+            font-size:11.5px; font-weight:800; letter-spacing:1.3px; text-transform:uppercase; color:var(--navy);
+        }
+        .kpi-tile.ok  .kpi-label { background:#f0fdf7; border-bottom-color:#a7f3d0; color:#047857; }
+        .kpi-tile.bad .kpi-label { background:#fef2f2; border-bottom-color:#fecaca; color:#b91c1c; }
+
+        /* card 1 only: the standard badge sits on the right, so pad both sides equally to keep the title centred */
+        #boxRate .kpi-label { padding:13px 112px; }
+.kpi-limit {
+    position:absolute; top:50%; right:12px; transform:translateY(-50%);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+    width:96px; height:46px; padding:0 12px; border-radius:12px;
+    background:#e2e8f0; color:#334155;
+    font-size:15px; font-weight:800; letter-spacing:.3px; text-transform:none; line-height:1; white-space:nowrap;
+}
+.kpi-limit small { font-size:9px; font-weight:700; letter-spacing:1.1px; text-transform:uppercase; color:#64748b; }
+
+        /* card body: all three cards share the same height */
+        .kpi-value { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; flex:1; min-height:180px; padding:22px 16px 24px; text-align:center; }
+        .kpi-value strong { font-size:46px; line-height:1; font-weight:900; letter-spacing:-1.5px; color:var(--navy); }
+        .kpi-tile.ok  .kpi-value strong { color:#047857; text-shadow:0 2px 10px rgba(4,120,87,.18); }
+        .kpi-tile.bad .kpi-value strong { color:#b91c1c; text-shadow:0 2px 10px rgba(185,28,28,.18); }
+
+        .kpi-pill { display:flex; align-items:center; gap:6px; padding:7px 20px; border-radius:22px; background:#f1f5f9; color:#475569; font-size:13.5px; font-weight:800; letter-spacing:.3px; }
+        .kpi-tile.ok  .kpi-pill { background:#dcfce7; color:#166534; }
+        .kpi-tile.bad .kpi-pill { background:#fee2e2; color:#991b1b; }
+        .kpi-pill::before { content:none; font-family:'Material Icons'; font-size:17px; line-height:1; }
+        .kpi-tile.ok  .kpi-pill::before { content:'verified'; }
+        .kpi-tile.bad .kpi-pill::before { content:'error'; }
+
+        /* small captions (shared by card 2 labels and card 3 "this month") */
+        .kpi-birds-label, .kpi-sub { font-size:11px; font-weight:700; letter-spacing:1.1px; text-transform:uppercase; color:#64748b; }
+
+        /* card 2: yellow heading */
+        #boxDoa { border-top-color:#eab308; }
+        #boxDoa .kpi-label { background:#fef9c3; border-bottom-color:#fde68a; color:#854d0e; }
+
+        /* card 1: bigger rate + lower, larger status pill */
+        #boxRate .kpi-value { gap:30px; padding:28px 16px 34px; }
+        #boxRate .kpi-value strong { font-size:68px; letter-spacing:-2px; }
+        #boxRate .kpi-pill { padding:11px 30px; font-size:17px; border-radius:26px; }
+        #boxRate .kpi-pill::before { font-size:22px; }
+        /* card 2: two stats side by side */
+        #boxDoa .kpi-value { flex-direction:row; align-items:stretch; justify-content:stretch; gap:0; padding:0; }
+        #boxDoa .kpi-birds { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding:24px 12px; }
+        #boxDoa .kpi-birds + .kpi-birds { border-left:1px dashed #cbd5e1; }
+        .kpi-birds-num { font-size:40px; line-height:1; font-weight:900; letter-spacing:-1px; color:var(--navy); }
+
+        /* card 3: light blue heading */
+        #boxBatch { border-top-color:#38bdf8; }
+        #boxBatch .kpi-label { background:#e0f2fe; border-bottom-color:#bae6fd; color:#0369a1; }
+        /* card 3: big number + caption pill */
+        #boxBatch .kpi-sub { padding:6px 16px; border-radius:20px; background:#f1f5f9; }
+
+        /* ===== CHART + TABLE CARDS ===== */
+        .kpi-chart-card { padding:16px 18px 10px; background:#fff; border:1px solid #e2e8f0; border-radius:12px; }
+        .kpi-chart-card + .kpi-chart-card { margin-top:16px; }
+        .kpi-chart-title { margin:0 0 8px; font-size:14px; font-weight:800; color:var(--navy); }
+        .kpi-chart { width:100%; height:360px; }
+        .std-note { margin:0 0 12px; font-size:12px; color:#64748b; }
+
+        .kpi-table-wrap { overflow-x:auto; }
+        .kpi-day-table { border-collapse:collapse; width:100%; font-size:12px; }
+        .kpi-day-table th, .kpi-day-table td { padding:7px 10px; border:1px solid #e2e8f0; text-align:center; white-space:nowrap; }
+        .kpi-day-table thead th { background:var(--navy); color:#fff; font-weight:800; }
+        .kpi-day-table thead th:first-child, .kpi-day-table tbody th { position:sticky; left:0; text-align:left; }
+        .kpi-day-table thead th:first-child { z-index:2; }
+        .kpi-day-table tbody th { z-index:1; background:#f8fafc; color:var(--navy); font-weight:800; }
+        .kpi-day-table td.ok    { background:#ecfdf5; color:#047857; font-weight:700; }
+        .kpi-day-table td.bad   { background:#fef2f2; color:#b91c1c; font-weight:700; }
+        .kpi-day-table td.empty { color:#cbd5e1; }
+
+        /* ===== BATCH-WISE (single date) ===== */
+        .kpi-batch-bar { display:flex; align-items:center; gap:12px; margin:22px 0 12px; }
+        .kpi-batch-bar label { font-size:13px; font-weight:800; color:var(--navy); }
+        #kpiDate { height:44px; padding:0 14px; border:1px solid #dbe3ef; border-radius:12px; background:#fff; color:#0b2a66; font-family:inherit; font-weight:700; cursor:pointer; box-shadow:0 4px 12px rgba(15,23,42,.08); }
+        .kpi-batch-table tbody th { text-align:left; }
+        .kpi-batch-table .total-col { background:#f1f5f9; font-weight:800; border-left:2px solid #94a3b8; }
+        .kpi-batch-table thead th.total-col { background:var(--navy); }
+
+    </style>
+</head>
+<body class="dashboard-page">
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <img src="../assets/Logo.png" alt="Imo Chicken Logo">
+            <h2>Live Bird Department</h2>
+        </div>
+        <div class="sidebar-divider"></div>
+        <a href="user4-kpis.html" class="sidebar-link active">KPI's</a>
+        <p class="sidebar-section-title">ADMIN ANALYTICS</p>
+        <nav class="sidebar-nav">
+            <a href="admin-analytics.html" class="sidebar-link">1) Live Bird Catching Report</a>
+            <a href="imo-plant-report.html" class="sidebar-link">2) Processing P.Received Report</a>
+            <a href="other-plants-report.html" class="sidebar-link">3) Live Bird Sales Report</a>
+            <a href="own-farm-report.html" class="sidebar-link">4) Own farm Movement Report</a>
+            <a href="birds-received-report.html" class="sidebar-link">5) Plant Received &amp; DOA Report</a>
+            <a href="bird-condition-analytics.html" class="sidebar-link">6) Bird Condition Report</a>
+            <a href="vehicle-expenses-monthly-report.html" class="sidebar-link">7) Catching Team Expense Report</a>
+            <a href="forecast-actual-report.html" class="sidebar-link">8) Forecast vs Actual Report</a>
+            <a href="admin-catching-breakdown-report.html" class="sidebar-link">9) Bird Quality Status Report</a>
+        </nav>
+        <div class="sidebar-divider"></div>
+        <nav class="sidebar-nav">
+            <a href="bird-flow-analytics.html" class="sidebar-link">Bird Flow Analytics</a>
+        </nav>
+    </aside>
+
+    <main class="dashboard-main">
+        <header class="dashboard-header kpi-banner">
+            <div>
+                <span class="kpi-logo"><img src="../assets/chicken.png" alt=""></span>
+                <div class="kpi-titles">
+                    <h1>KPI 1 – Live Bird Mortality Rate</h1>
+                    <p>Track the percentage of birds dying before slaughter due to stress, injury, heat, or poor handling</p>
+                </div>
+            </div>
+            <div class="header-user">
+                <span id="loggedUser">Logged in as:</span>
+                <button id="logoutBtn" class="logout-btn">Logout</button>
+            </div>
+        </header>
+
+        <section class="form-card analytics-card">
+            <div class="report-toolbar">
+                <div class="report-filters">
+                    <input type="month" id="kpiMonth" title="Select Month">
+                    <button id="refreshBtn" class="report-btn">Refresh</button>
+                </div>
+            </div>
+
+            <div class="kpi-strip" id="kpiCards">
+                <!-- Card 1: Mortality rate -->
+                <div class="kpi-tile" id="boxRate">
+            <div class="kpi-label">
+                <span>Mortality Rate</span>
+                <span class="kpi-limit">
+                    <span id="stdLabel">&lt; 0.20 %</span>
+                    <small>Standard</small>
+                </span>
+            </div>
+                    <div class="kpi-value">
+                        <strong id="sumRate">-</strong>
+                        <span class="kpi-pill" id="rateStatus">-</span>
+                    </div>
+                </div>
+
+                <!-- Card 2: DOA + total birds, side by side -->
+                <div class="kpi-tile" id="boxDoa">
+                    <div class="kpi-label">Dead Birds At Receiving</div>
+                    <div class="kpi-value">
+                        <div class="kpi-birds">
+                            <b class="kpi-birds-num" id="sumDoa">-</b>
+                            <span class="kpi-birds-label">Dead On Arrival</span>
+                        </div>
+                        <div class="kpi-birds">
+                            <b class="kpi-birds-num" id="sumBirds">-</b>
+                            <span class="kpi-birds-label">Total Birds Received</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Batches -->
+                <div class="kpi-tile" id="boxBatch">
+                    <div class="kpi-label">Batches</div>
+                    <div class="kpi-value">
+                        <strong id="sumBatch">-</strong>
+                        <span class="kpi-sub">this month</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="reportMessage" class="save-message"></div>
+            <div id="reportLoading" class="report-loading hidden">Loading KPI 1...</div>
+
+            <div class="kpi-chart-card">
+                <h3 class="kpi-chart-title" id="chartTitle">Daily Mortality Rate</h3>
+                <div id="kpiChart" class="kpi-chart"></div>
+            </div>
+
+            <div class="kpi-chart-card">
+                <h3 class="kpi-chart-title" id="tableTitle">Daily Details</h3>
+                <div class="kpi-table-wrap"><table class="kpi-day-table" id="dayTable"></table></div>
+            </div>
+            <div class="kpi-batch-bar">
+                <label for="kpiDate">Select Date</label>
+                <input type="date" id="kpiDate" title="Select Date">
+            </div>
+
+            <div class="kpi-chart-card">
+                <h3 class="kpi-chart-title" id="batchTitle">Batch-wise Mortality Rate</h3>
+                <div id="batchChart" class="kpi-chart"></div>
+            </div>
+
+            <div class="kpi-chart-card">
+                <h3 class="kpi-chart-title" id="batchTableTitle">Batch Details</h3>
+                <div class="kpi-table-wrap"><table class="kpi-day-table kpi-batch-table" id="batchTable"></table></div>
+            </div>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/kpi1-mortality.js"></script>
+</body>
+</html>
