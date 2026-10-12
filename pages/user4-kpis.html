@@ -316,6 +316,73 @@
         .kpi-hub-card h3 { margin:8px 0; font-size:18px; }
         .kpi-hub-card p { margin:0 0 12px; font-size:13px; color:#64748b; }
         .kpi-hub-std { display:inline-block; padding:4px 10px; border-radius:20px; background:#ecfdf5; color:#047857; font-size:11px; font-weight:700; }
+
+        /* KPI OVERVIEW */
+        .kpi-ov-bar { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin:22px 4px 0; padding:12px 18px; background:linear-gradient(90deg,#010853,#0b2a66); border-radius:12px; box-shadow:0 6px 16px rgba(1,8,83,.18); }
+        .kpi-ov-bar .t { font-size:15px; font-weight:800; letter-spacing:.4px; color:#fff; }
+        .kpi-ov-bar .m { font-size:12px; font-weight:700; letter-spacing:.6px; color:#cbd5e1; }
+        .kpi-hub { padding-top:18px; }
+        .kpi-hub-card.ok  { border-top:4px solid #047857; }
+        .kpi-hub-card.bad { border-top:4px solid #b91c1c; }
+        .kpi-ov-rate { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:6px 0 14px; }
+        .kpi-ov-rate strong { font-size:44px; line-height:1; font-weight:900; letter-spacing:-1.5px; color:#0b2a66; }
+        .kpi-hub-card.ok  .kpi-ov-rate strong { color:#047857; }
+        .kpi-hub-card.bad .kpi-ov-rate strong { color:#b91c1c; }
+        .kpi-ov-pill { padding:6px 14px; border-radius:20px; font-size:12.5px; font-weight:800; background:#f1f5f9; color:#475569; }
+        .kpi-hub-card.ok  .kpi-ov-pill { background:#dcfce7; color:#166534; }
+        .kpi-hub-card.bad .kpi-ov-pill { background:#fee2e2; color:#991b1b; }
+        .kpi-ov-stats { display:flex; gap:18px; margin:0 0 14px; padding-top:12px; border-top:1px dashed #cbd5e1; }
+        .kpi-ov-stats div { display:flex; flex-direction:column; gap:3px; font-size:11px; font-weight:700; letter-spacing:.8px; text-transform:uppercase; color:#64748b; }
+        .kpi-ov-stats b { font-size:17px; letter-spacing:0; color:#0b2a66; }
+
+        /* KPI 1 overview card - layout from the sketch */
+        #ovKpi1, #ovKpi3 , #ovKpi4 { position:relative; overflow:hidden; text-align:center; padding-bottom:0; }
+        #ovKpi1 .kpi-hub-no, #ovKpi3 .kpi-hub-no , #ovKpi4 .kpi-hub-no { position:absolute; top:16px; left:18px; }
+        .kpi-hub-img { width:120px; height:120px; margin:10px auto 16px; display:flex; align-items:center; justify-content:center; border-radius:50%; background:#f0f7ff; border:3px solid #38a3ff; }
+        .kpi-hub-img img { width:84px; height:84px; object-fit:contain; }
+        #ovKpi1.ok  .kpi-hub-img, #ovKpi3.ok  .kpi-hub-img , #ovKpi4.ok  .kpi-hub-img { border-color:#10b981; }
+        #ovKpi1.bad .kpi-hub-img, #ovKpi3.bad .kpi-hub-img , #ovKpi4.bad .kpi-hub-img { border-color:#ef4444; }
+
+        /* KPI 2 overview card - same layout and glow as KPI 1 */
+        #ovKpi2 { position:relative; overflow:hidden; text-align:center; padding-bottom:0; }
+        #ovKpi2 .kpi-hub-no { position:absolute; top:16px; left:18px; }
+        #ovKpi2 h3 { margin:0 0 4px; font-size:17px; }
+        #ovKpi2 .kpi-ov-rate { flex-direction:column; justify-content:center; gap:14px; margin:8px 0 22px; }
+        #ovKpi2 .kpi-ov-rate strong { font-size:56px; }
+        #ovKpi2 .kpi-ov-rate strong small { margin-left:6px; font-size:18px; letter-spacing:0; }
+        #ovKpi2 .kpi-ov-pill { padding:8px 22px; font-size:14px; }
+        #ovKpi2 .kpi-ov-stats { justify-content:space-around; gap:8px; margin:0 -22px; padding:16px 22px 8px; background:#f8fafc; border-top:1px solid #e2e8f0; }
+        #ovKpi2 .kpi-ov-stats div { flex:1; align-items:center; }
+        #ovKpi2 .kpi-ov-stats b { font-size:16px; }
+        #ovKpi2 .kpi-hub-std { display:block; margin:0 -22px; padding:4px 22px 18px; border-radius:0; background:#f8fafc; color:#475569; font-size:12px; font-weight:800; letter-spacing:.6px; text-transform:uppercase; }
+        #ovKpi2.ok  .kpi-hub-img { border-color:#10b981; }
+        #ovKpi2.bad .kpi-hub-img { border-color:#ef4444; }
+        #ovKpi2.ok  { border-color:#10b981; border-top-color:#047857; animation:kpiGlowOk 2.2s ease-in-out infinite; }
+        #ovKpi2.bad { border-color:#ef4444; border-top-color:#b91c1c; animation:kpiGlowBad 2.2s ease-in-out infinite; }
+        @media (prefers-reduced-motion: reduce) { #ovKpi2.ok, #ovKpi2.bad { animation:none; } }
+
+        /* animated glow around the card border (green = achieved, red = not achieved) */
+        #ovKpi1.ok, #ovKpi3.ok , #ovKpi4.ok { border-color:#10b981; border-top-color:#047857; animation:kpiGlowOk 2.2s ease-in-out infinite; }
+        #ovKpi1.bad, #ovKpi3.bad , #ovKpi4.bad { border-color:#ef4444; border-top-color:#b91c1c; animation:kpiGlowBad 2.2s ease-in-out infinite; }
+        @keyframes kpiGlowOk {
+            0%, 100% { box-shadow:0 0 0 0 rgba(16,185,129,.40), 0 0 10px 1px rgba(16,185,129,.30); }
+            50%      { box-shadow:0 0 0 8px rgba(16,185,129,0), 0 0 24px 6px rgba(16,185,129,.45); }
+        }
+        @keyframes kpiGlowBad {
+            0%, 100% { box-shadow:0 0 0 0 rgba(239,68,68,.40), 0 0 10px 1px rgba(239,68,68,.30); }
+            50%      { box-shadow:0 0 0 8px rgba(239,68,68,0), 0 0 24px 6px rgba(239,68,68,.45); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            #ovKpi1.ok, #ovKpi1.bad, #ovKpi3.ok, #ovKpi4.ok, #ovKpi3.bad , #ovKpi4.bad { animation:none; }
+        }
+        #ovKpi1 h3, #ovKpi3 h3 , #ovKpi4 h3 { margin:0 0 4px; font-size:17px; }
+        #ovKpi1 .kpi-ov-rate, #ovKpi3 .kpi-ov-rate , #ovKpi4 .kpi-ov-rate { flex-direction:column; justify-content:center; gap:14px; margin:8px 0 22px; }
+        #ovKpi1 .kpi-ov-rate strong, #ovKpi3 .kpi-ov-rate strong , #ovKpi4 .kpi-ov-rate strong { font-size:56px; }
+        #ovKpi1 .kpi-ov-pill, #ovKpi3 .kpi-ov-pill , #ovKpi4 .kpi-ov-pill { padding:8px 22px; font-size:14px; }
+        #ovKpi1 .kpi-ov-stats, #ovKpi3 .kpi-ov-stats , #ovKpi4 .kpi-ov-stats { justify-content:space-around; gap:8px; margin:0 -22px; padding:16px 22px 8px; background:#f8fafc; border-top:1px solid #e2e8f0; }
+        #ovKpi1 .kpi-ov-stats div, #ovKpi3 .kpi-ov-stats div , #ovKpi4 .kpi-ov-stats div { flex:1; align-items:center; }
+        #ovKpi1 .kpi-ov-stats b, #ovKpi3 .kpi-ov-stats b , #ovKpi4 .kpi-ov-stats b { font-size:20px; }
+        #ovKpi1 .kpi-hub-std, #ovKpi3 .kpi-hub-std , #ovKpi4 .kpi-hub-std { display:block; margin:0 -22px; padding:4px 22px 18px; border-radius:0; background:#f8fafc; color:#475569; font-size:12px; font-weight:800; letter-spacing:.6px; text-transform:uppercase; }
     </style>
 
     </style>
@@ -488,16 +555,72 @@
              COMING SOON
         ====================================== -->
 
+        <div class="kpi-ov-bar">
+            <span class="t">KPI Overview</span>
+            <span class="m" id="ovMonth"></span>
+        </div>
+
         <section class="kpi-hub">
-            <a href="kpi1-mortality.html" class="kpi-hub-card active">
+            <a href="kpi1-mortality.html" class="kpi-hub-card active" id="ovKpi1">
                 <span class="kpi-hub-no">KPI 1</span>
-                <h3>Live Bird Mortality Rate</h3>
-                <p>DOA / Total received birds. Batch wise and daily.</p>
-                <span class="kpi-hub-std">Standard: below 0.20%</span>
+                <div class="kpi-hub-img"><img src="../assets/DOA.png" alt=""></div>
+                <h3>Transport Mortality Rate</h3>
+                <div class="kpi-ov-rate">
+                    <strong id="ovRate">-</strong>
+                    <span class="kpi-ov-pill" id="ovStatus">Loading...</span>
+                </div>
+                <div class="kpi-ov-stats">
+                    <div><b id="ovDoa">-</b>DOA</div>
+                    <div><b id="ovBirds">-</b>Birds</div>
+                    <div><b id="ovBatch">-</b>Batches</div>
+                </div>
+                <span class="kpi-hub-std">Standard &lt; 0.20 %</span>
             </a>
-            <div class="kpi-hub-card pending"><span class="kpi-hub-no">KPI 2</span><h3>Not defined yet</h3></div>
-            <div class="kpi-hub-card pending"><span class="kpi-hub-no">KPI 3</span><h3>Not defined yet</h3></div>
-            <div class="kpi-hub-card pending"><span class="kpi-hub-no">KPI 4</span><h3>Not defined yet</h3></div>
+            <a href="kpi2-weight.html" class="kpi-hub-card active" id="ovKpi2">
+                <span class="kpi-hub-no">KPI 2</span>
+                <div class="kpi-hub-img"><img src="../assets/AVG.png" alt=""></div>
+                <h3>Average Bird Weight</h3>
+                <div class="kpi-ov-rate">
+                    <strong id="ov2Rate">-</strong>
+                    <span class="kpi-ov-pill" id="ov2Status">Loading...</span>
+                </div>
+                <div class="kpi-ov-stats">
+                    <div><b id="ov2Weight">-</b>Weight (kg)</div>
+                    <div><b id="ov2Birds">-</b>Birds</div>
+                    <div><b id="ov2Batch">-</b>Batches</div>
+                </div>
+                <span class="kpi-hub-std">Standard 1.80 – 2.40 kg</span>
+            </a>
+            <a href="kpi3-liveability.html" class="kpi-hub-card active" id="ovKpi3">
+                <span class="kpi-hub-no">KPI 3</span>
+                <div class="kpi-hub-img"><img src="../assets/LIVE.svg" alt=""></div>
+                <h3>Liveability</h3>
+                <div class="kpi-ov-rate">
+                    <strong id="ov3Rate">-</strong>
+                    <span class="kpi-ov-pill" id="ov3Status">Loading...</span>
+                </div>
+                <div class="kpi-ov-stats">
+                    <div><b id="ov3Doa">-</b>DOA</div>
+                    <div><b id="ov3Birds">-</b>Birds</div>
+                    <div><b id="ov3Days">-</b>Days</div>
+                </div>
+                <span class="kpi-hub-std">Standard &gt; 99.80 %</span>
+            </a>
+            <a href="kpi4-receiving.html" class="kpi-hub-card active" id="ovKpi4">
+                <span class="kpi-hub-no">KPI 4</span>
+                <div class="kpi-hub-img"><span class="material-icons" style="font-size:64px;color:#1E5AA8;">speed</span></div>
+                <h3>Bird Receiving Performance</h3>
+                <div class="kpi-ov-rate">
+                    <strong id="ov4Rate">-</strong>
+                    <span class="kpi-ov-pill" id="ov4Status">Loading...</span>
+                </div>
+                <div class="kpi-ov-stats">
+                    <div><b id="ov4Birds">-</b>Birds</div>
+                    <div><b id="ov4Hours">-</b>Hours</div>
+                    <div><b id="ov4Days">-</b>Days</div>
+                </div>
+                <span class="kpi-hub-std" id="ov4Std">Standard 1,500 – 3,000 birds / hr</span>
+            </a>
             <div class="kpi-hub-card pending"><span class="kpi-hub-no">KPI 5</span><h3>Not defined yet</h3></div>
         </section>
 
@@ -528,13 +651,159 @@ document.addEventListener("DOMContentLoaded", function () {
         "User";
 
     if (loggedUser) {
-        loggedUser.textContent = "Logged in as: " + username;
+        let shown = username;
+        try {
+            const u = JSON.parse(sessionStorage.getItem("livebirdUser") || "null");
+            if (u) shown = u.name || u.username || shown;
+        } catch (e) {}
+        loggedUser.textContent = "Logged in as: " + shown;
     }
 
 
     /* ===============================
        LOGOUT
     ================================ */
+
+    /* ===============================
+       KPI OVERVIEW (live values)
+    ================================ */
+
+    const MONTH_NAMES = ["January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"];
+
+    const ovNum = v => Number(v) || 0;
+    const ovFmt = (v, d) => ovNum(v).toLocaleString("en-US",
+        { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 });
+    const ovSet = (id, text) => { document.getElementById(id).textContent = text; };
+
+    async function loadKpiOverview() {
+        try {
+            const result = await sendRequest({ action: "getKpi1Data" });
+            const months = (result && result.success && result.monthly) ? result.monthly : [];
+
+            if (!months.length) { ovSet("ovStatus", "No data"); return; }
+
+            // latest month that has data
+            const m = months.slice()
+                .sort((a, b) => a.month.localeCompare(b.month))
+                .pop();
+
+            const std = ovNum(result.standard) > 0 ? ovNum(result.standard) : 0.2;
+            const rate = ovNum(m.kpi);
+            const bad = rate >= std;
+            const p = m.month.split("-");
+
+            ovSet("ovMonth", "Latest month: " + MONTH_NAMES[Number(p[1]) - 1] + " " + p[0]);
+            ovSet("ovRate", ovFmt(rate, 2) + "%");
+            ovSet("ovStatus", bad ? "Not Achieved" : "Achieved");
+            ovSet("ovDoa", ovFmt(m.doa));
+            ovSet("ovBirds", ovFmt(m.birds));
+            ovSet("ovBatch", ovFmt(m.batches));
+            document.getElementById("ovKpi1").classList.add(bad ? "bad" : "ok");
+
+        } catch (e) {
+            console.error(e);
+            ovSet("ovStatus", "Unable to load");
+        }
+    }
+
+    loadKpiOverview();
+    loadKpi2Overview();
+    loadKpi3Overview();
+    loadKpi4Overview();
+
+    async function loadKpi2Overview() {
+        try {
+            const result = await sendRequest({ action: "getKpi2Data" });
+            const months = (result && result.success && result.monthly) ? result.monthly : [];
+
+            if (!months.length) { ovSet("ov2Status", "No data"); return; }
+
+            // latest month that has data
+            const m = months.slice()
+                .sort((a, b) => a.month.localeCompare(b.month))
+                .pop();
+
+            const min = ovNum(result.min) > 0 ? ovNum(result.min) : 1.8;
+            const max = ovNum(result.max) > 0 ? ovNum(result.max) : 2.4;
+            const avg = ovNum(m.avg);
+            const ok = Number(avg.toFixed(2)) >= min && Number(avg.toFixed(2)) <= max;
+
+            document.getElementById("ov2Rate").innerHTML = ovFmt(avg, 2) + "<small>kg</small>";
+            ovSet("ov2Status", ok ? "Achieved" : "Not Achieved");
+            ovSet("ov2Weight", ovFmt(m.weight));
+            ovSet("ov2Birds", ovFmt(m.nob));
+            ovSet("ov2Batch", ovFmt(m.batches));
+            document.getElementById("ovKpi2").classList.add(ok ? "ok" : "bad");
+
+        } catch (e) {
+            console.error(e);
+            ovSet("ov2Status", "Unable to load");
+        }
+    }
+
+
+    async function loadKpi4Overview() {
+        try {
+            const result = await sendRequest({ action: "getKpi4Data" });
+            const months = (result && result.success && result.monthly) ? result.monthly : [];
+            if (!months.length) { ovSet("ov4Status", "No data"); return; }
+
+            // latest month that has data
+            const m = months.slice()
+                .sort((a, b) => a.month.localeCompare(b.month))
+                .pop();
+
+            const min = ovNum(result.min) > 0 ? ovNum(result.min) : 1500;
+            const max = ovNum(result.max) > 0 ? ovNum(result.max) : 3000;
+            const rate = ovNum(m.kpi);
+            const days = (result.daily || []).filter(d => d.date.slice(0, 7) === m.month).length;
+
+            document.getElementById("ov4Rate").innerHTML = ovFmt(rate, 0) + "<small> /hr</small>";
+            ovSet("ov4Birds", ovFmt(m.birds));
+            ovSet("ov4Hours", ovFmt(m.hours, 1));
+            ovSet("ov4Days", ovFmt(days));
+
+            const r0 = Number(rate.toFixed(0));
+            const ok = r0 >= min && r0 <= max;
+            ovSet("ov4Status", ok ? "Achieved" : "Not Achieved");
+            ovSet("ov4Std", "Standard " + ovFmt(min) + " \u2013 " + ovFmt(max) + " birds / hr");
+            document.getElementById("ovKpi4").classList.add(ok ? "ok" : "bad");
+        } catch (e) {
+            console.error(e);
+            ovSet("ov4Status", "Unable to load");
+        }
+    }
+
+    async function loadKpi3Overview() {
+        try {
+            const result = await sendRequest({ action: "getKpi3Data" });
+            const months = (result && result.success && result.monthly) ? result.monthly : [];
+            if (!months.length) { ovSet("ov3Status", "No data"); return; }
+
+            // latest month that has data
+            const m = months.slice()
+                .sort((a, b) => a.month.localeCompare(b.month))
+                .pop();
+
+            const std = ovNum(result.standard) > 0 ? ovNum(result.standard) : 99.8;
+            const rate = ovNum(m.kpi);
+            const ok = Number(rate.toFixed(2)) > std;
+
+            // days of that month that have data
+            const days = (result.daily || []).filter(d => d.date.slice(0, 7) === m.month).length;
+
+            ovSet("ov3Rate", ovFmt(rate, 2) + "%");
+            ovSet("ov3Status", ok ? "Achieved" : "Not Achieved");
+            ovSet("ov3Doa", ovFmt(m.doa));
+            ovSet("ov3Birds", ovFmt(m.nob));
+            ovSet("ov3Days", ovFmt(days));
+            document.getElementById("ovKpi3").classList.add(ok ? "ok" : "bad");
+        } catch (e) {
+            console.error(e);
+            ovSet("ov3Status", "Unable to load");
+        }
+    }
 
     const logoutBtn = document.getElementById("logoutBtn");
 

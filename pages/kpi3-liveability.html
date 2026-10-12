@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KPI 3 - Liveability</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/admin-analytics.css">
+    <link rel="stylesheet" href="../css/report.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="../css/kpi.css">
+    <style>
+        :root { --kpi-top:138px; }
+    </style>
+</head>
+<body class="dashboard-page">
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <img src="../assets/Logo.png" alt="Imo Chicken Logo">
+            <h2>Live Bird Department</h2>
+        </div>
+        <div class="sidebar-divider"></div>
+        <a href="user4-kpis.html" class="sidebar-link active">KPI's</a>
+        <p class="sidebar-section-title">ADMIN ANALYTICS</p>
+        <nav class="sidebar-nav">
+            <a href="admin-analytics.html" class="sidebar-link">1) Live Bird Catching Report</a>
+            <a href="imo-plant-report.html" class="sidebar-link">2) Processing P.Received Report</a>
+            <a href="other-plants-report.html" class="sidebar-link">3) Live Bird Sales Report</a>
+            <a href="own-farm-report.html" class="sidebar-link">4) Own farm Movement Report</a>
+            <a href="birds-received-report.html" class="sidebar-link">5) Plant Received &amp; DOA Report</a>
+            <a href="bird-condition-analytics.html" class="sidebar-link">6) Bird Condition Report</a>
+            <a href="vehicle-expenses-monthly-report.html" class="sidebar-link">7) Catching Team Expense Report</a>
+            <a href="forecast-actual-report.html" class="sidebar-link">8) Forecast vs Actual Report</a>
+            <a href="admin-catching-breakdown-report.html" class="sidebar-link">9) Bird Quality Status Report</a>
+        </nav>
+        <div class="sidebar-divider"></div>
+        <nav class="sidebar-nav">
+            <a href="bird-flow-analytics.html" class="sidebar-link">Bird Flow Analytics</a>
+        </nav>
+    </aside>
+
+    <main class="dashboard-main">
+        <header class="dashboard-header kpi-banner">
+            <div>
+                <span class="kpi-logo"><img src="../assets/LIVE.svg" alt=""></span>
+                <div class="kpi-titles">
+                    <h1>KPI 3 – Liveability</h1>
+                    <p>Share of the birds received that arrive alive at the plant: (NOB − DOA) ÷ NOB</p>
+                </div>
+            </div>
+            <div class="header-user">
+                <span id="loggedUser">Logged in as:</span>
+                <a href="user4-kpis.html" class="back-btn" title="Back to KPI Overview">Back</a>
+                <button id="logoutBtn" class="logout-btn">Logout</button>
+            </div>
+        </header>
+
+        <section class="form-card analytics-card">
+            <div class="report-toolbar">
+                <div class="report-filters">
+                    <input type="month" id="kpiMonth" title="Select Month">
+                    <button id="refreshBtn" class="report-btn">Refresh</button>
+                </div>
+            </div>
+
+            <div class="kpi-strip" id="kpiCards">
+                <!-- Card 1: Liveability -->
+                <div class="kpi-tile" id="boxRate">
+            <div class="kpi-label">
+                <span>Liveability</span>
+
+            </div>
+                    <div class="kpi-value">
+                        <strong id="sumRate">-</strong>
+                        <span class="kpi-pill" id="rateStatus">-</span>
+                        <span class="kpi-std">Standard: <b id="stdLabel">&gt; 99.80 %</b></span>
+                    </div>
+                </div>
+
+                <!-- Card 2: DOA + total birds, side by side -->
+                <div class="kpi-tile" id="boxDoa">
+                    <div class="kpi-label">Key Performance Dimensions</div>
+                    <div class="kpi-value">
+                        <div class="kpi-birds">
+                            <b class="kpi-birds-num" id="sumDoa">-</b>
+                            <span class="kpi-birds-label">Dead On Arrival</span>
+                        </div>
+                        <div class="kpi-birds">
+                            <b class="kpi-birds-num" id="sumBirds">-</b>
+                            <span class="kpi-birds-label">Total Birds Received</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Days -->
+                <div class="kpi-tile" id="boxDays">
+                    <div class="kpi-label">This Month Total Days</div>
+                    <div class="kpi-value">
+                        <strong id="sumDays">-</strong>
+                        <div class="kpi-chips">
+                            <span class="kpi-chip good"><b id="sumDaysGood">-</b> Achieved</span>
+                            <span class="kpi-chip out"><b id="sumDaysOut">-</b> Not Achieved</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="reportMessage" class="save-message"></div>
+            <div id="reportLoading" class="report-loading hidden">Loading KPI 3...</div>
+
+            <div class="kpi-batch-bar kpi-sec-first">
+                <span class="kpi-sec-title">Daily Analysis</span>
+            </div>
+
+            <div class="kpi-chart-card">
+                <h3 class="kpi-chart-title" id="chartTitle">Daily Liveability</h3>
+                <div id="kpiChart" class="kpi-chart"></div>
+            </div>
+
+            <div class="kpi-chart-card">
+                <h3 class="kpi-chart-title" id="tableTitle">Daily Details</h3>
+                <div class="kpi-table-wrap"><table class="kpi-day-table kpi-fixed" id="dayTable"></table></div>
+            </div>
+            <div class="kpi-batch-bar">
+                <label for="kpiYear">Monthly Comparison</label>
+                <select id="kpiYear" title="Select Year"></select>
+            </div>
+
+            <div class="kpi-chart-card">
+                <h3 class="kpi-chart-title" id="yearChartTitle">Monthly Liveability</h3>
+                <div id="yearChart" class="kpi-chart"></div>
+            </div>
+
+            <div class="kpi-chart-card">
+                <h3 class="kpi-chart-title" id="yearTableTitle">Monthly Details</h3>
+                <div class="kpi-table-wrap"><table class="kpi-day-table kpi-fixed" id="yearTable"></table></div>
+            </div>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/kpi3-liveability.js"></script>
+</body>
+</html>
