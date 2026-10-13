@@ -1669,3 +1669,6 @@ body.admin-analytics-page {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+.analytics-summary-card {
+    display: none !important;
+}

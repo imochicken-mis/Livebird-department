@@ -84,7 +84,7 @@ body.sidebar-collapsed .dashboard-header.kpi-banner { left:0 !important; padding
 
 .kpi-sec-title, .kpi-batch-bar label { font-size:15px; font-weight:800; letter-spacing:.4px; color:#fff; }
 
-#kpiMonth, #kpiDate, #kpiYear { height:44px; padding:0 14px; border:1px solid #dbe3ef; border-radius:12px; background:#fff; color:#0b2a66; font-family:inherit; font-weight:700; cursor:pointer; box-shadow:0 4px 12px rgba(15,23,42,.08); }
+#kpiMonth, #kpiDate, #kpiYear, #lorryDate { height:44px; padding:0 14px; border:1px solid #dbe3ef; border-radius:12px; background:#fff; color:#0b2a66; font-family:inherit; font-weight:700; cursor:pointer; box-shadow:0 4px 12px rgba(15,23,42,.08); }
 
 #refreshBtn { display:flex; align-items:center; gap:8px; height:44px; padding:0 22px; border-radius:12px; background:linear-gradient(135deg,#0b4aa8,#06306f); border:1px solid rgba(255,255,255,.35); box-shadow:0 6px 14px rgba(11,74,168,.3); }
 

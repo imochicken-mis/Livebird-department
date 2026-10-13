@@ -318,6 +318,21 @@
         .kpi-hub-std { display:inline-block; padding:4px 10px; border-radius:20px; background:#ecfdf5; color:#047857; font-size:11px; font-weight:700; }
 
         /* KPI OVERVIEW */
+        .kpi-ov-month { display:inline-block; margin-left:10px; padding:3px 12px; border-radius:20px; background:#f3e8ff; color:#7e22ce; font-size:12px; font-weight:800; letter-spacing:.4px; vertical-align:middle; }
+        .kpi-ov-month:empty { display:none; }
+        .kpi-ov-filter { display:flex; flex-wrap:wrap; align-items:center; gap:10px 14px; }
+        .kpi-ov-bar .kpi-ov-monthfilter { margin-left:0; background:#fff; color:#0b2a66; border-color:#fff; }
+        .ov-multi { position:relative; }
+        .ov-multi > summary { display:inline-block; list-style:none; cursor:pointer; user-select:none; }
+        .ov-multi > summary::-webkit-details-marker { display:none; }
+        .ov-multi > summary::after { content:" \25BE"; }
+        .ov-multi-panel { position:absolute; top:calc(100% + 6px); left:0; z-index:20; min-width:300px; padding:8px 6px; background:#fff; border:1px solid #e2e8f0; border-radius:12px; box-shadow:0 10px 28px rgba(15,23,42,.18); }
+        .ov-multi-panel label { display:flex; align-items:center; gap:10px; padding:8px 12px; border-radius:8px; color:#0b2a66; font-size:13px; font-weight:700; cursor:pointer; }
+        .ov-multi-panel label:hover { background:#f1f5f9; }
+        .ov-multi-all { margin-bottom:4px; border-bottom:1px solid #e2e8f0; }
+        .ov-multi-panel input { width:16px; height:16px; accent-color:#0b2a66; }
+        #ovStatusBox .ov-multi-panel { min-width:210px; }
+        .kpi-ov-monthfilter { margin-left:12px; padding:5px 14px; border:1px solid #c4b5fd; border-radius:20px; background:#f5f3ff; color:#6d28d9; font-family:inherit; font-size:12.5px; font-weight:800; vertical-align:middle; cursor:pointer; }
         .kpi-ov-bar { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin:22px 4px 0; padding:12px 18px; background:linear-gradient(90deg,#010853,#0b2a66); border-radius:12px; box-shadow:0 6px 16px rgba(1,8,83,.18); }
         .kpi-ov-bar .t { font-size:15px; font-weight:800; letter-spacing:.4px; color:#fff; }
         .kpi-ov-bar .m { font-size:12px; font-weight:700; letter-spacing:.6px; color:#cbd5e1; }
@@ -334,14 +349,15 @@
         .kpi-ov-stats { display:flex; gap:18px; margin:0 0 14px; padding-top:12px; border-top:1px dashed #cbd5e1; }
         .kpi-ov-stats div { display:flex; flex-direction:column; gap:3px; font-size:11px; font-weight:700; letter-spacing:.8px; text-transform:uppercase; color:#64748b; }
         .kpi-ov-stats b { font-size:17px; letter-spacing:0; color:#0b2a66; }
+        .kpi-ov-donut { width:100%; height:190px; margin:0 0 14px; }
 
         /* KPI 1 overview card - layout from the sketch */
-        #ovKpi1, #ovKpi3 , #ovKpi4 { position:relative; overflow:hidden; text-align:center; padding-bottom:0; }
-        #ovKpi1 .kpi-hub-no, #ovKpi3 .kpi-hub-no , #ovKpi4 .kpi-hub-no { position:absolute; top:16px; left:18px; }
+        #ovKpi1, #ovKpi3 , #ovKpi4 , #ovKpi5 { position:relative; overflow:hidden; text-align:center; padding-bottom:0; }
+        #ovKpi1 .kpi-hub-no, #ovKpi3 .kpi-hub-no , #ovKpi4 .kpi-hub-no , #ovKpi5 .kpi-hub-no { position:absolute; top:16px; left:18px; }
         .kpi-hub-img { width:120px; height:120px; margin:10px auto 16px; display:flex; align-items:center; justify-content:center; border-radius:50%; background:#f0f7ff; border:3px solid #38a3ff; }
         .kpi-hub-img img { width:84px; height:84px; object-fit:contain; }
-        #ovKpi1.ok  .kpi-hub-img, #ovKpi3.ok  .kpi-hub-img , #ovKpi4.ok  .kpi-hub-img { border-color:#10b981; }
-        #ovKpi1.bad .kpi-hub-img, #ovKpi3.bad .kpi-hub-img , #ovKpi4.bad .kpi-hub-img { border-color:#ef4444; }
+        #ovKpi1.ok  .kpi-hub-img, #ovKpi3.ok  .kpi-hub-img , #ovKpi4.ok  .kpi-hub-img , #ovKpi5.ok  .kpi-hub-img { border-color:#10b981; }
+        #ovKpi1.bad .kpi-hub-img, #ovKpi3.bad .kpi-hub-img , #ovKpi4.bad .kpi-hub-img , #ovKpi5.bad .kpi-hub-img { border-color:#ef4444; }
 
         /* KPI 2 overview card - same layout and glow as KPI 1 */
         #ovKpi2 { position:relative; overflow:hidden; text-align:center; padding-bottom:0; }
@@ -362,8 +378,28 @@
         @media (prefers-reduced-motion: reduce) { #ovKpi2.ok, #ovKpi2.bad { animation:none; } }
 
         /* animated glow around the card border (green = achieved, red = not achieved) */
-        #ovKpi1.ok, #ovKpi3.ok , #ovKpi4.ok { border-color:#10b981; border-top-color:#047857; animation:kpiGlowOk 2.2s ease-in-out infinite; }
-        #ovKpi1.bad, #ovKpi3.bad , #ovKpi4.bad { border-color:#ef4444; border-top-color:#b91c1c; animation:kpiGlowBad 2.2s ease-in-out infinite; }
+        #ovKpi1.ok, #ovKpi3.ok , #ovKpi4.ok , #ovKpi5.ok { border-color:#10b981; border-top-color:#047857; animation:kpiGlowOk 2.2s ease-in-out infinite; }
+        #ovKpi1.bad, #ovKpi3.bad , #ovKpi4.bad , #ovKpi5.bad { border-color:#ef4444; border-top-color:#b91c1c; animation:kpiGlowBad 2.2s ease-in-out infinite; }
+        /* running light around the card border */
+        @property --kpi-angle { syntax:'<angle>'; inherits:true; initial-value:0deg; }
+        @keyframes kpiSpin { to { --kpi-angle:360deg; } }
+        .kpi-hub { animation:kpiSpin 3s linear infinite; }
+        @media (prefers-reduced-motion: reduce) { .kpi-hub { animation:none; } }
+        @keyframes kpiGlowWarn {
+            0%, 100% { box-shadow:0 0 0 0 rgba(245,158,11,.40), 0 0 10px 1px rgba(245,158,11,.30); }
+            50%      { box-shadow:0 0 0 8px rgba(245,158,11,0), 0 0 24px 6px rgba(245,158,11,.45); }
+        }
+        :is(#ovKpi1, #ovKpi2, #ovKpi3, #ovKpi4, #ovKpi5).ok   { --kc:#10b981; --kcs:rgba(16,185,129,.28); animation: kpiGlowOk 2.2s ease-in-out infinite; }
+        :is(#ovKpi1, #ovKpi2, #ovKpi3, #ovKpi4, #ovKpi5).warn { --kc:#f59e0b; --kcs:rgba(245,158,11,.28); animation: kpiGlowWarn 2.2s ease-in-out infinite; }
+        :is(#ovKpi1, #ovKpi2, #ovKpi3, #ovKpi4, #ovKpi5).bad  { --kc:#ef4444; --kcs:rgba(239,68,68,.28);  animation: kpiGlowBad 2.2s ease-in-out infinite; }
+        :is(#ovKpi1, #ovKpi2, #ovKpi3, #ovKpi4, #ovKpi5).ok, :is(#ovKpi1, #ovKpi2, #ovKpi3, #ovKpi4, #ovKpi5).warn, :is(#ovKpi1, #ovKpi2, #ovKpi3, #ovKpi4, #ovKpi5).bad {
+            border:3px solid transparent !important;
+            background:linear-gradient(#fff, #fff) padding-box,
+                       conic-gradient(from var(--kpi-angle), var(--kcs) 0deg, var(--kcs) 230deg, var(--kc) 350deg, #fff 360deg) border-box;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            :is(#ovKpi1, #ovKpi2, #ovKpi3, #ovKpi4, #ovKpi5).ok, :is(#ovKpi1, #ovKpi2, #ovKpi3, #ovKpi4, #ovKpi5).warn, :is(#ovKpi1, #ovKpi2, #ovKpi3, #ovKpi4, #ovKpi5).bad { animation:none; }
+        }
         @keyframes kpiGlowOk {
             0%, 100% { box-shadow:0 0 0 0 rgba(16,185,129,.40), 0 0 10px 1px rgba(16,185,129,.30); }
             50%      { box-shadow:0 0 0 8px rgba(16,185,129,0), 0 0 24px 6px rgba(16,185,129,.45); }
@@ -373,16 +409,35 @@
             50%      { box-shadow:0 0 0 8px rgba(239,68,68,0), 0 0 24px 6px rgba(239,68,68,.45); }
         }
         @media (prefers-reduced-motion: reduce) {
-            #ovKpi1.ok, #ovKpi1.bad, #ovKpi3.ok, #ovKpi4.ok, #ovKpi3.bad , #ovKpi4.bad { animation:none; }
+            #ovKpi1.ok, #ovKpi1.bad, #ovKpi3.ok, #ovKpi4.ok, #ovKpi5.ok, #ovKpi3.bad , #ovKpi4.bad , #ovKpi5.bad { animation:none; }
         }
-        #ovKpi1 h3, #ovKpi3 h3 , #ovKpi4 h3 { margin:0 0 4px; font-size:17px; }
-        #ovKpi1 .kpi-ov-rate, #ovKpi3 .kpi-ov-rate , #ovKpi4 .kpi-ov-rate { flex-direction:column; justify-content:center; gap:14px; margin:8px 0 22px; }
-        #ovKpi1 .kpi-ov-rate strong, #ovKpi3 .kpi-ov-rate strong , #ovKpi4 .kpi-ov-rate strong { font-size:56px; }
-        #ovKpi1 .kpi-ov-pill, #ovKpi3 .kpi-ov-pill , #ovKpi4 .kpi-ov-pill { padding:8px 22px; font-size:14px; }
-        #ovKpi1 .kpi-ov-stats, #ovKpi3 .kpi-ov-stats , #ovKpi4 .kpi-ov-stats { justify-content:space-around; gap:8px; margin:0 -22px; padding:16px 22px 8px; background:#f8fafc; border-top:1px solid #e2e8f0; }
-        #ovKpi1 .kpi-ov-stats div, #ovKpi3 .kpi-ov-stats div , #ovKpi4 .kpi-ov-stats div { flex:1; align-items:center; }
-        #ovKpi1 .kpi-ov-stats b, #ovKpi3 .kpi-ov-stats b , #ovKpi4 .kpi-ov-stats b { font-size:20px; }
-        #ovKpi1 .kpi-hub-std, #ovKpi3 .kpi-hub-std , #ovKpi4 .kpi-hub-std { display:block; margin:0 -22px; padding:4px 22px 18px; border-radius:0; background:#f8fafc; color:#475569; font-size:12px; font-weight:800; letter-spacing:.6px; text-transform:uppercase; }
+        #ovKpi1 h3, #ovKpi3 h3 , #ovKpi4 h3 , #ovKpi5 h3 { margin:0 0 4px; font-size:17px; }
+        #ovKpi1 .kpi-ov-rate, #ovKpi3 .kpi-ov-rate , #ovKpi4 .kpi-ov-rate , #ovKpi5 .kpi-ov-rate { flex-direction:column; justify-content:center; gap:14px; margin:8px 0 22px; }
+        #ovKpi1 .kpi-ov-rate strong, #ovKpi3 .kpi-ov-rate strong , #ovKpi4 .kpi-ov-rate strong , #ovKpi5 .kpi-ov-rate strong { font-size:56px; }
+        #ovKpi1 .kpi-ov-pill, #ovKpi3 .kpi-ov-pill , #ovKpi4 .kpi-ov-pill , #ovKpi5 .kpi-ov-pill { padding:8px 22px; font-size:14px; }
+        #ovKpi1 .kpi-ov-stats, #ovKpi3 .kpi-ov-stats , #ovKpi4 .kpi-ov-stats , #ovKpi5 .kpi-ov-stats { justify-content:space-around; gap:8px; margin:0 -22px; padding:16px 22px 8px; background:#f8fafc; border-top:1px solid #e2e8f0; }
+        #ovKpi1 .kpi-ov-stats div, #ovKpi3 .kpi-ov-stats div , #ovKpi4 .kpi-ov-stats div , #ovKpi5 .kpi-ov-stats div { flex:1; align-items:center; }
+        #ovKpi1 .kpi-ov-stats b, #ovKpi3 .kpi-ov-stats b , #ovKpi4 .kpi-ov-stats b , #ovKpi5 .kpi-ov-stats b { font-size:20px; }
+        #ovKpi1 .kpi-hub-std, #ovKpi3 .kpi-hub-std , #ovKpi4 .kpi-hub-std , #ovKpi5 .kpi-hub-std { display:block; margin:0 -22px; padding:4px 22px 18px; border-radius:0; background:#f8fafc; color:#475569; font-size:12px; font-weight:800; letter-spacing:.6px; text-transform:uppercase; }
+    
+        /* KPI 5 - amber (Acceptable) state + smaller value text (e.g. "40m 38s") */
+        .kpi-hub-card.warn .kpi-ov-pill { background:#fef3c7; color:#92400e; }
+        #ovKpi5.warn .kpi-hub-img { border-color:#f59e0b; }
+        #ovKpi5.warn { border-color:#f59e0b; border-top-color:#d97706; }
+        #ovKpi5 .kpi-ov-rate strong { font-size:46px; }
+
+        /* 5 cards in one row on laptop / desktop screens */
+        @media (min-width: 1400px) {
+            .kpi-hub { grid-template-columns:repeat(5, minmax(0, 1fr)); gap:12px; }
+            .kpi-hub-img { width:100px; height:100px; margin:10px auto 12px; }
+            .kpi-hub-img img { width:70px; height:70px; }
+            .kpi-hub-img .material-icons { font-size:54px !important; }
+            #ovKpi1 h3, #ovKpi2 h3, #ovKpi3 h3, #ovKpi4 h3, #ovKpi5 h3 { font-size:15px; }
+            #ovKpi1 .kpi-ov-rate strong, #ovKpi2 .kpi-ov-rate strong, #ovKpi3 .kpi-ov-rate strong, #ovKpi4 .kpi-ov-rate strong, #ovKpi5 .kpi-ov-rate strong { font-size:44px; }
+            #ovKpi5 .kpi-ov-rate strong { font-size:38px; }
+            #ovKpi1 .kpi-ov-stats b, #ovKpi2 .kpi-ov-stats b, #ovKpi3 .kpi-ov-stats b, #ovKpi4 .kpi-ov-stats b, #ovKpi5 .kpi-ov-stats b { font-size:16px; }
+            #ovKpi1 .kpi-hub-std, #ovKpi2 .kpi-hub-std, #ovKpi3 .kpi-hub-std, #ovKpi4 .kpi-hub-std, #ovKpi5 .kpi-hub-std { font-size:11px; letter-spacing:.3px; }
+        }
     </style>
 
     </style>
@@ -523,10 +578,10 @@
 
             <div>
 
-                <h1>KPI's</h1>
+                <h1>KPI Overview</h1>
 
                 <p>
-                    Live Bird Department Performance Monitoring
+                    Live Bird Department Performance Monitoring 
                 </p>
 
             </div>
@@ -556,7 +611,30 @@
         ====================================== -->
 
         <div class="kpi-ov-bar">
-            <span class="t">KPI Overview</span>
+            <div class="kpi-ov-filter"><label class="t" for="ovMonthFilter">Month</label><input type="month" id="ovMonthFilter" class="kpi-ov-monthfilter" title="Select Month">
+                <label class="t" for="ovKpiFilter">KPI</label>
+                <details id="ovKpiBox" class="ov-multi">
+                    <summary class="kpi-ov-monthfilter"><span id="ovKpiLabel">All KPIs</span></summary>
+                    <div class="ov-multi-panel">
+                        <label class="ov-multi-all"><input type="checkbox" id="ovKpiAll" checked> All KPIs</label>
+                        <label><input type="checkbox" data-kpi value="ovKpi1" checked> KPI 1 - Live Bird Mortality Rate</label>
+                        <label><input type="checkbox" data-kpi value="ovKpi2" checked> KPI 2 - Average Bird Weight</label>
+                        <label><input type="checkbox" data-kpi value="ovKpi3" checked> KPI 3 - Liveability</label>
+                        <label><input type="checkbox" data-kpi value="ovKpi4" checked> KPI 4 - Bird Receiving Performance</label>
+                        <label><input type="checkbox" data-kpi value="ovKpi5" checked> KPI 5 - Truck Turnaround Time</label>
+                    </div>
+                </details>
+                <label class="t">Status</label>
+                <details id="ovStatusBox" class="ov-multi">
+                    <summary class="kpi-ov-monthfilter"><span id="ovStatusLabel">All Status</span></summary>
+                    <div class="ov-multi-panel">
+                        <label class="ov-multi-all"><input type="checkbox" id="ovStatusAll" checked> All Status</label>
+                        <label><input type="checkbox" data-status data-label="Achieved" value="ok" checked> Achieved</label>
+                        <label><input type="checkbox" data-status data-label="Acceptable" value="warn" checked> Acceptable</label>
+                        <label><input type="checkbox" data-status data-label="Not Achieved" value="bad" checked> Not Achieved</label>
+                    </div>
+                </details></div>
+            <span class="t"></span>
             <span class="m" id="ovMonth"></span>
         </div>
 
@@ -564,7 +642,7 @@
             <a href="kpi1-mortality.html" class="kpi-hub-card active" id="ovKpi1">
                 <span class="kpi-hub-no">KPI 1</span>
                 <div class="kpi-hub-img"><img src="../assets/DOA.png" alt=""></div>
-                <h3>Transport Mortality Rate</h3>
+                <h3>Live Bird Mortality Rate</h3>
                 <div class="kpi-ov-rate">
                     <strong id="ovRate">-</strong>
                     <span class="kpi-ov-pill" id="ovStatus">Loading...</span>
@@ -574,6 +652,7 @@
                     <div><b id="ovBirds">-</b>Birds</div>
                     <div><b id="ovBatch">-</b>Batches</div>
                 </div>
+                <div class="kpi-ov-donut" id="ovDonut1"></div>
                 <span class="kpi-hub-std">Standard &lt; 0.20 %</span>
             </a>
             <a href="kpi2-weight.html" class="kpi-hub-card active" id="ovKpi2">
@@ -589,11 +668,12 @@
                     <div><b id="ov2Birds">-</b>Birds</div>
                     <div><b id="ov2Batch">-</b>Batches</div>
                 </div>
+                <div class="kpi-ov-donut" id="ovDonut2"></div>
                 <span class="kpi-hub-std">Standard 1.80 – 2.40 kg</span>
             </a>
             <a href="kpi3-liveability.html" class="kpi-hub-card active" id="ovKpi3">
                 <span class="kpi-hub-no">KPI 3</span>
-                <div class="kpi-hub-img"><img src="../assets/LIVE.svg" alt=""></div>
+                <div class="kpi-hub-img"><img src="../assets/Live.png" alt=""></div>
                 <h3>Liveability</h3>
                 <div class="kpi-ov-rate">
                     <strong id="ov3Rate">-</strong>
@@ -604,11 +684,12 @@
                     <div><b id="ov3Birds">-</b>Birds</div>
                     <div><b id="ov3Days">-</b>Days</div>
                 </div>
+                <div class="kpi-ov-donut" id="ovDonut3"></div>
                 <span class="kpi-hub-std">Standard &gt; 99.80 %</span>
             </a>
             <a href="kpi4-receiving.html" class="kpi-hub-card active" id="ovKpi4">
                 <span class="kpi-hub-no">KPI 4</span>
-                <div class="kpi-hub-img"><span class="material-icons" style="font-size:64px;color:#1E5AA8;">speed</span></div>
+                <div class="kpi-hub-img"><img src="../assets/Lorry.png" alt=""></div>
                 <h3>Bird Receiving Performance</h3>
                 <div class="kpi-ov-rate">
                     <strong id="ov4Rate">-</strong>
@@ -619,9 +700,25 @@
                     <div><b id="ov4Hours">-</b>Hours</div>
                     <div><b id="ov4Days">-</b>Days</div>
                 </div>
+                <div class="kpi-ov-donut" id="ovDonut4"></div>
                 <span class="kpi-hub-std" id="ov4Std">Standard 1,500 – 3,000 birds / hr</span>
             </a>
-            <div class="kpi-hub-card pending"><span class="kpi-hub-no">KPI 5</span><h3>Not defined yet</h3></div>
+            <a href="kpi5-turnaround.html" class="kpi-hub-card active" id="ovKpi5">
+                <span class="kpi-hub-no">KPI 5</span>
+                <div class="kpi-hub-img"><img src="../assets/clock.png" alt=""></div>
+                <h3>Truck Turnaround Time</h3>
+                <div class="kpi-ov-rate">
+                    <strong id="ov5Rate">-</strong>
+                    <span class="kpi-ov-pill" id="ov5Status">Loading...</span>
+                </div>
+                <div class="kpi-ov-stats">
+                    <div><b id="ov5Gap">-</b>Gap Time</div>
+                    <div><b id="ov5Turns">-</b>Turnarounds</div>
+                    <div><b id="ov5Days">-</b>Days</div>
+                </div>
+                <div class="kpi-ov-donut" id="ovDonut5"></div>
+                <span class="kpi-hub-std" id="ov5Std">Standard &le; 45 min (limit 60)</span>
+            </a>
         </section>
 
 
@@ -633,6 +730,7 @@
          EXISTING JS
     ====================================== -->
 
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
     <script src="../js/api.js"></script>
 
 
@@ -671,15 +769,87 @@ document.addEventListener("DOMContentLoaded", function () {
     const MONTH_NAMES = ["January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"];
 
+    let ovSelMonth = "";   // "" = latest month
     const ovNum = v => Number(v) || 0;
     const ovFmt = (v, d) => ovNum(v).toLocaleString("en-US",
         { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 });
     const ovSet = (id, text) => { document.getElementById(id).textContent = text; };
 
+    /* ===============================
+       ACHIEVED / NOT ACHIEVED DAYS DONUT
+    ================================ */
+
+    const ovCharts = {};
+
+    function ovDonut(n, ok, bad, mid) {
+
+        const el = document.getElementById("ovDonut" + n);
+        if (!el || typeof echarts === "undefined") return;
+
+        mid = mid || 0;
+        const total = ok + bad + mid;
+
+        if (!total) {
+            el.innerHTML = '<div style="text-align:center;color:#94a3b8;font-size:12px;padding-top:80px;">No daily data</div>';
+            return;
+        }
+
+        const data = [
+            { name: "Achieved", value: ok, itemStyle: { color: "#047857" } }
+        ];
+
+        if (mid > 0) data.push({ name: "Acceptable", value: mid, itemStyle: { color: "#f59e0b" } });
+
+        data.push({ name: "Not Achieved", value: bad, itemStyle: { color: "#b91c1c" } });
+
+        const chart = ovCharts[n] || echarts.init(el);
+        ovCharts[n] = chart;
+
+        chart.setOption({
+            tooltip: {
+                trigger: "item",
+                formatter: p => p.name + ": " + p.value + " days (" + p.percent + "%)"
+            },
+            legend: {
+                bottom: 0,
+                itemWidth: 10,
+                itemHeight: 10,
+                textStyle: { fontSize: 11, fontWeight: 700, color: "#475569" }
+            },
+            graphic: {
+                type: "text",
+                left: "center",
+                top: 62,
+                style: {
+                    text: ok + " / " + total + "\ndays",
+                    textAlign: "center",
+                    fill: "#0b2a66",
+                    fontSize: 17,
+                    fontWeight: 800,
+                    lineHeight: 20
+                }
+            },
+            series: [{
+                type: "pie",
+                radius: ["52%", "76%"],
+                center: ["50%", "44%"],
+                avoidLabelOverlap: true,
+                itemStyle: { borderColor: "#fff", borderWidth: 2 },
+                label: { show: false },
+                labelLine: { show: false },
+                data: data
+            }]
+        }, true);
+    }
+
+    window.addEventListener("resize", function () {
+        Object.keys(ovCharts).forEach(k => ovCharts[k].resize());
+    });
+
     async function loadKpiOverview() {
         try {
             const result = await sendRequest({ action: "getKpi1Data" });
-            const months = (result && result.success && result.monthly) ? result.monthly : [];
+            const months = ((result && result.success && result.monthly) ? result.monthly : []).filter(r => !ovSelMonth || r.month === ovSelMonth);
 
             if (!months.length) { ovSet("ovStatus", "No data"); return; }
 
@@ -693,13 +863,17 @@ document.addEventListener("DOMContentLoaded", function () {
             const bad = rate >= std;
             const p = m.month.split("-");
 
-            ovSet("ovMonth", "Latest month: " + MONTH_NAMES[Number(p[1]) - 1] + " " + p[0]);
+            ovMonthSync(m.month);
             ovSet("ovRate", ovFmt(rate, 2) + "%");
             ovSet("ovStatus", bad ? "Not Achieved" : "Achieved");
             ovSet("ovDoa", ovFmt(m.doa));
             ovSet("ovBirds", ovFmt(m.birds));
             ovSet("ovBatch", ovFmt(m.batches));
             document.getElementById("ovKpi1").classList.add(bad ? "bad" : "ok");
+
+            const dd = (result.daily || []).filter(d => d.date.slice(0, 7) === m.month);
+            const dBad = dd.filter(d => ovNum(d.kpi) >= std).length;
+            ovDonut(1, dd.length - dBad, dBad);
 
         } catch (e) {
             console.error(e);
@@ -711,11 +885,107 @@ document.addEventListener("DOMContentLoaded", function () {
     loadKpi2Overview();
     loadKpi3Overview();
     loadKpi4Overview();
+    loadKpi5Overview();
+
+    // ===== MONTH FILTER (overview cards show the selected month) =====
+    const ovMonthInput = document.getElementById("ovMonthFilter");
+
+    // first load: show the latest month in the box
+    function ovMonthSync(ym) {
+        if (ovMonthInput && !ovMonthInput.value) ovMonthInput.value = ym;
+    }
+
+    // ===== KPI NAME + STATUS FILTERS (hide / show cards) =====
+    const ovKpiBox = document.getElementById("ovKpiBox");
+    const ovKpiBoxes = Array.from(ovKpiBox.querySelectorAll("input[data-kpi]"));
+    const ovKpiAll = document.getElementById("ovKpiAll");
+    const ovStatusBox = document.getElementById("ovStatusBox");
+    const ovStatusBoxes = Array.from(ovStatusBox.querySelectorAll("input[data-status]"));
+    const ovStatusAll = document.getElementById("ovStatusAll");
+    const ovHub = document.querySelector(".kpi-hub");
+
+    const ovEmpty = document.createElement("p");
+    ovEmpty.style.cssText = "display:none;margin:8px 4px 0;padding:18px;text-align:center;color:#64748b;font-weight:700;";
+    ovEmpty.textContent = "No KPI matches the selected filters.";
+    ovHub.insertAdjacentElement("afterend", ovEmpty);
+
+    function ovApplyFilters() {
+        const kpi = ovKpiBoxes.filter(b => b.checked).map(b => b.value);       // "all" or "ovKpi1" .. "ovKpi5"
+        const st = ovStatusBoxes.filter(b => b.checked).map(b => b.value);
+        const allSt = ovStatusBoxes.every(b => b.checked);     // "all" | "ok" | "warn" | "bad"
+        let shown = 0;
+
+        ["ovKpi1", "ovKpi2", "ovKpi3", "ovKpi4", "ovKpi5"].forEach(id => {
+            const c = document.getElementById(id);
+            const match = kpi.includes(id) && (allSt || st.some(s => c.classList.contains(s)));
+            c.style.display = match ? "" : "none";
+            if (match) shown++;
+        });
+
+        const loading = Array.from(ovHub.querySelectorAll(".kpi-ov-pill"))
+            .some(el => el.textContent === "Loading...");
+        ovEmpty.style.display = (!shown && !loading) ? "block" : "none";
+    }
+
+    ovKpiBox.addEventListener("change", e => {
+        if (e.target === ovKpiAll) {
+            ovKpiBoxes.forEach(b => { b.checked = ovKpiAll.checked; });
+        } else {
+            ovKpiAll.checked = ovKpiBoxes.every(b => b.checked);
+        }
+        const n = ovKpiBoxes.filter(b => b.checked).length;
+        document.getElementById("ovKpiLabel").textContent =
+            n === ovKpiBoxes.length ? "All KPIs" : n === 0 ? "No KPI" : n === 1 ? "1 KPI selected" : n + " KPIs selected";
+        ovApplyFilters();
+    });
+
+    // close the dropdown when clicking outside
+    document.addEventListener("click", e => { if (!ovKpiBox.contains(e.target)) ovKpiBox.removeAttribute("open"); });
+    ovStatusBox.addEventListener("change", e => {
+        if (e.target === ovStatusAll) {
+            ovStatusBoxes.forEach(b => { b.checked = ovStatusAll.checked; });
+        } else {
+            ovStatusAll.checked = ovStatusBoxes.every(b => b.checked);
+        }
+        const picked = ovStatusBoxes.filter(b => b.checked);
+        document.getElementById("ovStatusLabel").textContent =
+            picked.length === ovStatusBoxes.length ? "All Status" :
+            picked.length === 0 ? "No Status" :
+            picked.length === 1 ? picked[0].dataset.label : picked.length + " selected";
+        ovApplyFilters();
+    });
+    document.addEventListener("click", e => { if (!ovStatusBox.contains(e.target)) ovStatusBox.removeAttribute("open"); });
+
+    // cards get their status class / text after the data arrives -> re-apply
+    new MutationObserver(ovApplyFilters).observe(ovHub, {
+        subtree: true, childList: true, characterData: true,
+        attributes: true, attributeFilter: ["class"]
+    });
+
+    function ovResetCards() {
+        ["ovKpi1", "ovKpi2", "ovKpi3", "ovKpi4", "ovKpi5"].forEach(id => {
+            const c = document.getElementById(id);
+            c.classList.remove("ok", "warn", "bad");
+            c.querySelectorAll(".kpi-ov-rate strong, .kpi-ov-stats b").forEach(e => { e.textContent = "-"; });
+            const pill = c.querySelector(".kpi-ov-pill");
+            if (pill) pill.textContent = "Loading...";
+        });
+    }
+
+    ovMonthInput.addEventListener("change", () => {
+        ovSelMonth = ovMonthInput.value;   // cleared box = latest month again
+        ovResetCards();
+        loadKpiOverview();
+        loadKpi2Overview();
+        loadKpi3Overview();
+        loadKpi4Overview();
+        loadKpi5Overview();
+    });
 
     async function loadKpi2Overview() {
         try {
             const result = await sendRequest({ action: "getKpi2Data" });
-            const months = (result && result.success && result.monthly) ? result.monthly : [];
+            const months = ((result && result.success && result.monthly) ? result.monthly : []).filter(r => !ovSelMonth || r.month === ovSelMonth);
 
             if (!months.length) { ovSet("ov2Status", "No data"); return; }
 
@@ -736,6 +1006,13 @@ document.addEventListener("DOMContentLoaded", function () {
             ovSet("ov2Batch", ovFmt(m.batches));
             document.getElementById("ovKpi2").classList.add(ok ? "ok" : "bad");
 
+            const dd = (result.daily || []).filter(d => d.date.slice(0, 7) === m.month);
+            const dOk = dd.filter(d => {
+                const a = Number(ovNum(d.avg).toFixed(2));
+                return a >= min && a <= max;
+            }).length;
+            ovDonut(2, dOk, dd.length - dOk);
+
         } catch (e) {
             console.error(e);
             ovSet("ov2Status", "Unable to load");
@@ -743,10 +1020,54 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
+    async function loadKpi5Overview() {
+        try {
+            const result = await sendRequest({ action: "getKpi5Data" });
+            const months = ((result && result.success && result.monthly) ? result.monthly : []).filter(r => !ovSelMonth || r.month === ovSelMonth);
+            if (!months.length) { ovSet("ov5Status", "No data"); return; }
+
+            // latest month that has data
+            const m = months.slice()
+                .sort((a, b) => a.month.localeCompare(b.month))
+                .pop();
+
+            const good = ovNum(result.good) > 0 ? ovNum(result.good) : 45;
+            const limit = ovNum(result.limit) > 0 ? ovNum(result.limit) : 60;
+
+            // month total gap time / month number of gaps
+            const sec = Math.round(ovNum(m.avgSec));
+            const mm = Math.floor(sec / 60);
+            const ss = String(sec % 60).padStart(2, "0");
+
+            ovSet("ov5Rate", mm + "m " + ss + "s");
+            ovSet("ov5Gap", ovFmt(ovNum(m.totalSec) / 3600, 1) + " h");
+            ovSet("ov5Turns", ovFmt(m.turnarounds));
+            ovSet("ov5Days", ovFmt(m.days));
+            ovSet("ov5Std", "Standard \u2264 " + good + " min (limit " + limit + ")");
+
+            const st = sec <= good * 60 ? "ok" : sec <= limit * 60 ? "warn" : "bad";
+            ovSet("ov5Status", st === "ok" ? "Achieved" : st === "warn" ? "Acceptable" : "Not Achieved");
+            document.getElementById("ovKpi5").classList.add(st);
+
+            const dd = (result.daily || []).filter(d => d.date.slice(0, 7) === m.month);
+            let dOk = 0, dMid = 0, dBad = 0;
+            dd.forEach(d => {
+                const s = Math.round(ovNum(d.avgSec));
+                if (s <= good * 60) dOk++;
+                else if (s <= limit * 60) dMid++;
+                else dBad++;
+            });
+            ovDonut(5, dOk, dBad, dMid);
+        } catch (e) {
+            console.error(e);
+            ovSet("ov5Status", "Unable to load");
+        }
+    }
+
     async function loadKpi4Overview() {
         try {
             const result = await sendRequest({ action: "getKpi4Data" });
-            const months = (result && result.success && result.monthly) ? result.monthly : [];
+            const months = ((result && result.success && result.monthly) ? result.monthly : []).filter(r => !ovSelMonth || r.month === ovSelMonth);
             if (!months.length) { ovSet("ov4Status", "No data"); return; }
 
             // latest month that has data
@@ -769,6 +1090,13 @@ document.addEventListener("DOMContentLoaded", function () {
             ovSet("ov4Status", ok ? "Achieved" : "Not Achieved");
             ovSet("ov4Std", "Standard " + ovFmt(min) + " \u2013 " + ovFmt(max) + " birds / hr");
             document.getElementById("ovKpi4").classList.add(ok ? "ok" : "bad");
+
+            const dd = (result.daily || []).filter(d => d.date.slice(0, 7) === m.month);
+            const dOk = dd.filter(d => {
+                const r = Number(ovNum(d.kpi).toFixed(0));
+                return r >= min && r <= max;
+            }).length;
+            ovDonut(4, dOk, dd.length - dOk);
         } catch (e) {
             console.error(e);
             ovSet("ov4Status", "Unable to load");
@@ -778,7 +1106,7 @@ document.addEventListener("DOMContentLoaded", function () {
     async function loadKpi3Overview() {
         try {
             const result = await sendRequest({ action: "getKpi3Data" });
-            const months = (result && result.success && result.monthly) ? result.monthly : [];
+            const months = ((result && result.success && result.monthly) ? result.monthly : []).filter(r => !ovSelMonth || r.month === ovSelMonth);
             if (!months.length) { ovSet("ov3Status", "No data"); return; }
 
             // latest month that has data
@@ -799,6 +1127,10 @@ document.addEventListener("DOMContentLoaded", function () {
             ovSet("ov3Birds", ovFmt(m.nob));
             ovSet("ov3Days", ovFmt(days));
             document.getElementById("ovKpi3").classList.add(ok ? "ok" : "bad");
+
+            const dd = (result.daily || []).filter(d => d.date.slice(0, 7) === m.month);
+            const dOk = dd.filter(d => Number(ovNum(d.kpi).toFixed(2)) > std).length;
+            ovDonut(3, dOk, dd.length - dOk);
         } catch (e) {
             console.error(e);
             ovSet("ov3Status", "Unable to load");

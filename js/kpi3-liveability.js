@@ -100,8 +100,8 @@ document.addEventListener("DOMContentLoaded", () => {
             $("sumRate").textContent = fmt(m.kpi, 2) + "%";
             $("boxRate").className = "kpi-tile " + (ok ? "ok" : "bad");
             $("rateStatus").textContent = ok ? "Achieved" : "Not Achieved";
-            $("sumDoa").textContent = fmt(m.doa);
-            $("sumBirds").textContent = fmt(m.nob);
+            $("sumDoa").textContent = fmt(m.nob);
+            $("sumBirds").textContent = fmt(m.avail);
         } else {
             $("sumRate").textContent = "-";
             $("boxRate").className = "kpi-tile";
@@ -158,8 +158,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 return '<th class="' + (wd === 0 ? "sun" : wd === 6 ? "sat" : "") + '">' + n + "</th>";
             }).join("") + "</tr></thead>" +
             "<tbody>" +
-            row("Total Birds", d => "<td>" + fmt(d.nob) + "</td>") +
+            row("Dispatch Birds", d => "<td>" + fmt(d.nob) + "</td>") +
             row("DOA", d => "<td>" + fmt(d.doa) + "</td>") +
+            row("Alive NOB", d => "<td>" + fmt(d.avail) + "</td>") +
             row("KPI Value", d => '<td class="' + (isOk(d.kpi) ? "ok" : "bad") + '">' + fmt(d.kpi, 2) + "%</td>") +
             "</tbody>";
     }
@@ -388,8 +389,9 @@ document.addEventListener("DOMContentLoaded", () => {
             "<thead><tr><th>Month</th>" +
             nums.map(n => "<th>" + SHORT_MONTHS[n - 1] + "</th>").join("") +
             "</tr></thead><tbody>" +
-            row("Total Birds", m => "<td>" + fmt(m.nob) + "</td>") +
+            row("Dispatch Birds", m => "<td>" + fmt(m.nob) + "</td>") +
             row("DOA", m => "<td>" + fmt(m.doa) + "</td>") +
+            row("Alive NOB", m => "<td>" + fmt(m.avail) + "</td>") +
             row("KPI Value", m => '<td class="' + (isOk(m.kpi) ? "ok" : "bad") + '">' + fmt(m.kpi, 2) + "%</td>") +
             "</tbody>";
     }
