@@ -2,8 +2,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Standard range in birds / hour: Achieved when MIN <= value <= MAX.
     // Overwritten by the server values (KPI4_MIN / KPI4_MAX in Apps Script).
-    let KPI_MIN = 1500;
-    let KPI_MAX = 3000;
+    let KPI_MIN = 1200;
+    let KPI_MAX = 2000;
 
     const $ = id => document.getElementById(id);
 

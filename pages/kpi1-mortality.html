@@ -85,7 +85,7 @@
                     <div class="kpi-value">
                         <strong id="sumRate">-</strong>
                         <span class="kpi-pill" id="rateStatus">-</span>
-                        <span class="kpi-std">Standard: <b id="stdLabel">&lt; 0.20 %</b></span>
+                        <span class="kpi-std">Standard: <b id="stdLabel">&lt; 0.30 %</b></span>
                     </div>
                 </div>
 
@@ -106,8 +106,15 @@
 
                 <!-- Card 3: Batches -->
                 <div class="kpi-tile" id="boxBatch">
-                    <div class="kpi-label">This Month Total Batch Count</div>
+                    <div class="kpi-label">This Month Batches &amp; Days</div>
                     <div class="kpi-value">
+                        <span class="kpi-half-cap days">Days</span>
+                        <strong id="sumDays" class="days">-</strong>
+                        <div class="kpi-chips days">
+                            <span class="kpi-chip good"><b id="sumDaysGood">-</b> Achieved</span>
+                            <span class="kpi-chip out"><b id="sumDaysOut">-</b> Not Achieved</span>
+                        </div>
+                        <span class="kpi-half-cap">Batches</span>
                         <strong id="sumBatch">-</strong>
                         
                         <div class="kpi-chips">
@@ -168,5 +175,6 @@
     <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
     <script src="../js/api.js"></script>
     <script src="../js/kpi1-mortality.js"></script>
+    <script src="../js/kpi-formula.js"></script>
 </body>
 </html>

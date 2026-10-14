@@ -61,9 +61,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // lower is better:  ok = Achieved, warn = Acceptable, bad = Not Achieved
     const status = sec => {
         const s = Math.round(num(sec));
-        return s <= GOOD * 60 ? "ok" : s <= LIMIT * 60 ? "warn" : "bad";
+        return s <= LIMIT * 60 ? "ok" : "bad";
     };
-    const STATUS_TEXT = { ok: "Achieved", warn: "Acceptable", bad: "Not Achieved" };
+    const STATUS_TEXT = { ok: "Achieved", bad: "Not Achieved" };
 
     const monthLabel = ym => {
         const p = String(ym || "").split("-");
@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .filter(r => r.date.slice(0, 7) === ym)
             .sort((a, b) => a.date.localeCompare(b.date));
 
-        $("stdLabel").textContent = "≤ " + GOOD + " min  (limit " + LIMIT + " min)";
+        $("stdLabel").textContent = "≤ " + LIMIT + " min";
 
         if (m) {
             const st = status(m.avgSec);
@@ -143,12 +143,12 @@ document.addEventListener("DOMContentLoaded", () => {
             days.forEach(d => { c[status(d.avgSec)]++; });
             $("sumDays").textContent = fmt(days.length);
             $("sumDaysGood").textContent = fmt(c.ok);
-            $("sumDaysMid").textContent = fmt(c.warn);
+            
             $("sumDaysOut").textContent = fmt(c.bad);
         } else {
             $("sumDays").textContent = "-";
             $("sumDaysGood").textContent = "-";
-            $("sumDaysMid").textContent = "-";
+            
             $("sumDaysOut").textContent = "-";
         }
 
@@ -245,11 +245,9 @@ document.addEventListener("DOMContentLoaded", () => {
             markArea: {
                 silent: true,
                 data: [
-                    // up to the good limit = green
-                    [{ yAxis: 0, itemStyle: { color: "rgba(4,120,87,0.10)" } }, { yAxis: GOOD }],
-                    // good limit .. limit = amber
-                    [{ yAxis: GOOD, itemStyle: { color: "rgba(245,158,11,0.12)" } }, { yAxis: LIMIT }],
-                    // above the limit = red
+                    // below the standard = green
+                    [{ yAxis: 0, itemStyle: { color: "rgba(4,120,87,0.10)" } }, { yAxis: LIMIT }],
+                    // at / above the standard = red
                     [{ yAxis: LIMIT, itemStyle: { color: "rgba(185,28,28,0.08)" } }, { yAxis: max }]
                 ]
             },
@@ -258,14 +256,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 silent: true,
                 data: [
                     {
-                        yAxis: GOOD,
-                        lineStyle: { color: "#047857", type: "dashed", width: 2 },
-                        label: { formatter: "Good ≤ " + GOOD + " min", position: "insideEndTop", color: "#047857", fontWeight: 700 }
-                    },
-                    {
                         yAxis: LIMIT,
                         lineStyle: { color: "#b91c1c", type: "dashed", width: 2 },
-                        label: { formatter: "Limit " + LIMIT + " min", position: "insideEndTop", color: "#b91c1c", fontWeight: 700 }
+                        label: { formatter: "Standard ≤ " + LIMIT + " min", position: "insideEndTop", color: "#b91c1c", fontWeight: 700 }
                     }
                 ]
             }

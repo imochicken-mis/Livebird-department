@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
 
     // Standard: mortality must be BELOW this value (%). Overwritten by the server value.
-    let KPI_STANDARD = 0.2;
+    let KPI_STANDARD = 0.3;
 
     const $ = id => document.getElementById(id);
 
@@ -103,6 +103,18 @@ document.addEventListener("DOMContentLoaded", () => {
             $("sumDoa").textContent = "-";
             $("sumBirds").textContent = "-";
             $("sumBatch").textContent = "-";
+        }
+
+        // days tile (Achieved / Not Achieved days of the month)
+        if (days.length) {
+            const badDays = days.filter(d => isBad(num(d.kpi))).length;
+            $("sumDays").textContent = fmt(days.length);
+            $("sumDaysGood").textContent = fmt(days.length - badDays);
+            $("sumDaysOut").textContent = fmt(badDays);
+        } else {
+            $("sumDays").textContent = "-";
+            $("sumDaysGood").textContent = "-";
+            $("sumDaysOut").textContent = "-";
         }
 
         renderChart(days, ym);
@@ -568,11 +580,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 formatter: p => {
                     const r = rows[p[0].dataIndex];
                     return `<b>Batch ${r.batchNo || "-"}</b>` +
-                        `<br>Vehicle: ${r.vehicle || "-"}` +
+                        
                         `<br>Mortality: ${fmt(r.kpi, 2)}%` +
                         `<br>DOA: ${fmt(r.doa)}` +
-                        `<br>Avail Birds: ${fmt(r.avail)}` +
-                        `<br>Received: ${fmt(r.birds)}`;
+                        
+                        `<br>Birds: ${fmt(r.birds)}`;
                 }
             },
             xAxis: {

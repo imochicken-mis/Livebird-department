@@ -322,6 +322,11 @@
         .kpi-ov-month:empty { display:none; }
         .kpi-ov-filter { display:flex; flex-wrap:wrap; align-items:center; gap:10px 14px; }
         .kpi-ov-bar .kpi-ov-monthfilter { margin-left:0; background:#fff; color:#0b2a66; border-color:#fff; }
+
+        /* the Month / KPI / Status bar stays on top while scrolling */
+        .ov-sticky-top { position:sticky; top:0; z-index:100; margin:-32px -32px 0; padding:32px 32px 12px; background:#f4f6f9; }
+        .sidebar-toggle-btn { z-index:200; }
+        
         .ov-multi { position:relative; }
         .ov-multi > summary { display:inline-block; list-style:none; cursor:pointer; user-select:none; }
         .ov-multi > summary::-webkit-details-marker { display:none; }
@@ -349,7 +354,42 @@
         .kpi-ov-stats { display:flex; gap:18px; margin:0 0 14px; padding-top:12px; border-top:1px dashed #cbd5e1; }
         .kpi-ov-stats div { display:flex; flex-direction:column; gap:3px; font-size:11px; font-weight:700; letter-spacing:.8px; text-transform:uppercase; color:#64748b; }
         .kpi-ov-stats b { font-size:17px; letter-spacing:0; color:#0b2a66; }
-        .kpi-ov-donut { width:100%; height:190px; margin:0 0 14px; }
+        .kpi-ov-donut { width:100%; height:185px; margin:0 0 8px; }
+        .kpi-ov-legend { display:flex; flex-wrap:wrap; justify-content:center; gap:6px 8px; margin:0 0 16px; }
+        .kpi-ov-legend .lg { display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:20px; background:#f1f5f9; font-size:11.5px; font-weight:700; color:#475569; white-space:nowrap; }
+        .kpi-ov-legend .lg i { width:9px; height:9px; border-radius:50%; display:inline-block; }
+        .kpi-ov-legend .lg b { color:#0b2a66; font-weight:900; }
+        .kpi-ov-trend { margin:0 0 16px; padding-top:12px; border-top:1px dashed #cbd5e1; }
+        .kpi-ov-tabs { display:flex; gap:4px; padding:3px; margin:0 auto 6px; width:max-content; max-width:100%; background:#f1f5f9; border-radius:20px; }
+        .kpi-ov-tabs button { border:0; background:transparent; padding:5px 12px; border-radius:16px; font-family:inherit; font-size:11px; font-weight:800; letter-spacing:.4px; color:#64748b; cursor:pointer; }
+        .kpi-ov-tabs button.on { background:linear-gradient(90deg,#010853,#0b2a66); color:#fff; box-shadow:0 3px 8px rgba(1,8,83,.25); }
+        .kpi-ov-cap { display:none; text-align:center; margin:0 0 4px; font-size:11px; font-weight:800; letter-spacing:.5px; text-transform:uppercase; color:#64748b; }
+        .kpi-ov-col { width:100%; height:200px; }
+        .kpi-ov-empty { text-align:center; color:#94a3b8; font-size:12px; font-weight:700; padding-top:80px; }
+        .kpi-an { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; padding:0 4px 28px; margin:0; }
+        .kpi-an .kpi-ov-col { height:260px; }
+        @media (max-width:820px) { .kpi-an { grid-template-columns:1fr; } }
+        .kpi-an > .kpi-ov-bar { grid-column:1 / -1; margin:22px 0 0; }
+        .kpi-an > .kpi-an-row { margin-top:0; padding:16px 14px; min-width:0; }
+        .kpi-an .kpi-an-body { display:block; }
+        .kpi-an .kpi-an-donut { display:none; }
+        .kpi-an-head { flex-wrap:wrap; }
+        .kpi-an-ctrl { margin-left:auto; display:flex; align-items:center; flex-wrap:wrap; justify-content:flex-end; gap:8px; }
+        .kpi-an-ctrl .kpi-ov-tabs { margin:0; }
+        .ov-period > summary { padding:7px 14px; border-radius:20px; background:#f1f5f9; color:#0b2a66; font-size:11px; font-weight:800; letter-spacing:.4px; }
+        .ov-period .ov-multi-panel { left:auto; right:0; min-width:200px; max-height:280px; overflow:auto; }
+        .kpi-an .kpi-an-head h3 { font-size:15px; }
+        .kpi-an-row { margin-top:16px; padding:18px 20px; background:#fff; border:1px solid #e2e8f0; border-radius:16px; box-shadow:0 6px 18px rgba(15,23,42,.06); }
+        .kpi-an-head { display:flex; align-items:center; gap:12px; margin:0 0 14px; padding-bottom:10px; border-bottom:1px dashed #cbd5e1; }
+        .kpi-an-head .no { font-size:11px; font-weight:800; letter-spacing:1px; color:#b017d2; text-transform:uppercase; }
+        .kpi-an-head h3 { margin:0; font-size:17px; color:#0b2a66; }
+        .kpi-an-body { display:grid; grid-template-columns:minmax(240px,340px) 1fr; gap:26px; align-items:start; }
+        .kpi-an-col .kpi-ov-trend { margin:0; padding-top:0; border-top:0; }
+        @media (max-width:820px) { .kpi-an-body { grid-template-columns:1fr; } }
+        #ovKpi1 .kpi-hub-std, #ovKpi2 .kpi-hub-std, #ovKpi3 .kpi-hub-std, #ovKpi4 .kpi-hub-std, #ovKpi5 .kpi-hub-std {
+            display:block !important; margin:-6px 0 14px !important; padding:0 !important;
+            background:transparent !important; text-align:center;
+        }
 
         /* KPI 1 overview card - layout from the sketch */
         #ovKpi1, #ovKpi3 , #ovKpi4 , #ovKpi5 { position:relative; overflow:hidden; text-align:center; padding-bottom:0; }
@@ -574,6 +614,7 @@
 
         <!-- HEADER -->
 
+        <div class="ov-sticky-top">
         <header class="dashboard-header">
 
             <div>
@@ -630,12 +671,14 @@
                     <div class="ov-multi-panel">
                         <label class="ov-multi-all"><input type="checkbox" id="ovStatusAll" checked> All Status</label>
                         <label><input type="checkbox" data-status data-label="Achieved" value="ok" checked> Achieved</label>
-                        <label><input type="checkbox" data-status data-label="Acceptable" value="warn" checked> Acceptable</label>
+                        
                         <label><input type="checkbox" data-status data-label="Not Achieved" value="bad" checked> Not Achieved</label>
                     </div>
                 </details></div>
             <span class="t"></span>
             <span class="m" id="ovMonth"></span>
+        </div>
+
         </div>
 
         <section class="kpi-hub">
@@ -653,7 +696,7 @@
                     <div><b id="ovBatch">-</b>Batches</div>
                 </div>
                 <div class="kpi-ov-donut" id="ovDonut1"></div>
-                <span class="kpi-hub-std">Standard &lt; 0.20 %</span>
+                <span class="kpi-hub-std">Standard &lt; 0.30 %</span>
             </a>
             <a href="kpi2-weight.html" class="kpi-hub-card active" id="ovKpi2">
                 <span class="kpi-hub-no">KPI 2</span>
@@ -685,7 +728,7 @@
                     <div><b id="ov3Days">-</b>Days</div>
                 </div>
                 <div class="kpi-ov-donut" id="ovDonut3"></div>
-                <span class="kpi-hub-std">Standard &gt; 99.80 %</span>
+                <span class="kpi-hub-std">Standard &gt; 99.70 %</span>
             </a>
             <a href="kpi4-receiving.html" class="kpi-hub-card active" id="ovKpi4">
                 <span class="kpi-hub-no">KPI 4</span>
@@ -701,7 +744,7 @@
                     <div><b id="ov4Days">-</b>Days</div>
                 </div>
                 <div class="kpi-ov-donut" id="ovDonut4"></div>
-                <span class="kpi-hub-std" id="ov4Std">Standard 1,500 – 3,000 birds / hr</span>
+                <span class="kpi-hub-std" id="ov4Std">Standard 1,200 – 2,000 birds / hr</span>
             </a>
             <a href="kpi5-turnaround.html" class="kpi-hub-card active" id="ovKpi5">
                 <span class="kpi-hub-no">KPI 5</span>
@@ -717,7 +760,7 @@
                     <div><b id="ov5Days">-</b>Days</div>
                 </div>
                 <div class="kpi-ov-donut" id="ovDonut5"></div>
-                <span class="kpi-hub-std" id="ov5Std">Standard &le; 45 min (limit 60)</span>
+                <span class="kpi-hub-std" id="ov5Std">Standard &le; 60 min</span>
             </a>
         </section>
 
@@ -781,7 +824,275 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const ovCharts = {};
 
+    // move each card's "Standard" line up, right above the DOA / Birds / Batches band
+    document.querySelectorAll(".kpi-hub-card").forEach(card => {
+        const std = card.querySelector(".kpi-hub-std");
+        const stats = card.querySelector(".kpi-ov-stats");
+        if (std && stats) card.insertBefore(std, stats);
+    });
+
     function ovDonut(n, ok, bad, mid) {
+
+        // no data for this month -> clear everything
+        if (!(ok + bad + (mid || 0))) {
+            ovDonutEmpty(n);
+            return;
+        }
+
+        // coming back from the empty state -> remove the message first
+        if (!ovCharts[n]) {
+            const box = document.getElementById("ovDonut" + n);
+            if (box) box.innerHTML = "";
+        }
+
+        ovDonutDraw(n, ok, bad, mid);
+    }
+
+    function ovDonutEmpty(n) {
+
+        const el = document.getElementById("ovDonut" + n);
+        if (!el) return;
+
+        if (ovCharts[n]) {
+            ovCharts[n].dispose();
+            delete ovCharts[n];
+        }
+
+        el.innerHTML = '<div style="text-align:center;color:#94a3b8;font-size:12px;font-weight:700;padding-top:80px;">No data for this month</div>';
+
+        const lg = el.nextElementSibling;
+        if (lg && lg.classList.contains("kpi-ov-legend")) lg.innerHTML = "";
+    }
+
+    function ovDonutDraw(n, ok, bad, mid) {
+
+        const el = document.getElementById("ovDonut" + n);
+        if (!el || typeof echarts === "undefined") return;
+
+        mid = mid || 0;
+        const total = ok + bad + mid;
+
+        if (!total) {
+            el.innerHTML = '<div style="text-align:center;color:#94a3b8;font-size:12px;padding-top:80px;">No daily data</div>';
+            return;
+        }
+
+        const grad = (c1, c2) => new echarts.graphic.LinearGradient(0, 0, 1, 1, [
+            { offset: 0, color: c1 },
+            { offset: 1, color: c2 }
+        ]);
+
+        const defs = [
+            { name: "Achieved",     value: ok,  c1: "#34d399", c2: "#047857", glow: "rgba(4,120,87,0.35)" },
+            { name: "Acceptable",   value: mid, c1: "#fcd34d", c2: "#d97706", glow: "rgba(217,119,6,0.35)", optional: true },
+            { name: "Not Achieved", value: bad, c1: "#f87171", c2: "#b91c1c", glow: "rgba(185,28,28,0.35)" }
+        ].filter(d => !d.optional || d.value > 0);
+
+        const slices = defs.filter(d => d.value > 0).map(d => ({
+            name: d.name,
+            value: d.value,
+            itemStyle: { color: grad(d.c1, d.c2), shadowBlur: 14, shadowColor: d.glow, shadowOffsetY: 3 }
+        }));
+
+        // legend = HTML chips under the chart (never overlaps the donut)
+        let lg = el.nextElementSibling;
+
+        if (!lg || !lg.classList.contains("kpi-ov-legend")) {
+            lg = document.createElement("div");
+            lg.className = "kpi-ov-legend";
+            el.insertAdjacentElement("afterend", lg);
+        }
+
+        lg.innerHTML = defs.map(d =>
+            '<span class="lg"><i style="background:linear-gradient(135deg,' + d.c1 + "," + d.c2 + ')"></i>' +
+            d.name + " <b>" + d.value + "</b></span>"
+        ).join("");
+
+        const pct = Math.round((ok / total) * 100);
+        const pctColor = ok >= bad + mid ? "#047857" : "#b91c1c";
+
+        const chart = ovCharts[n] || echarts.init(el);
+        ovCharts[n] = chart;
+
+        chart.setOption({
+            animationDuration: 1100,
+            animationEasing: "cubicOut",
+            tooltip: {
+                trigger: "item",
+                backgroundColor: "#ffffff",
+                borderColor: "#e2e8f0",
+                borderWidth: 1,
+                padding: [8, 12],
+                extraCssText: "box-shadow:0 8px 22px rgba(15,23,42,.18);border-radius:10px;",
+                textStyle: { color: "#0f172a", fontSize: 12 },
+                formatter: p =>
+                    '<b style="color:#0b2a66">' + p.name + "</b><br>" +
+                    '<span style="font-size:15px;font-weight:800;">' + p.value + "</span> days" +
+                    ' <span style="color:#64748b">(' + p.percent + "%)</span>"
+            },
+            legend: { show: false },
+            graphic: [
+                {
+                    type: "text", left: "center", top: 58,
+                    style: { text: pct + "%", textAlign: "center", fill: pctColor, fontSize: 30, fontWeight: 900 }
+                },
+                {
+                    type: "text", left: "center", top: 95,
+                    style: { text: "ACHIEVED", textAlign: "center", fill: "#64748b", fontSize: 10, fontWeight: 800 }
+                },
+                {
+                    type: "text", left: "center", top: 110,
+                    style: { text: ok + " of " + total + " days", textAlign: "center", fill: "#0b2a66", fontSize: 11, fontWeight: 700 }
+                }
+            ],
+            series: [
+                {
+                    // thin outer track ring
+                    type: "pie",
+                    silent: true,
+                    radius: ["86%", "88%"],
+                    center: ["50%", "50%"],
+                    label: { show: false },
+                    labelLine: { show: false },
+                    animation: false,
+                    data: [{ value: 1, itemStyle: { color: "#e2e8f0" } }]
+                },
+                {
+                    type: "pie",
+                    radius: ["60%", "80%"],
+                    center: ["50%", "50%"],
+                    startAngle: 90,
+                    padAngle: slices.length > 1 ? 3 : 0,
+                    itemStyle: { borderRadius: 9 },
+                    avoidLabelOverlap: true,
+                    label: { show: false },
+                    labelLine: { show: false },
+                    emphasis: {
+                        scale: true,
+                        scaleSize: 7,
+                        itemStyle: { shadowBlur: 22 }
+                    },
+                    data: slices
+                }
+            ]
+        }, true);
+    }
+
+    // previous donut version (legend inside chart) - no longer used
+    function ovDonutV2_(n, ok, bad, mid) {
+
+        const el = document.getElementById("ovDonut" + n);
+        if (!el || typeof echarts === "undefined") return;
+
+        mid = mid || 0;
+        const total = ok + bad + mid;
+
+        if (!total) {
+            el.innerHTML = '<div style="text-align:center;color:#94a3b8;font-size:12px;padding-top:90px;">No daily data</div>';
+            return;
+        }
+
+        const grad = (c1, c2) => new echarts.graphic.LinearGradient(0, 0, 1, 1, [
+            { offset: 0, color: c1 },
+            { offset: 1, color: c2 }
+        ]);
+
+        const defs = [
+            { name: "Achieved",     value: ok,  c1: "#34d399", c2: "#047857", glow: "rgba(4,120,87,0.35)" },
+            { name: "Acceptable",   value: mid, c1: "#fcd34d", c2: "#d97706", glow: "rgba(217,119,6,0.35)", optional: true },
+            { name: "Not Achieved", value: bad, c1: "#f87171", c2: "#b91c1c", glow: "rgba(185,28,28,0.35)" }
+        ].filter(d => !d.optional || d.value > 0);
+
+        const slices = defs.filter(d => d.value > 0).map(d => ({
+            name: d.name,
+            value: d.value,
+            itemStyle: { color: grad(d.c1, d.c2), shadowBlur: 14, shadowColor: d.glow, shadowOffsetY: 3 }
+        }));
+
+        const counts = {};
+        defs.forEach(d => { counts[d.name] = d.value; });
+
+        const pct = Math.round((ok / total) * 100);
+        const pctColor = ok >= bad + mid ? "#047857" : "#b91c1c";
+
+        const chart = ovCharts[n] || echarts.init(el);
+        ovCharts[n] = chart;
+
+        chart.setOption({
+            animationDuration: 1100,
+            animationEasing: "cubicOut",
+            tooltip: {
+                trigger: "item",
+                backgroundColor: "#ffffff",
+                borderColor: "#e2e8f0",
+                borderWidth: 1,
+                padding: [8, 12],
+                extraCssText: "box-shadow:0 8px 22px rgba(15,23,42,.18);border-radius:10px;",
+                textStyle: { color: "#0f172a", fontSize: 12 },
+                formatter: p =>
+                    '<b style="color:#0b2a66">' + p.name + "</b><br>" +
+                    '<span style="font-size:15px;font-weight:800;">' + p.value + "</span> days" +
+                    ' <span style="color:#64748b">(' + p.percent + "%)</span>"
+            },
+            legend: {
+                bottom: 0,
+                icon: "circle",
+                itemWidth: 9,
+                itemHeight: 9,
+                itemGap: 14,
+                data: defs.map(d => d.name),
+                formatter: name => name + "  " + counts[name],
+                textStyle: { fontSize: 11, fontWeight: 700, color: "#475569" }
+            },
+            graphic: [
+                {
+                    type: "text", left: "center", top: 64,
+                    style: { text: pct + "%", textAlign: "center", fill: pctColor, fontSize: 30, fontWeight: 900 }
+                },
+                {
+                    type: "text", left: "center", top: 101,
+                    style: { text: "ACHIEVED", textAlign: "center", fill: "#64748b", fontSize: 10, fontWeight: 800 }
+                },
+                {
+                    type: "text", left: "center", top: 116,
+                    style: { text: ok + " of " + total + " days", textAlign: "center", fill: "#0b2a66", fontSize: 11, fontWeight: 700 }
+                }
+            ],
+            series: [
+                {
+                    // thin outer track ring
+                    type: "pie",
+                    silent: true,
+                    radius: ["84%", "86%"],
+                    center: ["50%", "46%"],
+                    label: { show: false },
+                    labelLine: { show: false },
+                    animation: false,
+                    data: [{ value: 1, itemStyle: { color: "#e2e8f0" } }]
+                },
+                {
+                    type: "pie",
+                    radius: ["58%", "78%"],
+                    center: ["50%", "46%"],
+                    startAngle: 90,
+                    padAngle: slices.length > 1 ? 3 : 0,
+                    itemStyle: { borderRadius: 9 },
+                    avoidLabelOverlap: true,
+                    label: { show: false },
+                    labelLine: { show: false },
+                    emphasis: {
+                        scale: true,
+                        scaleSize: 7,
+                        itemStyle: { shadowBlur: 22 }
+                    },
+                    data: slices
+                }
+            ]
+        }, true);
+    }
+
+    // previous donut version - no longer used
+    function ovDonutOld_(n, ok, bad, mid) {
 
         const el = document.getElementById("ovDonut" + n);
         if (!el || typeof echarts === "undefined") return;
@@ -846,19 +1157,397 @@ document.addEventListener("DOMContentLoaded", function () {
         Object.keys(ovCharts).forEach(k => ovCharts[k].resize());
     });
 
+    /* ===============================
+       KPI VALUE COLUMN CHART (Monthly / Weekly / Daily)
+    ================================ */
+
+    const OV_SHORT_MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const ovSum = (list, key) => list.reduce((a, r) => a + ovNum(r[key]), 0);
+    const ovMmss = min => {
+        const s = Math.round(min * 60);
+        return Math.floor(s / 60) + "m " + String(s % 60).padStart(2, "0") + "s";
+    };
+
+    // per KPI: how to build a value from daily rows (agg), from a monthly row (mon),
+    // the status rule (st) and the standard line(s) (lines)
+    const OV_TREND = {
+        1: {
+            unit: "%", dec: 2,
+            agg: l => { const b = ovSum(l, "birds"); return b > 0 ? ovSum(l, "doa") / b * 100 : null; },
+            mon: r => ovNum(r.kpi),
+            st: (v, s) => v >= s.std ? "bad" : "ok",
+            lines: s => [{ y: s.std, t: "Std < " + s.std + "%", c: "#b91c1c" }]
+        },
+        2: {
+            unit: " kg", dec: 2,
+            agg: l => { const n = ovSum(l, "nob"); return n > 0 ? ovSum(l, "weight") / n : null; },
+            mon: r => ovNum(r.avg),
+            st: (v, s) => { const a = Number(v.toFixed(2)); return a >= s.min && a <= s.max ? "ok" : "bad"; },
+            lines: s => [
+                { y: s.min, t: "Min " + s.min, c: "#64748b" },
+                { y: s.max, t: "Max " + s.max, c: "#64748b" }
+            ]
+        },
+        3: {
+            unit: "%", dec: 2, ymin: true,
+            agg: l => { const n = ovSum(l, "nob"); return n > 0 ? (n - ovSum(l, "doa")) / n * 100 : null; },
+            mon: r => ovNum(r.kpi),
+            st: (v, s) => Number(v.toFixed(2)) > s.std ? "ok" : "bad",
+            lines: s => [{ y: s.std, t: "Std > " + s.std + "%", c: "#b91c1c" }]
+        },
+        4: {
+            unit: " /hr", dec: 0,
+            agg: l => { const h = ovSum(l, "seconds") / 3600; return h > 0 ? ovSum(l, "birds") / h : null; },
+            mon: r => ovNum(r.kpi),
+            st: (v, s) => { const a = Number(v.toFixed(0)); return a >= s.min && a <= s.max ? "ok" : "bad"; },
+            lines: s => [
+                { y: s.min, t: "Min " + ovFmt(s.min), c: "#64748b" },
+                { y: s.max, t: "Max " + ovFmt(s.max), c: "#64748b" }
+            ]
+        },
+        5: {
+            unit: " min", dec: 1,
+            // values are kept in minutes
+            agg: l => { const t = ovSum(l, "turnarounds"); return t > 0 ? ovSum(l, "totalSec") / t / 60 : null; },
+            mon: r => ovNum(r.avgSec) / 60,
+            st: (v, s) => {
+                const sec = Math.round(v * 60);
+                return sec <= s.limit * 60 ? "ok" : "bad";
+            },
+            lines: s => [
+                { y: s.limit, t: "Std \u2264 " + s.limit + " min", c: "#b91c1c" }
+                
+            ],
+            fmt: v => ovMmss(v),
+            lab: v => String(Math.round(v))
+        }
+    };
+
+    const OV_COLORS = { ok: ["#34d399", "#047857"], warn: ["#fcd34d", "#d97706"], bad: ["#f87171", "#b91c1c"] };
+    const OV_ST_TEXT = { ok: "Achieved", warn: "Acceptable", bad: "Not Achieved" };
+
+    const ovTrendView = { 1: "daily", 2: "daily", 3: "daily", 4: "daily", 5: "daily" };
+    const ovTrendData = {};
+    const ovTrendCharts = {};
+
+    // tabs + chart box under each card's donut
+    // one analysis row per KPI (KPI name on top, donut left, column chart right)
+    function ovAnalysisRow(n) {
+
+        let sec = document.getElementById("ovAnalysis");
+
+        if (!sec) {
+            sec = document.createElement("section");
+            sec.id = "ovAnalysis";
+            sec.className = "kpi-an";
+            sec.innerHTML = '<div class="kpi-ov-bar"><span class="t">KPI Analysis</span></div>';
+            document.querySelector(".kpi-hub").insertAdjacentElement("afterend", sec);
+        }
+
+        let row = document.getElementById("ovRow" + n);
+
+        if (!row) {
+            const h3 = document.querySelector("#ovKpi" + n + " h3");
+            row = document.createElement("div");
+            row.className = "kpi-an-row";
+            row.id = "ovRow" + n;
+            row.innerHTML =
+                '<div class="kpi-an-head"><span class="no">KPI ' + n + "</span><h3>" +
+                (h3 ? h3.textContent : "") + "</h3></div>" +
+                '<div class="kpi-an-body"><div class="kpi-an-donut"></div><div class="kpi-an-col"></div></div>';
+            sec.appendChild(row);
+        }
+
+        return row;
+    }
+
+    function ovTrendMount(n) {
+
+        const donut = document.getElementById("ovDonut" + n);
+        if (!donut || document.getElementById("ovTrend" + n)) return;
+
+        const box = document.createElement("div");
+        box.className = "kpi-ov-trend";
+        box.id = "ovTrend" + n;
+        box.innerHTML =
+            '<div class="kpi-ov-tabs">' +
+            [["monthly", "Monthly"], ["weekly", "Weekly"], ["daily", "Daily"]]
+                .map(t => '<button type="button" data-v="' + t[0] + '">' + t[1] + "</button>").join("") +
+            "</div>" +
+            '<div class="kpi-ov-cap" id="ovCap' + n + '"></div>' +
+            '<div class="kpi-ov-col" id="ovCol' + n + '"></div>';
+
+        // the donut leaves the card and goes to the analysis row (the legend follows it)
+        const row = ovAnalysisRow(n);
+        
+        row.querySelector(".kpi-an-col").appendChild(box);
+
+        box.querySelector(".kpi-ov-tabs").addEventListener("click", e => {
+            const b = e.target.closest("button[data-v]");
+            if (!b) return;
+            e.preventDefault();      // the whole card is a link -> do not open the KPI page
+            e.stopPropagation();
+            ovTrendView[n] = b.dataset.v;
+            ovTrendDraw(n);
+        });
+    }
+
+    // p = null -> "No data" ; otherwise { month, daily, monthly, s }
+    function ovTrend(n, p) {
+        ovTrendData[n] = p || null;
+        ovTrendDraw(n);
+    }
+
+    function ovTrendDraw(n) {
+
+        const box = document.getElementById("ovTrend" + n);
+        const el = document.getElementById("ovCol" + n);
+        if (!box || !el) return;
+
+        const view = ovTrendView[n];
+        document.querySelectorAll("#ovRow" + n + " button[data-v]").forEach(b => b.classList.toggle("on", b.dataset.v === view));
+
+        const empty = () => {
+            if (ovTrendCharts[n]) { ovTrendCharts[n].dispose(); delete ovTrendCharts[n]; }
+            el.innerHTML = '<div class="kpi-ov-empty">No data for this month</div>';
+            document.getElementById("ovCap" + n).textContent = "";
+        };
+
+        const p = ovTrendData[n];
+        if (!p || typeof echarts === "undefined") { empty(); return; }
+
+        const cfg = OV_TREND[n];
+        const fmt = cfg.fmt || (v => ovFmt(v, cfg.dec) + cfg.unit);
+        const lab = cfg.lab || (v => ovFmt(v, cfg.dec));
+
+        const ym = p.month;
+        const year = ym.slice(0, 4);
+        const monthNo = Number(ym.slice(5, 7));
+        const inMonth = p.daily.filter(d => d.date.slice(0, 7) === ym);
+
+        let pts = [];
+
+        if (view === "daily") {
+
+            pts = inMonth.map(d => ({ label: d.date.slice(8), tip: d.date, v: cfg.agg([d]) }));
+
+        } else if (view === "weekly") {
+
+            const last = new Date(Number(year), monthNo, 0).getDate();
+
+            for (let a = 1, w = 1; a <= last; a += 7, w++) {
+                const b = Math.min(a + 6, last);
+                const l = inMonth.filter(d => { const day = Number(d.date.slice(8)); return day >= a && day <= b; });
+                pts.push({
+                    label: "W" + w,
+                    tip: "Week " + w + " (" + a + "–" + b + " " + OV_SHORT_MONTHS[monthNo - 1] + ")",
+                    v: l.length ? cfg.agg(l) : null
+                });
+            }
+
+        } else {
+
+            pts = p.monthly
+                .filter(r => r.month.slice(0, 4) === year)
+                .sort((a, b) => a.month.localeCompare(b.month))
+                .map(r => ({
+                    label: OV_SHORT_MONTHS[Number(r.month.slice(5, 7)) - 1],
+                    tip: MONTH_NAMES[Number(r.month.slice(5, 7)) - 1] + " " + year,
+                    v: cfg.mon(r)
+                }));
+        }
+
+        if (view !== "weekly") pts = pts.filter(x => x.v !== null);
+
+        // tick the months / weeks / days that should be shown
+        pts = ovPeriodApply(n, view, pts, ym);
+        const per = ovPeriodSel[n][view];
+        if (per.set && per.set.size === 0) {
+            empty();
+            el.firstChild.textContent = "Nothing selected";
+            return;
+        }
+        pts.forEach(x => { x.st = x.v === null ? null : cfg.st(x.v, p.s); });
+
+        const vals = pts.filter(x => x.v !== null).map(x => x.v);
+        if (!vals.length) { empty(); return; }
+
+        document.getElementById("ovCap" + n).textContent =
+            view === "monthly" ? "Monthly · " + year
+                : (view === "weekly" ? "Weekly · " : "Daily · ") + MONTH_NAMES[monthNo - 1] + " " + year;
+
+        // axis range (standard lines must stay inside the chart)
+        const lines = cfg.lines(p.s);
+        const lineYs = lines.map(l => l.y);
+        let yMin = 0;
+        let yMax = Math.max(...vals, ...lineYs) * 1.18;
+
+        if (cfg.ymin) {                                        // liveability sits near 100 %
+            yMin = Math.max(0, Math.floor((Math.min(...vals, ...lineYs) - 0.25) * 10) / 10);
+            yMax = 100;
+        } else {
+            const step = Math.pow(10, Math.floor(Math.log10(yMax))) / 2;
+            yMax = Math.ceil(yMax / step) * step;
+        }
+
+        const grad = st => new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: OV_COLORS[st][0] },
+            { offset: 1, color: OV_COLORS[st][1] }
+        ]);
+
+        if (!ovTrendCharts[n]) el.innerHTML = "";              // remove the "No data" message
+        const chart = ovTrendCharts[n] || echarts.init(el);
+        ovTrendCharts[n] = chart;
+
+        chart.setOption({
+            animationDuration: 700,
+            animationEasing: "cubicOut",
+            grid: { left: 44, right: 10, top: 24, bottom: 24 },
+            tooltip: {
+                trigger: "axis",
+                axisPointer: { type: "shadow" },
+                backgroundColor: "#ffffff",
+                borderColor: "#e2e8f0",
+                borderWidth: 1,
+                padding: [8, 12],
+                extraCssText: "box-shadow:0 8px 22px rgba(15,23,42,.18);border-radius:10px;",
+                textStyle: { color: "#0f172a", fontSize: 12 },
+                formatter: p2 => {
+                    const x = pts[p2[0].dataIndex];
+                    if (x.v === null) return '<b style="color:#0b2a66">' + x.tip + "</b><br>No data";
+                    return '<b style="color:#0b2a66">' + x.tip + "</b><br>" +
+                        '<span style="font-size:15px;font-weight:800;">' + fmt(x.v) + "</span><br>" +
+                        '<span style="color:' + OV_COLORS[x.st][1] + ';font-weight:700;">' + OV_ST_TEXT[x.st] + "</span>";
+                }
+            },
+            xAxis: {
+                type: "category",
+                data: pts.map(x => x.label),
+                axisTick: { show: false },
+                axisLine: { lineStyle: { color: "#cbd5e1" } },
+                axisLabel: { color: "#64748b", fontSize: 10, fontWeight: 700 }
+            },
+            yAxis: {
+                type: "value",
+                min: yMin,
+                max: yMax,
+                axisLabel: { color: "#64748b", fontSize: 10, formatter: v => ovFmt(v, cfg.dec > 1 ? 1 : cfg.dec) },
+                splitLine: { lineStyle: { color: "#e2e8f0", type: "dashed" } }
+            },
+            series: [{
+                type: "bar",
+                barMaxWidth: 26,
+                data: pts.map(x => x.v === null ? null : {
+                    value: Number(x.v.toFixed(4)),
+                    itemStyle: { color: grad(x.st), borderRadius: [5, 5, 0, 0] }
+                }),
+                label: {
+                    show: false,
+                    position: "top",
+                    fontSize: 9,
+                    fontWeight: 800,
+                    color: "#0b2a66",
+                    formatter: q => lab(q.value)
+                },
+                markLine: {
+                    silent: true,
+                    symbol: "none",
+                    data: lines.map(l => ({
+                        yAxis: l.y,
+                        lineStyle: { color: l.c, type: "dashed", width: 1.5 },
+                        label: { formatter: l.t, position: "insideEndTop", color: l.c, fontSize: 9, fontWeight: 800 }
+                    }))
+                }
+            }]
+        }, true);
+
+        chart.resize();
+    }
+
+    [1, 2, 3, 4, 5].forEach(ovTrendMount);
+
+    // ===== PERIOD PICKER (tick the months / weeks / days to show) + tabs in the card header =====
+    const ovPeriodSel = {};          // ovPeriodSel[n][view] = { ctx, set }   (set = null -> everything ticked)
+
+    function ovTrendControls(n) {
+        const head = document.querySelector("#ovRow" + n + " .kpi-an-head");
+        const tabs = document.querySelector("#ovTrend" + n + " .kpi-ov-tabs");
+        if (!head || !tabs) return;
+
+        const picker = document.createElement("details");
+        picker.className = "ov-multi ov-period";
+        picker.id = "ovPer" + n;
+        picker.innerHTML = '<summary><span></span></summary><div class="ov-multi-panel"></div>';
+
+        const ctrl = document.createElement("div");
+        ctrl.className = "kpi-an-ctrl";
+        ctrl.appendChild(picker);
+        ctrl.appendChild(tabs);          // moves the Monthly / Weekly / Daily tabs (click handler stays)
+        head.appendChild(ctrl);
+
+        picker.addEventListener("change", e => {
+            const view = ovTrendView[n];
+            const boxes = Array.from(picker.querySelectorAll("input[data-p]"));
+            if (e.target.hasAttribute("data-all")) boxes.forEach(b => { b.checked = e.target.checked; });
+            const checked = boxes.filter(b => b.checked).map(b => b.value);
+            ovPeriodSel[n][view].set = checked.length === boxes.length ? null : new Set(checked);
+            ovTrendDraw(n);
+        });
+    }
+
+    // builds the tick list for the current tab and returns only the ticked points
+    function ovPeriodApply(n, view, pts, ym) {
+        const st = ovPeriodSel[n] || (ovPeriodSel[n] = {});
+        const ctx = view === "monthly" ? ym.slice(0, 4) : ym;       // new year / month -> tick everything again
+        if (!st[view] || st[view].ctx !== ctx) st[view] = { ctx: ctx, set: null };
+        const cur = st[view];
+
+        const opts = pts.filter(x => x.v !== null);
+        const noun = { monthly: "months", weekly: "weeks", daily: "days" }[view];
+        const picked = cur.set ? opts.filter(x => cur.set.has(x.label)) : opts;
+
+        const picker = document.getElementById("ovPer" + n);
+        if (picker) {
+            picker.querySelector("summary span").textContent =
+                !cur.set ? "All " + noun :
+                picked.length === 0 ? "None" :
+                picked.length <= 2 ? picked.map(x => x.label).join(", ") :
+                picked.length + " " + noun;
+
+            picker.querySelector(".ov-multi-panel").innerHTML =
+                '<label class="ov-multi-all"><input type="checkbox" data-all' + (cur.set ? "" : " checked") + "> All " + noun + "</label>" +
+                opts.map(x => '<label><input type="checkbox" data-p value="' + x.label + '"' +
+                    (!cur.set || cur.set.has(x.label) ? " checked" : "") + "> " + x.tip + "</label>").join("");
+        }
+
+        return cur.set ? pts.filter(x => cur.set.has(x.label)) : pts;
+    }
+
+    [1, 2, 3, 4, 5].forEach(ovTrendControls);
+
+    // close an open picker when clicking outside of it
+    document.addEventListener("click", e => {
+        document.querySelectorAll(".ov-period[open]").forEach(d => { if (!d.contains(e.target)) d.removeAttribute("open"); });
+    });
+
+    window.addEventListener("resize", function () {
+        Object.keys(ovTrendCharts).forEach(k => ovTrendCharts[k].resize());
+    });
+
     async function loadKpiOverview() {
         try {
             const result = await sendRequest({ action: "getKpi1Data" });
             const months = ((result && result.success && result.monthly) ? result.monthly : []).filter(r => !ovSelMonth || r.month === ovSelMonth);
 
-            if (!months.length) { ovSet("ovStatus", "No data"); return; }
+            if (!months.length) { ovSet("ovStatus", "No data"); ovDonut(1, 0, 0); ovTrend(1, null); return; }
 
             // latest month that has data
             const m = months.slice()
                 .sort((a, b) => a.month.localeCompare(b.month))
                 .pop();
 
-            const std = ovNum(result.standard) > 0 ? ovNum(result.standard) : 0.2;
+            const std = ovNum(result.standard) > 0 ? ovNum(result.standard) : 0.3;
             const rate = ovNum(m.kpi);
             const bad = rate >= std;
             const p = m.month.split("-");
@@ -874,6 +1563,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const dd = (result.daily || []).filter(d => d.date.slice(0, 7) === m.month);
             const dBad = dd.filter(d => ovNum(d.kpi) >= std).length;
             ovDonut(1, dd.length - dBad, dBad);
+            ovTrend(1, { month: m.month, daily: result.daily || [], monthly: result.monthly || [], s: { std: std } });
 
         } catch (e) {
             console.error(e);
@@ -919,6 +1609,8 @@ document.addEventListener("DOMContentLoaded", function () {
             const c = document.getElementById(id);
             const match = kpi.includes(id) && (allSt || st.some(s => c.classList.contains(s)));
             c.style.display = match ? "" : "none";
+            const anRow = document.getElementById("ovRow" + id.slice(-1));
+            if (anRow) anRow.style.display = match ? "" : "none";
             if (match) shown++;
         });
 
@@ -987,7 +1679,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const result = await sendRequest({ action: "getKpi2Data" });
             const months = ((result && result.success && result.monthly) ? result.monthly : []).filter(r => !ovSelMonth || r.month === ovSelMonth);
 
-            if (!months.length) { ovSet("ov2Status", "No data"); return; }
+            if (!months.length) { ovSet("ov2Status", "No data"); ovDonut(2, 0, 0); ovTrend(2, null); return; }
 
             // latest month that has data
             const m = months.slice()
@@ -1012,6 +1704,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 return a >= min && a <= max;
             }).length;
             ovDonut(2, dOk, dd.length - dOk);
+            ovTrend(2, { month: m.month, daily: result.daily || [], monthly: result.monthly || [], s: { min: min, max: max } });
 
         } catch (e) {
             console.error(e);
@@ -1024,14 +1717,14 @@ document.addEventListener("DOMContentLoaded", function () {
         try {
             const result = await sendRequest({ action: "getKpi5Data" });
             const months = ((result && result.success && result.monthly) ? result.monthly : []).filter(r => !ovSelMonth || r.month === ovSelMonth);
-            if (!months.length) { ovSet("ov5Status", "No data"); return; }
+            if (!months.length) { ovSet("ov5Status", "No data"); ovDonut(5, 0, 0); ovTrend(5, null); return; }
 
             // latest month that has data
             const m = months.slice()
                 .sort((a, b) => a.month.localeCompare(b.month))
                 .pop();
 
-            const good = ovNum(result.good) > 0 ? ovNum(result.good) : 45;
+            
             const limit = ovNum(result.limit) > 0 ? ovNum(result.limit) : 60;
 
             // month total gap time / month number of gaps
@@ -1043,21 +1736,22 @@ document.addEventListener("DOMContentLoaded", function () {
             ovSet("ov5Gap", ovFmt(ovNum(m.totalSec) / 3600, 1) + " h");
             ovSet("ov5Turns", ovFmt(m.turnarounds));
             ovSet("ov5Days", ovFmt(m.days));
-            ovSet("ov5Std", "Standard \u2264 " + good + " min (limit " + limit + ")");
+            ovSet("ov5Std", "Standard \u2264 " + limit + " min");
 
-            const st = sec <= good * 60 ? "ok" : sec <= limit * 60 ? "warn" : "bad";
-            ovSet("ov5Status", st === "ok" ? "Achieved" : st === "warn" ? "Acceptable" : "Not Achieved");
+            const st = sec <= limit * 60 ? "ok" : "bad";
+            ovSet("ov5Status", st === "ok" ? "Achieved" : "Not Achieved");
             document.getElementById("ovKpi5").classList.add(st);
 
             const dd = (result.daily || []).filter(d => d.date.slice(0, 7) === m.month);
             let dOk = 0, dMid = 0, dBad = 0;
             dd.forEach(d => {
                 const s = Math.round(ovNum(d.avgSec));
-                if (s <= good * 60) dOk++;
-                else if (s <= limit * 60) dMid++;
+                if (s <= limit * 60) dOk++;
+                
                 else dBad++;
             });
             ovDonut(5, dOk, dBad, dMid);
+            ovTrend(5, { month: m.month, daily: result.daily || [], monthly: result.monthly || [], s: { limit: limit } });
         } catch (e) {
             console.error(e);
             ovSet("ov5Status", "Unable to load");
@@ -1068,15 +1762,15 @@ document.addEventListener("DOMContentLoaded", function () {
         try {
             const result = await sendRequest({ action: "getKpi4Data" });
             const months = ((result && result.success && result.monthly) ? result.monthly : []).filter(r => !ovSelMonth || r.month === ovSelMonth);
-            if (!months.length) { ovSet("ov4Status", "No data"); return; }
+            if (!months.length) { ovSet("ov4Status", "No data"); ovDonut(4, 0, 0); ovTrend(4, null); return; }
 
             // latest month that has data
             const m = months.slice()
                 .sort((a, b) => a.month.localeCompare(b.month))
                 .pop();
 
-            const min = ovNum(result.min) > 0 ? ovNum(result.min) : 1500;
-            const max = ovNum(result.max) > 0 ? ovNum(result.max) : 3000;
+            const min = ovNum(result.min) > 0 ? ovNum(result.min) : 1200;
+            const max = ovNum(result.max) > 0 ? ovNum(result.max) : 2000;
             const rate = ovNum(m.kpi);
             const days = (result.daily || []).filter(d => d.date.slice(0, 7) === m.month).length;
 
@@ -1097,6 +1791,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 return r >= min && r <= max;
             }).length;
             ovDonut(4, dOk, dd.length - dOk);
+            ovTrend(4, { month: m.month, daily: result.daily || [], monthly: result.monthly || [], s: { min: min, max: max } });
         } catch (e) {
             console.error(e);
             ovSet("ov4Status", "Unable to load");
@@ -1107,14 +1802,14 @@ document.addEventListener("DOMContentLoaded", function () {
         try {
             const result = await sendRequest({ action: "getKpi3Data" });
             const months = ((result && result.success && result.monthly) ? result.monthly : []).filter(r => !ovSelMonth || r.month === ovSelMonth);
-            if (!months.length) { ovSet("ov3Status", "No data"); return; }
+            if (!months.length) { ovSet("ov3Status", "No data"); ovDonut(3, 0, 0); ovTrend(3, null); return; }
 
             // latest month that has data
             const m = months.slice()
                 .sort((a, b) => a.month.localeCompare(b.month))
                 .pop();
 
-            const std = ovNum(result.standard) > 0 ? ovNum(result.standard) : 99.8;
+            const std = ovNum(result.standard) > 0 ? ovNum(result.standard) : 99.7;
             const rate = ovNum(m.kpi);
             const ok = Number(rate.toFixed(2)) > std;
 
@@ -1131,6 +1826,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const dd = (result.daily || []).filter(d => d.date.slice(0, 7) === m.month);
             const dOk = dd.filter(d => Number(ovNum(d.kpi).toFixed(2)) > std).length;
             ovDonut(3, dOk, dd.length - dOk);
+            ovTrend(3, { month: m.month, daily: result.daily || [], monthly: result.monthly || [], s: { std: std } });
         } catch (e) {
             console.error(e);
             ovSet("ov3Status", "Unable to load");

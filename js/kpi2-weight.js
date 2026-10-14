@@ -118,6 +118,18 @@ document.addEventListener("DOMContentLoaded", () => {
             $("sumBatch").textContent = "-";
         }
 
+        // days tile (Achieved / Not Achieved days of the month)
+        if (days.length) {
+            const goodDays = days.filter(d => isOk(num(d.avg))).length;
+            $("sumDays").textContent = fmt(days.length);
+            $("sumDaysGood").textContent = fmt(goodDays);
+            $("sumDaysOut").textContent = fmt(days.length - goodDays);
+        } else {
+            $("sumDays").textContent = "-";
+            $("sumDaysGood").textContent = "-";
+            $("sumDaysOut").textContent = "-";
+        }
+
         renderChart(days, ym);
         renderTable(days, ym);
         renderBatchCounts(ym);
@@ -381,7 +393,7 @@ document.addEventListener("DOMContentLoaded", () => {
             i => {
                 const r = rows[i];
                 return `<b>Batch ${esc(r.batchNo || "-")}</b>` +
-                    `<br>Customer: ${esc(r.customer || "-")}` +
+                    
                     `<br>Avg Weight: ${fmt(r.avg, 2)} kg` +
                     `<br>Weight: ${fmt(r.weight, 2)} kg` +
                     `<br>Birds: ${fmt(r.nob)}`;

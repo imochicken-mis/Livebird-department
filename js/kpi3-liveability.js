@@ -1,14 +1,14 @@
 document.addEventListener("DOMContentLoaded", () => {
 
     // Standard: liveability must be ABOVE this value (%). Overwritten by the server value.
-    let KPI_STANDARD = 99.8;
+    let KPI_STANDARD = 99.7;
 
     const $ = id => document.getElementById(id);
 
     // ---------------- SESSION (user4 only) ----------------
     const sessionUser = sessionStorage.getItem("livebirdUser");
     if (!sessionUser) { window.location.href = "../index.html"; return; }
-    const user = JSON.parse(sessionUser);
+    const user = JSON.parse(sessionUser);   
     if (!user.username || user.username.toLowerCase() !== "user4") {
         sessionStorage.removeItem("livebirdUser");
         window.location.href = "../index.html";
@@ -303,7 +303,7 @@ document.addEventListener("DOMContentLoaded", () => {
             i => {
                 const d = days[i];
                 return `<b>${d.date}</b><br>Liveability: ${fmt(d.kpi, 2)}%` +
-                    `<br>DOA: ${fmt(d.doa)}<br>Birds: ${fmt(d.nob)}`;
+                    `<br>DOA: ${fmt(d.doa)}<br>Dispatch NOB: ${fmt(d.nob)}<br>Alive NOB: ${fmt(d.avail)}`;
             },
             false
         ), true);
@@ -361,7 +361,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 return `<b>${SHORT_MONTHS[x.n - 1]} ${year}</b>` +
                     `<br>Liveability: ${fmt(x.r.kpi, 2)}%` +
                     `<br>DOA: ${fmt(x.r.doa)}` +
-                    `<br>Birds: ${fmt(x.r.nob)}`;
+                    `<br>Dispatch NOB: ${fmt(x.r.nob)}` +
+                    `<br>Alive NOB: ${fmt(x.r.avail)}`;
             },
             list.length === 1
         ), true);
