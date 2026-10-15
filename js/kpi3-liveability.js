@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
         num(v).toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
 
     // Achieved only when the value (as shown, 2 decimals) is ABOVE the standard
-    const isOk = v => Number(num(v).toFixed(2)) > KPI_STANDARD;
+    const isOk = v => Number(num(v).toFixed(2)) >= KPI_STANDARD;
 
     const monthLabel = ym => {
         const p = String(ym || "").split("-");
@@ -93,7 +93,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .filter(r => r.date.slice(0, 7) === ym)
             .sort((a, b) => a.date.localeCompare(b.date));
 
-        $("stdLabel").textContent = "> " + KPI_STANDARD.toFixed(2) + " %";
+        $("stdLabel").textContent = "\u2265 " + KPI_STANDARD.toFixed(2) + " %";
 
         if (m) {
             const ok = isOk(m.kpi);
@@ -271,7 +271,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     silent: true,
                     lineStyle: { color: "#b91c1c", type: "dashed", width: 2 },
                     label: {
-                        formatter: "Standard > " + KPI_STANDARD.toFixed(2) + "%",
+                        formatter: "Standard \u2265 " + KPI_STANDARD.toFixed(2) + "%",
                         position: "insideEndBottom",
                         color: "#b91c1c",
                         fontWeight: 700

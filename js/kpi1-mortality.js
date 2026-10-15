@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const num = v => Number(v) || 0;
     const fmt = (v, d = 0) =>
         num(v).toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
-    const isBad = r => r >= KPI_STANDARD;
+    const isBad = r => Number((Number(r) || 0).toFixed(2)) > KPI_STANDARD;
     const monthLabel = ym => {
         const p = String(ym || "").split("-");
         return p.length === 2 && MONTH_NAMES[Number(p[1]) - 1]
@@ -86,7 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .filter(r => r.date.slice(0, 7) === ym)
             .sort((a, b) => a.date.localeCompare(b.date));
 
-        $("stdLabel").textContent = "< " + KPI_STANDARD.toFixed(2) + " %";
+        $("stdLabel").textContent = "\u2264 " + KPI_STANDARD.toFixed(2) + " %";
 
         if (m) {
             const r = num(m.kpi);

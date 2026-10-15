@@ -74,7 +74,7 @@ body.sidebar-collapsed .dashboard-header.kpi-banner { left:0 !important; padding
 }
 
 /* ===== SECTION TITLE BARS ===== */
-.report-toolbar { justify-content:flex-end; }
+.report-toolbar { justify-content:flex-end; margin:22px 0 22px; padding:0 4px; }
 
 .kpi-batch-bar { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin:44px 0 14px; padding:12px 18px; background:linear-gradient(90deg,#010853,#0b2a66); border-radius:12px; box-shadow:0 6px 16px rgba(1,8,83,.18); }
 
@@ -230,6 +230,23 @@ body.sidebar-collapsed .dashboard-header.kpi-banner { left:0 !important; padding
 
 .kpi-chip.out { background:#fee2e2; color:#991b1b; }
 
+/* ===== SECTION SEPARATION ===== */
+/* soft tinted backdrop so each white card stands out on its own */
+.analytics-card { background:#e9eff8 !important; border:1px solid #d5dfee; }
+
+/* monthly summary cards (top 3) */
+.kpi-tile { box-shadow:0 8px 20px rgba(15,23,42,.10); }
+
+/* daily chart card: blue accent */
+.kpi-chart-card { border:1px solid #d5dfee; border-top:4px solid #0b4aa8; box-shadow:0 8px 20px rgba(15,23,42,.08); }
+
+/* daily details table card: teal accent */
+.kpi-chart-card + .kpi-chart-card { border-top-color:#0d9488; }
+
+/* a clear gap between the three blocks */
+.kpi-strip { margin-bottom:22px; }
+.kpi-chart-card + .kpi-chart-card { margin-top:22px; }
+
 /* ===== CHART + TABLE CARDS ===== */
 .kpi-chart-card { padding:16px 18px 10px; background:#fff; border:1px solid #e2e8f0; border-radius:12px; }
 
@@ -269,3 +286,19 @@ body.sidebar-collapsed .dashboard-header.kpi-banner { left:0 !important; padding
 .kpi-fixed { table-layout:fixed; }
 
 .kpi-fixed thead th:first-child { width:150px; }
+
+/* =====================================================
+   SECTION BACKGROUNDS: each section gets its own tinted blue block
+   (Monthly Summary / Daily Analysis / Batch-wise / Monthly Comparison)
+   The cards, charts and tables inside stay white, as before.
+   ===================================================== */
+/* the one big tinted background is removed ... */
+.analytics-card { background:transparent !important; border:0 !important; box-shadow:none !important; padding:26px 0 0 !important; }
+
+/* ... and every section gets its own tinted block with a gap between them */
+.kpi-panel { margin:0 0 28px; padding:18px 20px 20px; background:#e9eff8; border:1px solid #d5dfee; border-radius:18px; }
+
+.kpi-panel > .kpi-batch-bar { margin:0 0 16px; }
+.kpi-panel-body { padding:0; }
+.kpi-panel .kpi-strip { margin-bottom:0; }
+.kpi-panel > .kpi-chart-card + .kpi-chart-card { margin-top:18px; }
