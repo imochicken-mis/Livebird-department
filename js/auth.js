@@ -16,7 +16,7 @@ const USER_PERMISSIONS = {
 
     user4: {
         name: "Admin",
-        home: "pages/admin-analytics.html"
+        home: "pages/user4-kpis.html"
     }
 };
 
