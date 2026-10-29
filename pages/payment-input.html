@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LB Sales Collections | Live Bird Department</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/payment-input.css">
+</head>
+<body class="dashboard-page">
+    <aside class="sidebar">
+        <div class="sidebar-brand"><img src="../assets/Logo.png" alt="Logo"><h2>Live Bird Department</h2></div>
+        <div class="sidebar-divider"></div>
+        <p class="sidebar-section-title">DATA INPUT</p>
+        <nav class="sidebar-nav">
+            <a href="dashboard.html" class="sidebar-link">Daily Catching &amp; Sales</a>
+            <a href="payment-input.html" class="sidebar-link active">LB Sales Collections</a>
+            <a href="bird-condition.html" class="sidebar-link">Bird Condition &amp; Defect</a>
+        </nav>
+        <div class="sidebar-divider"></div>
+        <p class="sidebar-section-title">REPORTS</p>
+        <nav class="sidebar-nav"><a href="catching-breakdown.html" class="sidebar-link">Catching Summary Report</a><a href="bird-condition-report.html" class="sidebar-link">Bird Condition Report</a></nav>
+        <div class="sidebar-divider"></div>
+        <p class="sidebar-section-title">SYSTEM</p>
+        <nav class="sidebar-nav"><a href="settings.html" class="sidebar-link">Settings</a></nav>
+    </aside>
+    <main class="dashboard-main">
+        <header class="dashboard-header">
+            <div><h1>Live Birds Sales Collections</h1><p></p></div>
+            <div class="header-user"><span id="loggedUser">Logged in as:</span><button id="logoutBtn" class="logout-btn" type="button">Logout</button></div>
+        </header>
+        <section class="form-card payment-card">
+            <div class="form-card-title"><h2>Find Bill</h2></div>
+            <form id="billSearchForm" class="payment-search">
+                <div class="form-group"><label for="billSearch">Bill No</label><input id="billSearch" type="text" autocomplete="off" required placeholder="Enter bill number"></div>
+                <button class="save-btn" id="searchBillBtn" type="submit">Search Bill</button>
+            </form>
+            <p id="paymentMessage" class="payment-message" role="status" aria-live="polite"></p>
+        </section>
+        <section class="form-card payment-card" id="billDetailsCard" hidden>
+            <div class="form-card-title"><h2>Bill Details</h2></div>
+            <div class="payment-details-grid">
+                <div><span>Bill No</span><strong id="detailBill"></strong></div>
+                <div><span>Caught Date</span><strong id="detailDate"></strong></div>
+                <div><span>Expected Date</span><strong id="detailExpectedDate"></strong></div>
+                <div><span>Farmer Name</span><strong id="detailFarmer"></strong></div>
+                <div><span>Batch No</span><strong id="detailBatch"></strong></div>
+                <div><span>Customer Name</span><strong id="detailCustomer"></strong></div>
+                <div><span>Total NOB</span><strong id="detailNob"></strong></div>
+                <div><span>Final Weight</span><strong id="detailWeight"></strong></div>
+                <div><span>Unit Price</span><strong id="detailPrice"></strong></div>
+                <div><span>Total Amount</span><strong id="detailAmount"></strong></div>
+                <div><span>Previously Paid</span><strong id="detailPaid"></strong></div>
+                <div class="balance-tile"><span>Balance Remaining</span><strong id="detailBalance"></strong></div>
+            </div>
+            <div class="form-card-title payment-title"><h2>Record Payment</h2></div>
+            <form id="paymentForm">
+                <div class="form-grid">
+                    <div class="form-group"><label for="paymentDate">Payment Date</label><input id="paymentDate" type="date" required></div>
+                    <div class="form-group"><label for="paymentMethod">Payment Method</label><select id="paymentMethod" required><option value="">Select method</option><option>Cash</option><option>Bank Transfer</option></select></div>
+                    <div class="form-group"><label for="receiptNo">Referance No</label><input id="receiptNo" type="text" maxlength="60"></div>
+                    <div class="form-group"><label for="paymentAmount">Payment Amount</label><input id="paymentAmount" type="number" min="0.01" step="0.01" required></div>
+                </div>
+                <div class="payment-actions"><button type="button" class="cancel-btn" id="clearBillBtn">Clear</button><button type="submit" class="save-btn" id="savePaymentBtn">Save Payment</button></div>
+            </form>
+            <div id="paymentHistorySection" class="payment-history" hidden>
+                <div class="form-card-title payment-title"><h2>Payment History</h2></div>
+                <div class="payment-history-scroll">
+                    <table class="payment-history-table">
+                        <thead><tr><th>Action</th><th>#</th><th>Payment Date</th><th>Method</th><th>Reference No</th><th>Paid Amount</th><th>Balance After Payment</th><th>Recorded By</th></tr></thead>
+                        <tbody id="paymentHistoryBody"></tbody>
+                    </table>
+                </div>
+                <p id="paymentHistoryEmpty" class="payment-history-empty" hidden>No previous payments for this bill.</p>
+            </div>
+        </section>
+    </main>
+    <script src="../js/api.js"></script>
+    <script src="../js/payment-input.js"></script>
+</body>
+</html>
