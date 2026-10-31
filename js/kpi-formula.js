@@ -15,9 +15,9 @@
             a: "sumWeight", b: "sumBirds", mult: false
         },
         "kpi3-liveability": {
-            name: "Liveability (%)", lhs: "Liveability %",
-            num: "Birds Alive At Receiving", den: "Birds Dispatched",
-            a: "sumBirds", b: "sumDoa", mult: true            // Alive / Dispatch
+            name: "Sales & Collection (%)", lhs: "Collection %",
+            num: "Bills Settled Within 2 Days", den: "Total Bills",
+            a: "sumBirds", b: "sumDoa", mult: true            // Settled / Total
         },
         "kpi4-receiving": {
             name: "Birds Receiving Performance", lhs: "Birds / Hour",

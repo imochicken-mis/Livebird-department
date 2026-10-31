@@ -108,7 +108,7 @@ async function sendRequestNetwork(payload) {
 
 const CACHE_TTL_MS = 30 * 1000;              // 30 seconds (was 5 min - sheet edits showed up late)
 const CACHE_PREFIX = "lbcache:";
-const NEVER_CACHE = /^(login|getCatchingRecordLookup|getCatchingRecordBySerial|getBillPaymentInfo|getBillPaymentHistory|getRefreshReportCache)/i;
+const NEVER_CACHE = /^(login|getCatchingRecordLookup|getCatchingRecordBySerial|getBillPaymentInfo|getBillPaymentHistory|getCustomerAccounts|getRefreshReportCache)/i;
 
 function clearApiCache() {
     try {
@@ -227,8 +227,14 @@ async function getBillPaymentHistory(billNo) {
     return await sendRequest({ action: "getBillPaymentHistory", billNo: billNo });
 }
 
+async function getCustomerAccounts() {
+    return await sendRequest({ action: "getCustomerAccounts" });
+}
 
-// =========================================================
+async function saveCustomerAccountPayment(payment) {
+    return await sendRequest({ action: "saveCustomerAccountPayment", payment: payment });
+}
+
 // USER 1
 // =========================================================
 

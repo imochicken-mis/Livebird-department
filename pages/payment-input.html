@@ -6,7 +6,11 @@
     <title>LB Sales Collections | Live Bird Department</title>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/dashboard.css">
-    <link rel="stylesheet" href="../css/payment-input.css">
+    <link rel="stylesheet" href="../css/report.css">
+    <link rel="stylesheet" href="../css/payment-input.css?v=20261030-4">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body class="dashboard-page">
     <aside class="sidebar">
@@ -15,68 +19,166 @@
         <p class="sidebar-section-title">DATA INPUT</p>
         <nav class="sidebar-nav">
             <a href="dashboard.html" class="sidebar-link">Daily Catching &amp; Sales</a>
-            <a href="payment-input.html" class="sidebar-link active">LB Sales Collections</a>
+            <a href="payment-input.html" id="collectionsNavLink" class="sidebar-link active">LB Sales Collections</a>
             <a href="bird-condition.html" class="sidebar-link">Bird Condition &amp; Defect</a>
         </nav>
         <div class="sidebar-divider"></div>
         <p class="sidebar-section-title">REPORTS</p>
-        <nav class="sidebar-nav"><a href="catching-breakdown.html" class="sidebar-link">Catching Summary Report</a><a href="bird-condition-report.html" class="sidebar-link">Bird Condition Report</a></nav>
+        <nav class="sidebar-nav">
+            <a href="catching-breakdown.html" class="sidebar-link">Catching Summary Report</a>
+            <a href="bird-condition-report.html" class="sidebar-link">Bird Condition Report</a>
+            <a href="payment-input.html#daily-report" id="dailyReportNavLink" class="sidebar-link">LB Sales Collection Report</a>
+        </nav>
         <div class="sidebar-divider"></div>
         <p class="sidebar-section-title">SYSTEM</p>
         <nav class="sidebar-nav"><a href="settings.html" class="sidebar-link">Settings</a></nav>
     </aside>
     <main class="dashboard-main">
         <header class="dashboard-header">
-            <div><h1>Live Birds Sales Collections</h1><p></p></div>
+            <div><h1>LB Sales Collections Report</h1><p></p></div>
             <div class="header-user"><span id="loggedUser">Logged in as:</span><button id="logoutBtn" class="logout-btn" type="button">Logout</button></div>
         </header>
-        <section class="form-card payment-card">
-            <div class="form-card-title"><h2>Find Bill</h2></div>
-            <form id="billSearchForm" class="payment-search">
-                <div class="form-group"><label for="billSearch">Bill No</label><input id="billSearch" type="text" autocomplete="off" required placeholder="Enter bill number"></div>
-                <button class="save-btn" id="searchBillBtn" type="submit">Search Bill</button>
-            </form>
-            <p id="paymentMessage" class="payment-message" role="status" aria-live="polite"></p>
-        </section>
-        <section class="form-card payment-card" id="billDetailsCard" hidden>
-            <div class="form-card-title"><h2>Bill Details</h2></div>
-            <div class="payment-details-grid">
-                <div><span>Bill No</span><strong id="detailBill"></strong></div>
-                <div><span>Caught Date</span><strong id="detailDate"></strong></div>
-                <div><span>Expected Date</span><strong id="detailExpectedDate"></strong></div>
-                <div><span>Farmer Name</span><strong id="detailFarmer"></strong></div>
-                <div><span>Batch No</span><strong id="detailBatch"></strong></div>
-                <div><span>Customer Name</span><strong id="detailCustomer"></strong></div>
-                <div><span>Total NOB</span><strong id="detailNob"></strong></div>
-                <div><span>Final Weight</span><strong id="detailWeight"></strong></div>
-                <div><span>Unit Price</span><strong id="detailPrice"></strong></div>
-                <div><span>Total Amount</span><strong id="detailAmount"></strong></div>
-                <div><span>Previously Paid</span><strong id="detailPaid"></strong></div>
-                <div class="balance-tile"><span>Balance Remaining</span><strong id="detailBalance"></strong></div>
-            </div>
-            <div class="form-card-title payment-title"><h2>Record Payment</h2></div>
-            <form id="paymentForm">
-                <div class="form-grid">
-                    <div class="form-group"><label for="paymentDate">Payment Date</label><input id="paymentDate" type="date" required></div>
-                    <div class="form-group"><label for="paymentMethod">Payment Method</label><select id="paymentMethod" required><option value="">Select method</option><option>Cash</option><option>Bank Transfer</option></select></div>
-                    <div class="form-group"><label for="receiptNo">Referance No</label><input id="receiptNo" type="text" maxlength="60"></div>
-                    <div class="form-group"><label for="paymentAmount">Payment Amount</label><input id="paymentAmount" type="number" min="0.01" step="0.01" required></div>
+
+        <div class="payment-tabs" role="tablist" aria-label="Sales collection sections">
+            <button type="button" class="payment-tab active" data-payment-tab="customer-balance" role="tab" aria-selected="true">Customer Cash In Advance</button>
+            <button type="button" class="payment-tab" data-payment-tab="customer-bills" role="tab" aria-selected="false">Customer Bills</button>
+        </div>
+
+        <div id="customerBalancePanel" class="payment-tab-panel">
+            <section class="form-card payment-card customer-payment-card">
+                <div class="form-card-title"><h2>Add Customer's Cash in Advance</h2><p>Use this for money received without a bill or an advance payment.</p></div>
+                <form id="customerPaymentForm">
+                    <div class="form-grid">
+                        <div class="form-group"><label for="customerAccountSelect">Customer</label><select id="customerAccountSelect" required><option value="">Select customer</option></select></div>
+                        <div class="form-group"><label for="customerPaymentDate">Date cash received</label><input id="customerPaymentDate" type="date" required></div>
+                        <div class="form-group"><label for="customerPaymentMethod">Cash received method</label><select id="customerPaymentMethod" required><option value="">Select method</option><option>Cash</option><option>Bank Transfer</option></select></div>
+                        <div class="form-group"><label for="customerReferenceNo">Reference No</label><input id="customerReferenceNo" type="text" maxlength="60"></div>
+                        <div class="form-group"><label for="customerPaymentAmount">Amount</label><input id="customerPaymentAmount" type="number" min="0.01" step="0.01" required></div>
+                        <div class="form-group"><label for="customerPaymentRemark">Remark</label><input id="customerPaymentRemark" type="text" maxlength="120" placeholder="Optional"></div>
+                    </div>
+                    <div class="payment-actions"><button type="button" class="cancel-btn" id="clearCustomerPaymentBtn">Clear</button><button type="submit" class="save-btn" id="saveCustomerPaymentBtn">Save Payment</button></div>
+                </form>
+                <p id="customerBalanceMessage" class="payment-message" role="status" aria-live="polite"></p>
+            </section>
+        </div>
+
+        <div id="dailyReportPanel" class="payment-tab-panel" hidden>
+            <section class="form-card analytics-card">
+                <div class="report-toolbar">
+                    <div class="analytics-section-heading"><h2></h2></div>
+                    <div class="report-filters">
+                        <input type="date" id="fromDate" title="Bill From Date">
+                        <input type="date" id="toDate" title="Bill To Date">
+                        <input type="search" id="dailyReportCustomer" title="Customer" placeholder="All customers">
+                        <select id="dailyReportMethod" title="Payment Status"><option value="all">All Statuses</option><option value="Unpaid">Not Settled</option><option value="Partially Paid">Partially Settled</option><option value="Paid">Settled</option></select>
+                        <button type="button" id="dailyReportFilterBtn" class="report-btn">Filter</button>
+                        <button type="button" id="dailyReportClearBtn" class="report-btn">Clear</button>
+                        <button type="button" id="dailyReportRefreshBtn" class="report-btn">Refresh</button>
+                    </div>
                 </div>
-                <div class="payment-actions"><button type="button" class="cancel-btn" id="clearBillBtn">Clear</button><button type="submit" class="save-btn" id="savePaymentBtn">Save Payment</button></div>
-            </form>
-            <div id="paymentHistorySection" class="payment-history" hidden>
-                <div class="form-card-title payment-title"><h2>Payment History</h2></div>
-                <div class="payment-history-scroll">
-                    <table class="payment-history-table">
-                        <thead><tr><th>Action</th><th>#</th><th>Payment Date</th><th>Method</th><th>Reference No</th><th>Paid Amount</th><th>Balance After Payment</th><th>Recorded By</th></tr></thead>
-                        <tbody id="paymentHistoryBody"></tbody>
+                <div id="dailyReportMessage" class="save-message" role="status" aria-live="polite"></div>
+                <div class="report-table-wrapper">
+                    <table id="reportTable" class="analytics-table payment-status-table">
+                        <thead><tr><th>BILL DATE</th><th>BILL NO</th><th>CUSTOMER</th><th>FARMER</th><th>TOTAL AMOUNT</th><th>TOTAL SETTLED</th><th>BALANCE</th><th>LAST CASH RECEIVED DATE</th><th>STATUS</th></tr></thead>
+                        <tbody id="dailyReportBody"></tbody>
+                        <tfoot>
+                            <tr class="grand-total-row">
+                                <td>GRAND TOTAL:</td>
+                                <td id="dailyReportTotal">0</td>
+                                <td></td>
+                                <td></td>
+                                <td id="dailyReportCash">0.00</td>
+                                <td id="dailyReportBank">0.00</td>
+                                <td id="dailyReportAdvance">0.00</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
-                <p id="paymentHistoryEmpty" class="payment-history-empty" hidden>No previous payments for this bill.</p>
-            </div>
-        </section>
+            </section>
+        </div>
+    
+
+        <div id="customerBillsPanel" class="payment-tab-panel" hidden>
+            <section id="customerBillsSummaryCard" class="form-card payment-card customer-accounts-card">
+                <div class="form-card-title customer-summary-heading"><div><h2>Customer Bills</h2><p>Outstanding bills and cash advances</p></div><button type="button" class="refresh-customer-btn" id="refreshCustomerAccountsBtn">Refresh</button></div>
+                <p id="customerAccountsMessage" class="payment-message" role="status" aria-live="polite"></p>
+                                <div class="customer-summary-filters">
+                    <div class="form-group"><label for="customerSummarySearch">Find Customer</label><input id="customerSummarySearch" type="search" placeholder="Enter customer name"></div>
+                </div>
+                <div class="customer-summary-scroll">
+                    <table class="customer-summary-table">
+
+                        <thead><tr><th>Customer</th><th>Total Bills</th><th>Pending Bills</th><th>Outstanding</th><th>Cash in Advance</th><th>Action</th></tr></thead>
+                        <tbody id="customerSummaryBody"></tbody>
+                    </table>
+                </div>
+                <p id="customerSummaryEmpty" class="payment-history-empty" hidden>No customer accounts found.</p>
+            </section>
+
+            <section id="customerBillsListCard" class="form-card payment-card customer-bills-list-card" hidden>
+                <div class="form-card-title customer-summary-heading"><div><h2 id="selectedCustomerTitle">Customer Bills</h2><p>Search and open a bill</p></div><button type="button" class="back-btn" id="clearSelectedCustomerBtn">← All Customers</button></div>
+                <div class="customer-bill-filters">
+                    <div class="form-group"><label for="customerBillSearch">Search Bill No</label><input id="customerBillSearch" type="search" placeholder="Enter bill number"></div>
+                    <div class="form-group"><label for="customerBillStatus">Status</label><select id="customerBillStatus"><option value="all">All Bills</option><option value="outstanding">Outstanding</option><option value="paid">Settled</option></select></div>
+                    <div class="form-group"><label for="customerBillSort">Sort</label><select id="customerBillSort"><option value="date-desc">Newest Date</option><option value="date-asc">Oldest Date</option><option value="bill-asc">Bill No</option></select></div>
+                </div>
+                <div class="customer-summary-scroll customer-bills-list-scroll">
+                    <table class="customer-summary-table customer-bills-list-table">
+                        <thead><tr><th>Bill No</th><th>Date</th><th>Total Amount</th><th>Settled Amount</th><th>Balance</th><th>Status</th><th>Action</th></tr></thead>
+                        <tbody id="customerBillsListBody"></tbody>
+                    </table>
+                </div>
+                <p id="customerBillsListEmpty" class="payment-history-empty" hidden>No bills match the selected filters.</p>
+                        </section>
+            <section id="billPaymentsPanel" class="payment-tab-panel" hidden>
+                <section class="form-card payment-card" id="billDetailsCard">
+                    <div class="form-card-title customer-summary-heading"><h2>Bill Details</h2><button type="button" class="back-btn" id="backToCustomerBillsBtn">← Back to Customer Bills</button></div>
+                    <p id="paymentMessage" class="payment-message" role="status" aria-live="polite"></p>
+                    <div class="advance-banner">Cash in Advance: <strong id="detailCashAdvance">0.00</strong></div>
+                                        <label class="advance-use-toggle"><input type="checkbox" id="useCashAdvance"> Use Cash in Advance for this payment</label>
+                    <div class="payment-details-grid">
+                        <div><span>Bill No</span><strong id="detailBill"></strong></div>
+                        <div><span>Caught Date</span><strong id="detailDate"></strong></div>
+                        <div><span>Expected Date</span><strong id="detailExpectedDate"></strong></div>
+                        <div><span>Farmer Name</span><strong id="detailFarmer"></strong></div>
+                        <div><span>Batch No</span><strong id="detailBatch"></strong></div>
+                        <div><span>Customer Name</span><strong id="detailCustomer"></strong></div>
+                        <div><span>Total NOB</span><strong id="detailNob"></strong></div>
+                        <div><span>Final Weight</span><strong id="detailWeight"></strong></div>
+                        <div><span>Unit Price</span><strong id="detailPrice"></strong></div>
+                        <div><span>Total Amount</span><strong id="detailAmount"></strong></div>
+                        <div><span>Previously Paid</span><strong id="detailPaid"></strong></div>
+                        <div class="balance-tile"><span>Balance Remaining</span><strong id="detailBalance"></strong></div>
+                    </div>
+                    <div class="form-card-title payment-title"><h2>Record Payment</h2><button type="button" class="add-payment-btn" id="toggleSecondPaymentBtn" aria-expanded="false">+ Add another payment</button></div>
+                    <form id="paymentForm">
+                        <div class="form-grid">
+                            <div class="form-group"><label for="paymentDate">Cash Received Date</label><input id="paymentDate" type="date" required></div>
+                            <div class="form-group"><label for="paymentMethod">Cash Received Method</label><select id="paymentMethod"><option value="">Select method</option><option>Cash</option><option>Bank Transfer</option></select></div>
+                            <div class="form-group"><label for="receiptNo">Reference No</label><input id="receiptNo" type="text" maxlength="60"></div>
+                            <div class="form-group"><label for="paymentAmount">Received Amount</label><input id="paymentAmount" type="number" min="0" step="0.01" required></div><div id="secondaryPaymentFields" class="secondary-payment-fields" hidden><div class="form-group payment-method-2"><label for="paymentMethod2">Cash Received Method 2</label><select id="paymentMethod2"><option value="">Second payment (optional)</option><option>Cash</option><option>Bank Transfer</option></select></div><div class="form-group payment-reference-2"><label for="receiptNo2">Reference No 2</label><input id="receiptNo2" type="text" maxlength="60"></div><div class="form-group payment-amount-2"><label for="paymentAmount2">Received Amount 2</label><input id="paymentAmount2" type="number" min="0" step="0.01" inputmode="decimal"></div></div>
+                        </div>
+                        <div class="payment-actions"><button type="button" class="cancel-btn" id="clearBillBtn">Clear</button><button type="submit" class="save-btn" id="savePaymentBtn">Save Payment</button></div>
+                    </form>
+                    
+                    <div id="paymentHistorySection" class="payment-history" hidden>
+                        <div class="form-card-title payment-title"><h2>Payment History</h2></div>
+                        <div class="payment-history-scroll">
+                            <table class="payment-history-table">
+                                <thead><tr><th>Action</th><th>#</th><th>Cash Received Date</th><th>Method</th><th>Reference No</th><th>Received Amount</th><th>Balance Amount</th><th>Recorded By</th></tr></thead>
+                                <tbody id="paymentHistoryBody"></tbody>
+                            </table>
+                        </div>
+                        <p id="paymentHistoryEmpty" class="payment-history-empty" hidden>No previous payments for this bill.</p>
+                    </div>
+                </section>
+            </section>
+        </div>
     </main>
-    <script src="../js/api.js"></script>
-    <script src="../js/payment-input.js"></script>
+    <script src="../js/api.js?v=20261029-3"></script>
+                <script src="../js/payment-input.js?v=20261030-4"></script>
+    <script src="../js/admin-export.js"></script>
 </body>
 </html>

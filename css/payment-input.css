@@ -36,3 +36,64 @@ main.dashboard-main > .payment-card:first-of-type { padding-top: 16px; padding-b
 .payment-history-empty { margin: 10px 0 0; color: #64748b; font-size: 13px; }
 .payment-history-table .history-edit-btn { padding: 6px 12px; border: 1px solid #bfdbfe; border-radius: 6px; background: #eff6ff; color: #1d4ed8; cursor: pointer; font-weight: 600; }
 .payment-history-table .history-edit-btn:hover { background: #dbeafe; }
+
+.payment-tabs { display: flex; gap: 8px; margin: 0 0 18px; }
+.payment-tabs[hidden] { display: none; }
+.payment-tab { border: 1px solid #cbd5e1; border-radius: 8px; background: #fff; color: #334155; padding: 10px 18px; font-weight: 700; cursor: pointer; }
+.payment-tab.active { background: #1e5aa8; border-color: #1e5aa8; color: #fff; }
+.payment-tab-panel[hidden] { display: none; }
+.customer-summary-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.customer-summary-heading p, .customer-payment-card .form-card-title p { margin: 4px 0 0; color: #64748b; font-size: 13px; }
+.refresh-customer-btn { border: 1px solid #bfdbfe; border-radius: 7px; padding: 8px 13px; background: #eff6ff; color: #1d4ed8; cursor: pointer; font-weight: 600; }
+.customer-summary-filters { display: grid; grid-template-columns: minmax(240px, 430px); gap: 12px; margin: 14px 0; }
+.customer-summary-filters .form-group { margin: 0; }
+.customer-summary-scroll { overflow-x: auto; border: 1px solid #e2e8f0; border-radius: 9px; }
+.customer-summary-table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+.customer-summary-table th, .customer-summary-table td { padding: 11px 13px; border-bottom: 1px solid #e2e8f0; text-align: left; }
+.advance-use-toggle { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 14px; color: #1e3a8a; font-size: 13px; font-weight: 600; cursor: pointer; }
+.advance-use-toggle input { width: 16px; height: 16px; accent-color: #1e5aa8; cursor: pointer; }
+.customer-summary-table th { background: #f1f5f9; color: #475569; font-size: 12px; }
+.customer-summary-table td { color: #0f172a; font-size: 13px; }
+
+.customer-summary-table tbody tr:last-child td { border-bottom: 0; }
+.customer-bill-link { border: 0; background: transparent; color: #1d4ed8; cursor: pointer; font-weight: 700; padding: 3px 6px; margin-right: 3px; text-decoration: underline; }
+.customer-bill-link:hover { color: #1e40af; }
+.customer-bills-list-card { margin-top: 16px; }
+/* Bill Payment Status Report - reuses the report.css look (#reportTable) */
+#reportTable.payment-status-table { min-width: 1100px; }
+#reportTable.payment-status-table thead th { white-space: normal; line-height: 1.25; vertical-align: middle; }
+.report-filters select { height: 40px; padding: 0 11px; border: 1px solid #cbd5e1; border-radius: 20px; background: #fff; color: #0f172a; font-size: 13px; outline: none; }
+.report-filters select:focus { border-color: #1E5AA8; box-shadow: 0 0 0 3px rgba(30, 90, 168, 0.10); }
+#reportTable.payment-status-table tbody tr.bill-status-unpaid td:last-child { color: #b91c1c; font-weight: 700; }
+#reportTable.payment-status-table tbody tr.bill-status-partially-paid td:last-child { color: #b45309; font-weight: 700; }
+#reportTable.payment-status-table tbody tr.bill-status-paid td:last-child { color: #15803d; font-weight: 700; }
+.customer-bills-list-scroll { max-height: 420px; overflow-y: auto; }
+.customer-bills-list-scroll thead th { position: sticky; top: 0; z-index: 1; }
+.customer-bill-filters { display: grid; grid-template-columns: minmax(220px, 1.7fr) minmax(150px, 1fr) minmax(150px, 1fr); gap: 12px; margin-bottom: 14px; }
+.customer-bill-filters .form-group { margin: 0; }
+.customer-summary-table .history-edit-btn { padding: 6px 12px; border: 1px solid #bfdbfe; border-radius: 6px; background: #eff6ff; color: #1d4ed8; cursor: pointer; font-weight: 600; }
+.customer-summary-table .history-edit-btn:hover { background: #dbeafe; }
+.bill-status-outstanding { color: #b45309 !important; font-weight: 700; }
+.bill-status-paid { color: #15803d !important; font-weight: 700; }
+@media (max-width: 700px) { .customer-bill-filters { grid-template-columns: 1fr; } }
+@media (max-width: 700px) { .customer-summary-filters { grid-template-columns: 1fr; } }
+.customer-payment-card { margin-top: 20px; }
+@media (max-width: 700px) { .payment-tabs { flex-wrap: wrap; } .customer-summary-heading { align-items: flex-start; } }
+#customerAccountsPanel { display: flex; flex-direction: column; }
+#customerAccountsPanel .customer-payment-card { order: -1; }
+
+.back-btn { border: 1px solid #cbd5e1; border-radius: 7px; padding: 8px 12px; background: #f8fafc; color: #334155; cursor: pointer; font-weight: 600; }
+.back-btn:hover { background: #e2e8f0; }
+#customerBillsPanel .payment-tab-panel[hidden] { display: none; }
+
+.advance-banner { margin: 10px 0 14px; padding: 11px 14px; border: 1px solid #bfdbfe; border-radius: 8px; background: #eff6ff; color: #1e3a8a; font-weight: 600; }
+.advance-banner strong { margin-left: 6px; font-size: 17px; }
+
+
+@media (min-width: 801px) { #paymentForm .payment-method-2 { grid-column: 2; } #paymentForm .payment-reference-2 { grid-column: 3; } #paymentForm .payment-amount-2 { grid-column: 4; } }
+
+.secondary-payment-fields { display: contents; }
+.add-payment-btn { border: 1px solid #bfdbfe; border-radius: 7px; padding: 7px 12px; background: #eff6ff; color: #1d4ed8; cursor: pointer; font-weight: 700; }
+.add-payment-btn:hover { background: #dbeafe; }
+
+#secondaryPaymentFields[hidden] { display: none !important; }

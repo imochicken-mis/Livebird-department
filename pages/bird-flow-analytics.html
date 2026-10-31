@@ -11,6 +11,30 @@
     >
 
     <title>Bird Flow Analytics</title>
+    <style>
+        /* TEMPORARY under-construction sign (page stays visible behind it, sidebar stays usable) */
+        .uc-overlay { position: fixed; inset: 0; z-index: 900; display: flex; align-items: center; justify-content: center; background: rgba(15, 23, 42, 0.18); backdrop-filter: blur(1.5px); padding: 24px 24px 24px 284px; transition: padding-left 0.22s ease; }
+        body.sidebar-collapsed .uc-overlay { padding-left: 24px; }
+        body .sidebar { z-index: 1000; }
+        body .sidebar-toggle-btn { z-index: 1001; }
+        .uc-sign { position: relative; width: min(520px, 92%); transform: rotate(-3deg); filter: drop-shadow(0 18px 28px rgba(15, 23, 42, 0.35)); animation: ucSwing 3.2s ease-in-out infinite; transform-origin: 50% -90px; }
+        .uc-string { position: absolute; top: -90px; width: 3px; height: 92px; background: #fff; border-radius: 2px; }
+        .uc-string-l { left: 18%; transform: rotate(-14deg); transform-origin: bottom; }
+        .uc-string-r { right: 18%; transform: rotate(14deg); transform-origin: bottom; }
+        .uc-body { display: flex; align-items: center; justify-content: center; gap: 22px; background: #fbd60a; padding: 26px 24px; }
+        .uc-stripe { height: 30px; background: repeating-linear-gradient(-60deg, #111 0 18px, #fbd60a 18px 36px); }
+        .uc-stripe:first-of-type { border-radius: 18px 18px 0 0; }
+        .uc-stripe:last-of-type { border-radius: 0 0 18px 18px; }
+        .uc-text { display: flex; flex-direction: column; line-height: 1; color: #111; text-align: left; }
+        .uc-text b { font-size: 52px; font-weight: 900; letter-spacing: 1px; }
+        .uc-text span { font-size: 25px; font-weight: 800; letter-spacing: 0.5px; margin-top: 4px; }
+        .uc-sep { width: 3px; align-self: stretch; background: #111; border-radius: 2px; }
+        .uc-tools { font-size: 56px; line-height: 1; }
+        @keyframes ucSwing { 0%, 100% { transform: rotate(-3.5deg); } 50% { transform: rotate(-1deg); } }
+        @media (prefers-reduced-motion: reduce) { .uc-sign { animation: none; } }
+        @media (max-width: 900px) { .uc-overlay { padding-left: 244px; } }
+        @media (max-width: 700px) { .uc-overlay, body.sidebar-collapsed .uc-overlay { padding-left: 24px; } .uc-text b { font-size: 36px; } .uc-text span { font-size: 17px; } .uc-tools { font-size: 38px; } }
+    </style>
 
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/dashboard.css">
@@ -69,6 +93,21 @@
     ====================================================== -->
 
     <main class="dashboard-main">
+
+        <!-- TEMPORARY: remove this block (and its <style> in <head>) when the page is ready -->
+        <div class="uc-overlay" role="alert">
+            <div class="uc-sign">
+                <span class="uc-string uc-string-l"></span>
+                <span class="uc-string uc-string-r"></span>
+                <div class="uc-stripe"></div>
+                <div class="uc-body">
+                    <div class="uc-text"><b>UNDER</b><span>CONSTRUCTION</span></div>
+                    <i class="uc-sep"></i>
+                    <div class="uc-tools">&#128736;&#65039;</div>
+                </div>
+                <div class="uc-stripe"></div>
+            </div>
+        </div>
 
         <div class="admin-main">
 

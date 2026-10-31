@@ -1,14 +1,14 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    // Standard: liveability must be ABOVE this value (%). Overwritten by the server value.
-    let KPI_STANDARD = 99.7;
+    // Standard: collection % must be AT LEAST this value. Overwritten by the server value.
+    let KPI_STANDARD = 95;
 
     const $ = id => document.getElementById(id);
 
     // ---------------- SESSION (user4 only) ----------------
     const sessionUser = sessionStorage.getItem("livebirdUser");
     if (!sessionUser) { window.location.href = "../index.html"; return; }
-    const user = JSON.parse(sessionUser);   
+    const user = JSON.parse(sessionUser);
     if (!user.username || user.username.toLowerCase() !== "user4") {
         sessionStorage.removeItem("livebirdUser");
         window.location.href = "../index.html";
@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const fmt = (v, d = 0) =>
         num(v).toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
 
-    // Achieved only when the value (as shown, 2 decimals) is ABOVE the standard
+    // Achieved when the value (as shown, 2 decimals) is AT LEAST the standard
     const isOk = v => Number(num(v).toFixed(2)) >= KPI_STANDARD;
 
     const monthLabel = ym => {
@@ -93,15 +93,15 @@ document.addEventListener("DOMContentLoaded", () => {
             .filter(r => r.date.slice(0, 7) === ym)
             .sort((a, b) => a.date.localeCompare(b.date));
 
-        $("stdLabel").textContent = "\u2265 " + KPI_STANDARD.toFixed(2) + " %";
+        $("stdLabel").textContent = "≥ " + KPI_STANDARD.toFixed(2) + " %";
 
         if (m) {
             const ok = isOk(m.kpi);
             $("sumRate").textContent = fmt(m.kpi, 2) + "%";
             $("boxRate").className = "kpi-tile " + (ok ? "ok" : "bad");
             $("rateStatus").textContent = ok ? "Achieved" : "Not Achieved";
-            $("sumDoa").textContent = fmt(m.nob);
-            $("sumBirds").textContent = fmt(m.avail);
+            $("sumDoa").textContent = fmt(m.total);
+            $("sumBirds").textContent = fmt(m.settled);
         } else {
             $("sumRate").textContent = "-";
             $("boxRate").className = "kpi-tile";
@@ -158,9 +158,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 return '<th class="' + (wd === 0 ? "sun" : wd === 6 ? "sat" : "") + '">' + n + "</th>";
             }).join("") + "</tr></thead>" +
             "<tbody>" +
-            row("Dispatch Birds", d => "<td>" + fmt(d.nob) + "</td>") +
-            row("DOA", d => "<td>" + fmt(d.doa) + "</td>") +
-            row("Alive NOB", d => "<td>" + fmt(d.avail) + "</td>") +
+            row("Total Bills", d => "<td>" + fmt(d.total) + "</td>") +
+            row("Settled within 2 days", d => "<td>" + fmt(d.settled) + "</td>") +
             row("KPI Value", d => '<td class="' + (isOk(d.kpi) ? "ok" : "bad") + '">' + fmt(d.kpi, 2) + "%</td>") +
             "</tbody>";
     }
@@ -170,8 +169,8 @@ document.addEventListener("DOMContentLoaded", () => {
     function yScale(values) {
         const lowest = Math.min(KPI_STANDARD, ...values);
         const span = 100 - lowest;
-        const step = span > 3 ? 1 : span > 1.2 ? 0.5 : span > 0.6 ? 0.2 : 0.1;
-        const min = Number((Math.floor((lowest - step * 0.5) / step) * step).toFixed(4));
+        const step = span > 50 ? 10 : span > 20 ? 5 : span > 8 ? 2 : span > 3 ? 1 : span > 1.2 ? 0.5 : span > 0.6 ? 0.2 : 0.1;
+        const min = Math.max(0, Number((Math.floor((lowest - step * 0.5) / step) * step).toFixed(4)));
         return { min: min, max: 100, step: step };
     }
 
@@ -234,7 +233,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 axisLine: { show: false },
                 axisTick: { show: false },
                 splitLine: { lineStyle: { color: "#e2e8f0", type: "dashed" } },
-                axisLabel: { color: "#64748b", formatter: v => Number(v).toFixed(2) + "%" }
+                axisLabel: { color: "#64748b", formatter: v => Number(v).toFixed(ax.step < 1 ? 2 : 0) + "%" }
             },
             series: [{
                 type: "line",
@@ -262,7 +261,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     data: [
                         // below the standard = red (bad)
                         [{ yAxis: ax.min, itemStyle: { color: "rgba(185,28,28,0.08)" } }, { yAxis: KPI_STANDARD }],
-                        // above the standard = green (good)
+                        // at / above the standard = green (good)
                         [{ yAxis: KPI_STANDARD, itemStyle: { color: "rgba(4,120,87,0.10)" } }, { yAxis: ax.max }]
                     ]
                 },
@@ -271,7 +270,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     silent: true,
                     lineStyle: { color: "#b91c1c", type: "dashed", width: 2 },
                     label: {
-                        formatter: "Standard \u2265 " + KPI_STANDARD.toFixed(2) + "%",
+                        formatter: "Standard ≥ " + KPI_STANDARD.toFixed(2) + "%",
                         position: "insideEndBottom",
                         color: "#b91c1c",
                         fontWeight: 700
@@ -292,7 +291,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (!chart) chart = echarts.init(el);
-        $("chartTitle").textContent = "Daily Liveability" + (ym ? " - " + monthLabel(ym) : "");
+        $("chartTitle").textContent = "Daily Sales & Collection" + (ym ? " - " + monthLabel(ym) : "");
 
         if (!days.length) { emptyChart(chart, "No daily data for this month"); return; }
 
@@ -302,8 +301,9 @@ document.addEventListener("DOMContentLoaded", () => {
             "Day",
             i => {
                 const d = days[i];
-                return `<b>${d.date}</b><br>Liveability: ${fmt(d.kpi, 2)}%` +
-                    `<br>DOA: ${fmt(d.doa)}<br>Dispatch NOB: ${fmt(d.nob)}<br>Alive NOB: ${fmt(d.avail)}`;
+                return `<b>${d.date}</b><br>Collection: ${fmt(d.kpi, 2)}%` +
+                    `<br>Total Bills: ${fmt(d.total)}` +
+                    `<br>Settled within 2 days: ${fmt(d.settled)}`;
             },
             false
         ), true);
@@ -344,7 +344,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (!yearChart) yearChart = echarts.init(el);
-        $("yearChartTitle").textContent = "Monthly Liveability" + (year ? " - " + year : "");
+        $("yearChartTitle").textContent = "Monthly Sales & Collection" + (year ? " - " + year : "");
 
         // only the months that have data
         const list = Object.keys(byMonth).map(Number).sort((a, b) => a - b)
@@ -359,10 +359,9 @@ document.addEventListener("DOMContentLoaded", () => {
             i => {
                 const x = list[i];
                 return `<b>${SHORT_MONTHS[x.n - 1]} ${year}</b>` +
-                    `<br>Liveability: ${fmt(x.r.kpi, 2)}%` +
-                    `<br>DOA: ${fmt(x.r.doa)}` +
-                    `<br>Dispatch NOB: ${fmt(x.r.nob)}` +
-                    `<br>Alive NOB: ${fmt(x.r.avail)}`;
+                    `<br>Collection: ${fmt(x.r.kpi, 2)}%` +
+                    `<br>Total Bills: ${fmt(x.r.total)}` +
+                    `<br>Settled within 2 days: ${fmt(x.r.settled)}`;
             },
             list.length === 1
         ), true);
@@ -390,9 +389,8 @@ document.addEventListener("DOMContentLoaded", () => {
             "<thead><tr><th>Month</th>" +
             nums.map(n => "<th>" + SHORT_MONTHS[n - 1] + "</th>").join("") +
             "</tr></thead><tbody>" +
-            row("Dispatch Birds", m => "<td>" + fmt(m.nob) + "</td>") +
-            row("DOA", m => "<td>" + fmt(m.doa) + "</td>") +
-            row("Alive NOB", m => "<td>" + fmt(m.avail) + "</td>") +
+            row("Total Bills", m => "<td>" + fmt(m.total) + "</td>") +
+            row("Settled within 2 days", m => "<td>" + fmt(m.settled) + "</td>") +
             row("KPI Value", m => '<td class="' + (isOk(m.kpi) ? "ok" : "bad") + '">' + fmt(m.kpi, 2) + "%</td>") +
             "</tbody>";
     }

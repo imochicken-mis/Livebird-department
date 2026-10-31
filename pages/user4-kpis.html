@@ -723,7 +723,7 @@
                         <label class="ov-multi-all"><input type="checkbox" id="ovKpiAll" checked> All KPIs</label>
                         <label><input type="checkbox" data-kpi value="ovKpi1" checked> KPI 1 - Live Bird Mortality Rate</label>
                         <label><input type="checkbox" data-kpi value="ovKpi2" checked> KPI 2 - Average Bird Weight</label>
-                        <label><input type="checkbox" data-kpi value="ovKpi3" checked> KPI 3 - Liveability</label>
+                        <label><input type="checkbox" data-kpi value="ovKpi3" checked> KPI 3 - Sales &amp; Collection</label>
                         <label><input type="checkbox" data-kpi value="ovKpi4" checked> KPI 4 - Bird Receiving Performance</label>
                         <label><input type="checkbox" data-kpi value="ovKpi5" checked> KPI 5 - Truck Turnaround Time</label>
                     </div>
@@ -780,18 +780,18 @@
             <a href="kpi3-liveability.html" class="kpi-hub-card active" id="ovKpi3">
                 <span class="kpi-hub-no">KPI 3</span>
                 <div class="kpi-hub-img"><img src="../assets/Live.png" alt=""></div>
-                <h3>Liveability</h3>
+                <h3>Sales &amp; Collection</h3>
                 <div class="kpi-ov-rate">
                     <strong id="ov3Rate">-</strong>
                     <span class="kpi-ov-pill" id="ov3Status">Loading...</span>
                 </div>
                 <div class="kpi-ov-stats">
-                    <div><b id="ov3Doa">-</b>DOA</div>
-                    <div><b id="ov3Birds">-</b>Birds</div>
+                    <div><b id="ov3Doa">-</b>Total Bills</div>
+                    <div><b id="ov3Birds">-</b>Settled</div>
                     <div><b id="ov3Days">-</b>Days</div>
                 </div>
                 <div class="kpi-ov-donut" id="ovDonut3"></div>
-                <span class="kpi-hub-std">Standard &ge; 99.70 %</span>
+                <span class="kpi-hub-std">Standard &ge; 95 %</span>
             </a>
             <a href="kpi4-receiving.html" class="kpi-hub-card active" id="ovKpi4">
                 <span class="kpi-hub-no">KPI 4</span>
@@ -1265,7 +1265,7 @@ document.addEventListener("DOMContentLoaded", function () {
         },
         3: {
             unit: "%", dec: 2, ymin: true,
-            agg: l => { const n = ovSum(l, "nob"); return n > 0 ? (n - ovSum(l, "doa")) / n * 100 : null; },
+            agg: l => { const t = ovSum(l, "total"); return t > 0 ? ovSum(l, "settled") / t * 100 : null; },
             mon: r => ovNum(r.kpi),
             st: (v, s) => Number(v.toFixed(2)) >= s.std ? "ok" : "bad",
             lines: s => [{ y: s.std, t: "Std \u2265 " + s.std + "%", c: "#b91c1c" }]
@@ -1912,21 +1912,21 @@ document.addEventListener("DOMContentLoaded", function () {
                 .sort((a, b) => a.month.localeCompare(b.month))
                 .pop();
 
-            const std = ovNum(result.standard) > 0 ? ovNum(result.standard) : 99.7;
+            const std = ovNum(result.standard) > 0 ? ovNum(result.standard) : 95;
             const rate = ovNum(m.kpi);
             const ok = Number(rate.toFixed(2)) >= std;
 
-            // days of that month that have data
-            const days = (result.daily || []).filter(d => d.date.slice(0, 7) === m.month).length;
-
             ovSet("ov3Rate", ovFmt(rate, 2) + "%");
             ovSet("ov3Status", ok ? "Achieved" : "Not Achieved");
-            ovSet("ov3Doa", ovFmt(m.doa));
-            ovSet("ov3Birds", ovFmt(m.nob));
-            ovSet("ov3Days", ovFmt(days));
+            ovSet("ov3Doa", ovFmt(m.total));
+            ovSet("ov3Birds", ovFmt(m.settled));
+
+            // days of that month that have data
+            const dd = (result.daily || []).filter(d => d.date.slice(0, 7) === m.month);
+            ovSet("ov3Days", ovFmt(dd.length));
             document.getElementById("ovKpi3").classList.add(ok ? "ok" : "bad");
 
-            const dd = (result.daily || []).filter(d => d.date.slice(0, 7) === m.month);
+            // donut = days that reached the standard vs not
             const dOk = dd.filter(d => Number(ovNum(d.kpi).toFixed(2)) >= std).length;
             ovDonut(3, dOk, dd.length - dOk);
             ovTrend(3, { month: m.month, daily: result.daily || [], monthly: result.monthly || [], s: { std: std } });

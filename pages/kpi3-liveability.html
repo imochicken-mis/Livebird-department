@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KPI 3 - Liveability</title>
+    <title>KPI 3 - Sales &amp; Collection</title>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/dashboard.css">
     <link rel="stylesheet" href="../css/admin-analytics.css">
@@ -48,8 +48,8 @@
             <div>
                 <span class="kpi-logo"><img src="../assets/Live.png" alt=""></span>
                 <div class="kpi-titles">
-                    <h1>KPI 3 – Liveability</h1>
-                    <p>Share of the birds received that arrive alive at the plant: (NOB − DOA) ÷ NOB</p>
+                    <h1>KPI 3 – Sales &amp; Collection</h1>
+                    <p>Share of the bills settled within 2 days of the bill date: Settled within 2 Days ÷ Total Bills</p>
                 </div>
             </div>
             <div class="header-user">
@@ -68,30 +68,30 @@
             </div>
 
             <div class="kpi-strip" id="kpiCards">
-                <!-- Card 1: Liveability -->
+                <!-- Card 1: Collection % -->
                 <div class="kpi-tile" id="boxRate">
             <div class="kpi-label">
-                <span>Liveability</span>
+                <span>Collection within 2 Days</span>
 
             </div>
                     <div class="kpi-value">
                         <strong id="sumRate">-</strong>
                         <span class="kpi-pill" id="rateStatus">-</span>
-                        <span class="kpi-std">Standard: <b id="stdLabel">&ge; 99.70 %</b></span>
+                        <span class="kpi-std">Standard: <b id="stdLabel">&ge; 95.00 %</b></span>
                     </div>
                 </div>
 
-                <!-- Card 2: DOA + total birds, side by side -->
+                <!-- Card 2: total bills + settled bills, side by side -->
                 <div class="kpi-tile" id="boxDoa">
                     <div class="kpi-label">Key Performance Dimensions</div>
                     <div class="kpi-value">
                         <div class="kpi-birds">
                             <b class="kpi-birds-num" id="sumDoa">-</b>
-                            <span class="kpi-birds-label">Dispatch NOB</span>
+                            <span class="kpi-birds-label">Total Bills</span>
                         </div>
                         <div class="kpi-birds">
                             <b class="kpi-birds-num" id="sumBirds">-</b>
-                            <span class="kpi-birds-label">Alive NOB</span>
+                            <span class="kpi-birds-label">Settled within 2 Days</span>
                         </div>
                     </div>
                 </div>
@@ -117,7 +117,7 @@
             </div>
 
             <div class="kpi-chart-card">
-                <h3 class="kpi-chart-title" id="chartTitle">Daily Liveability</h3>
+                <h3 class="kpi-chart-title" id="chartTitle">Daily Sales &amp; Collection</h3>
                 <div id="kpiChart" class="kpi-chart"></div>
             </div>
 
@@ -131,7 +131,7 @@
             </div>
 
             <div class="kpi-chart-card">
-                <h3 class="kpi-chart-title" id="yearChartTitle">Monthly Liveability</h3>
+                <h3 class="kpi-chart-title" id="yearChartTitle">Monthly Sales &amp; Collection</h3>
                 <div id="yearChart" class="kpi-chart"></div>
             </div>
 
