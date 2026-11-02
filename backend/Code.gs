@@ -1200,6 +1200,8 @@ function getCustomerAccounts() {
       unpaidBillCount: 0,
       outstanding: 0,
       cashAdvance: 0,
+      deposits: [],
+      advanceUsed: 0,
       bills: []
     };
     order.push(key);
@@ -1253,12 +1255,28 @@ function getCustomerAccounts() {
     ledger.getRange(2, 2, ledger.getLastRow() - 1, 5).getValues().forEach(row => { // B:F
       const key = customerKey_(row[0]);
       if (String(row[2] || "").trim() === "Applied to Bill") return; // Ignore legacy auto-application rows.
-      if (accounts[key]) accounts[key].cashAdvance += safeSheetNumber(row[4]);
+      const account = accounts[key];
+      if (!account) return;
+      const amount = safeSheetNumber(row[4]);
+      account.cashAdvance += amount;
+      if (amount > 0) account.deposits.push({ ref: String(row[3] || "").trim(), amount: amount }); // E: Reference No
+      else account.advanceUsed += -amount;
     });
   }
 
   const customers = order.map(key => {
     const account = accounts[key];
+    // Reference numbers of the deposits that still have balance (oldest deposit is used first).
+    let used = account.advanceUsed;
+    account.advanceRefs = [];
+    account.deposits.forEach(deposit => {
+      const take = Math.min(used, deposit.amount);
+      used -= take;
+      const left = Math.round((deposit.amount - take) * 100) / 100;
+      if (left > 0) account.advanceRefs.push({ ref: deposit.ref, amount: left });
+    });
+    delete account.deposits;
+    delete account.advanceUsed;
     account.outstanding = Math.round(Math.max(0, account.outstanding) * 100) / 100;
     account.cashAdvance = Math.round(Math.max(0, account.cashAdvance) * 100) / 100;
     account.bills.sort((a, b) => String(a.date).localeCompare(String(b.date)));
