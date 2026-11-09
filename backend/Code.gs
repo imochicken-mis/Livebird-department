@@ -56,7 +56,7 @@ function doPost(e) {
   const out = doPostInner_(e);
   try {
     const a = JSON.parse(e.postData.contents).action;
-    if (/^(save|add)/i.test(String(a))) clearReportCache_();
+    if (/^(save|add|delete)/i.test(String(a))) clearReportCache_();
   } catch (_) {}
   return out;
 }
@@ -193,6 +193,10 @@ function doPostInner_(e) {
 
     if (action === "getBillPaymentHistory") {
       return getBillPaymentHistory(request.billNo);
+    }
+
+    if (action === "deleteCashInAdvanceApplication") {
+      return deleteCashInAdvanceApplication(request.billNo, request.rowNumber);
     }
 
     if (action === "getCustomerAccounts") {
@@ -1127,7 +1131,7 @@ function recalculateBillPaymentBalances_(sheet, billNo, totalAmount) {
 
 const CUSTOMER_LEDGER_HEADERS_ = [
   "Timestamp", "Customer", "Payment Date", "Type",
-  "Reference No", "Amount", "Added By", "Remark"
+  "Reference No", "Amount", "Added By", "Remark", "Payment Method"
 ];
 
 function customerKey_(value) {
@@ -1202,6 +1206,7 @@ function getCustomerAccounts() {
       cashAdvance: 0,
       deposits: [],
       advanceUsed: 0,
+      lastAdvanceDate: "",
       bills: []
     };
     order.push(key);
@@ -1259,8 +1264,11 @@ function getCustomerAccounts() {
       if (!account) return;
       const amount = safeSheetNumber(row[4]);
       account.cashAdvance += amount;
-      if (amount > 0) account.deposits.push({ ref: String(row[3] || "").trim(), amount: amount }); // E: Reference No
-      else account.advanceUsed += -amount;
+      if (amount > 0) {
+        account.deposits.push({ ref: String(row[3] || "").trim(), amount: amount }); // E: Reference No
+        const depositDate = formatSheetDate(row[1]);                                  // C: Payment Date
+        if (depositDate > account.lastAdvanceDate) account.lastAdvanceDate = depositDate;
+      } else account.advanceUsed += -amount;
     });
   }
 
@@ -1307,10 +1315,10 @@ function saveCustomerAccountPayment(payment) {
     });
   }
 
-  if (method !== "Cash" && method !== "Bank Transfer") {
+  if (method !== "Cash Bag" && method !== "Bank Transfer") {
     return jsonResponse({
       success: false,
-      message: "Payment method must be Cash or Bank Transfer."
+      message: "Payment method must be Cash Bag or Bank Transfer."
     });
   }
 
@@ -1337,6 +1345,10 @@ function saveCustomerAccountPayment(payment) {
 
   try {
     const sheet = getCustomerLedgerSheet_(true);
+    // column I: Cash Bag / Bank Transfer (the header is added once on an existing sheet)
+    if (!String(sheet.getRange(1, 9).getValue() || "").trim()) {
+      sheet.getRange(1, 9).setValue("Payment Method");
+    }
     writeFirstBlankRow_(sheet, [
       new Date(),
       customer,
@@ -1345,7 +1357,8 @@ function saveCustomerAccountPayment(payment) {
       referenceNo,
       amount,
       addedBy,
-      remark
+      remark,
+      method
     ], 1);
 
     return jsonResponse({
@@ -1370,6 +1383,36 @@ function getCustomerAdvanceAmount_(customerName) {
     if (String(row[2] || "").trim() === "Applied to Bill") return sum; // Ignore legacy rows.
     return sum + safeSheetNumber(row[4]); // F: Amount
   }, 0));
+}
+
+// Reference No(s) of the cash in advance deposits that cover `amountToUse` (oldest deposit first)
+function getCustomerAdvanceRefs_(customerName, amountToUse) {
+  const sheet = getCustomerLedgerSheet_(false);
+  if (!sheet || sheet.getLastRow() < 2 || !(amountToUse > 0)) return "";
+
+  const target = customerKey_(customerName);
+  const deposits = [];
+  let used = 0;
+
+  sheet.getRange(2, 2, sheet.getLastRow() - 1, 5).getValues().forEach(row => { // B:F
+    if (customerKey_(row[0]) !== target) return;
+    if (String(row[2] || "").trim() === "Applied to Bill") return; // Ignore legacy rows.
+    const amount = safeSheetNumber(row[4]);
+    if (amount > 0) deposits.push({ ref: String(row[3] || "").trim(), amount: amount });
+    else used += -amount;
+  });
+
+  const refs = [];
+  let need = amountToUse;
+  deposits.forEach(deposit => {
+    const skip = Math.min(used, deposit.amount);
+    used -= skip;
+    const left = deposit.amount - skip;
+    if (left <= 0.000001 || need <= 0.000001) return;
+    need -= left;
+    if (deposit.ref && refs.indexOf(deposit.ref) < 0) refs.push(deposit.ref);
+  });
+  return refs.join(", ");
 }
 
 function saveBillPayment(payment) {
@@ -1406,10 +1449,11 @@ function saveBillPayment(payment) {
     });
   }
 
-  if (payments.some(item => item.paymentMethod !== "Cash" && item.paymentMethod !== "Bank Transfer")) {
+  // the method is optional (the payment form has no method box any more)
+  if (payments.some(item => item.paymentMethod && item.paymentMethod !== "Cash Bag" && item.paymentMethod !== "Cash" && item.paymentMethod !== "Bank Transfer")) {
     return jsonResponse({
       success: false,
-      message: "Payment method must be Cash or Bank Transfer."
+      message: "Payment method must be Cash Bag or Bank Transfer."
     });
   }
 
@@ -1477,6 +1521,11 @@ function saveBillPayment(payment) {
       });
     }
 
+    // reference no(s) of the advance deposit(s) used (read before the ledger row below is written)
+    const advanceRefs = !editRow && advanceApplied > 0
+      ? getCustomerAdvanceRefs_(bill.customer, advanceApplied)
+      : "";
+
     if (!editRow && advanceApplied > 0) {
       const ledger = getCustomerLedgerSheet_(true);
       writeFirstBlankRow_(ledger, [
@@ -1505,7 +1554,7 @@ function saveBillPayment(payment) {
         writeFirstBlankRow_(sheet, [
           new Date(), bill.billNo, bill.date, bill.expectedDate, bill.farmer,
           bill.batch, bill.customer, bill.totalNob, bill.totalWeight,
-          bill.totalPrice, bill.totalAmount, "Cash in Advance Applied", "Advance", advanceApplied,
+          bill.totalPrice, bill.totalAmount, "Cash in Advance Applied", advanceRefs || "Advance", advanceApplied,
           Math.max(0, Math.round((billBalanceBefore - advanceApplied) * 100) / 100), addedBy, paymentDate
         ], 1);
       }
@@ -1532,6 +1581,82 @@ function saveBillPayment(payment) {
       advanceApplied: advanceApplied,
       updated: Boolean(editRow),
       savedRows: payments.length + (advanceApplied > 0 ? 1 : 0)
+    });
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+// Deletes one "Cash in Advance Applied" row of a bill and the matching "Applied to Payment" row of the
+// CustomerLedger, so the amount goes back to the customer's Cash in Advance.
+function deleteCashInAdvanceApplication(billNo, rowNumber) {
+  billNo = String(billNo || "").trim();
+  rowNumber = Number(rowNumber) || 0;
+
+  if (!billNo || !Number.isInteger(rowNumber) || rowNumber < 2) {
+    return jsonResponse({ success: false, message: "Bill No and the payment row are required." });
+  }
+
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(15000);
+  } catch (_) {
+    return jsonResponse({ success: false, message: "System is busy. Please try again." });
+  }
+
+  try {
+    const bill = getBillPaymentBill_(billNo);
+    if (!bill) {
+      return jsonResponse({ success: false, message: "Bill No was not found in CatchingBreakdown column I." });
+    }
+
+    const sheet = getBillPaymentSheet_(false);
+    if (!sheet || rowNumber > sheet.getLastRow()) {
+      return jsonResponse({ success: false, message: "The payment row could not be found. Open the bill again." });
+    }
+
+    const row = sheet.getRange(rowNumber, 1, 1, 17).getValues()[0];
+    if (customerKey_(row[1]) !== customerKey_(bill.billNo) ||
+        !String(row[11] || "").trim().startsWith("Cash in Advance")) {
+      return jsonResponse({ success: false, message: "Only a Cash in Advance payment of this bill can be deleted here." });
+    }
+
+    const amount = safeSheetNumber(row[13]);
+    const paymentDate = row[16] ? formatSheetDate(row[16]) : formatSheetDate(row[0]);
+
+    // the matching ledger row (negative amount, same bill) - the latest one on the same date
+    const ledger = getCustomerLedgerSheet_(false);
+    let ledgerRow = 0;
+    if (ledger && ledger.getLastRow() >= 2) {
+      const values = ledger.getRange(2, 1, ledger.getLastRow() - 1, 8).getValues();
+      for (let i = values.length - 1; i >= 0; i--) {
+        const v = values[i];
+        if (customerKey_(v[1]) !== customerKey_(bill.customer)) continue;
+        if (String(v[3] || "").trim() !== "Applied to Payment") continue;
+        if (customerKey_(v[4]) !== customerKey_(bill.billNo)) continue;
+        if (Math.abs(safeSheetNumber(v[5]) + amount) > 0.005) continue;
+        if (!ledgerRow || formatSheetDate(v[2]) === paymentDate) ledgerRow = i + 2;
+        if (formatSheetDate(v[2]) === paymentDate) break;
+      }
+    }
+
+    if (!ledgerRow) {
+      return jsonResponse({
+        success: false,
+        message: "The matching CustomerLedger row was not found, so nothing was deleted."
+      });
+    }
+
+    ledger.deleteRow(ledgerRow);
+    sheet.deleteRow(rowNumber);
+
+    const balance = recalculateBillPaymentBalances_(sheet, bill.billNo, bill.totalAmount);
+    return jsonResponse({
+      success: true,
+      message: "Cash in Advance payment deleted.",
+      balance: balance,
+      returnedToAdvance: amount,
+      cashAdvance: getCustomerAdvanceAmount_(bill.customer)
     });
   } finally {
     lock.releaseLock();

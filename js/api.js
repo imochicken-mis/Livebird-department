@@ -223,6 +223,10 @@ async function saveBillPayment(payment) {
     return await sendRequest({ action: "saveBillPayment", payment: payment });
 }
 
+async function deleteCashInAdvanceApplication(billNo, rowNumber) {
+    return await sendRequest({ action: "deleteCashInAdvanceApplication", billNo: billNo, rowNumber: rowNumber });
+}
+
 async function getBillPaymentHistory(billNo) {
     return await sendRequest({ action: "getBillPaymentHistory", billNo: billNo });
 }

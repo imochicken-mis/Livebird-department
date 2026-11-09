@@ -25,7 +25,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const isoToday = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
     const showBillMessage = (text, type = "") => { const el = byId("paymentMessage"); el.textContent = text; el.className = `payment-message ${type}`.trim(); };
     const showCustomerMessage = (text, type = "") => { const el = byId("customerAccountsMessage"); el.textContent = text; el.className = `payment-message ${type}`.trim(); };
-    const showBalanceMessage = (text, type = "") => { const el = byId("customerBalanceMessage"); el.textContent = text; el.className = `payment-message ${type}`.trim(); };
+    let balanceMessageTimer = null;
+    const showBalanceMessage = (text, type = "") => {
+        const el = byId("customerBalanceMessage"); el.textContent = text; el.className = `payment-message ${type}`.trim();
+        clearTimeout(balanceMessageTimer);
+        if (type === "success") balanceMessageTimer = setTimeout(() => { el.textContent = ""; el.className = "payment-message"; }, 5000);   // success message fades after 5 s
+    };
     const fill = (id, value) => { byId(id).textContent = value ?? ""; };
 
     const balancePanel = byId("customerBalancePanel");
@@ -42,12 +47,7 @@ const customerBillsListCard = byId("customerBillsListCard");
     const billPanel = byId("billPaymentsPanel");
     const tabButtons = [...document.querySelectorAll("[data-payment-tab]")];
     const amountInput = byId("paymentAmount");
-    const paymentMethod2 = byId("paymentMethod2");
-    const receiptNo2 = byId("receiptNo2");
-    const amountInput2 = byId("paymentAmount2");
-    const secondaryPaymentFields = byId("secondaryPaymentFields");
         const useCashAdvance = byId("useCashAdvance");
-    const toggleSecondPaymentBtn = byId("toggleSecondPaymentBtn");
     const saveButton = byId("savePaymentBtn");
     const paymentDateInput = byId("paymentDate");
     const historySection = byId("paymentHistorySection");
@@ -81,7 +81,13 @@ if (name !== "customer-bills") {
             billPanel.hidden = true;
             billsSummaryCard.hidden = true;
             customerBillsListCard.hidden = true;
-        } else if (!currentBill) {
+        } else if (currentBill) {
+            // a bill was left open when the tab was changed: show it again with the latest cash in advance
+            billPanel.hidden = false;
+            const account = currentCustomerAccount();
+            fill("detailCashAdvance", money(account ? account.cashAdvance : 0));
+            updatePaymentLimits();
+        } else {
             billsSummaryCard.hidden = Boolean(selectedCustomerName);
             customerBillsListCard.hidden = !selectedCustomerName;
         }
@@ -136,7 +142,6 @@ if (name !== "customer-bills") {
 const currentCustomerAccount = () => customerAccountsData.find(item => String(item.name || "").trim().toLowerCase() === String(currentBill ? currentBill.customer : "").trim().toLowerCase());
     const billBalanceBeforeEdit = () => Number(currentBill ? currentBill.balance : 0) + (editingPayment ? Number(editingPayment.paymentAmount || 0) : 0);
         const cashAdvanceAmount = () => Math.max(0, Number((currentCustomerAccount() || {}).cashAdvance || 0));
-    const paymentMethod1 = byId("paymentMethod");
     const receiptNo1 = byId("receiptNo");
     let advanceShown = false;
     // With "Use Cash in Advance" ticked, the first line only shows the advance that will be used (read only).
@@ -144,10 +149,10 @@ const currentCustomerAccount = () => customerAccountsData.find(item => String(it
         if (!advanceShown) return;
         advanceShown = false;
         amountInput.value = ""; receiptNo1.value = "";
-        amountInput.readOnly = false; receiptNo1.readOnly = false; paymentMethod1.disabled = false;
+        amountInput.readOnly = false; receiptNo1.readOnly = false;
     };
     const advanceToApply = () => useCashAdvance.checked
-        ? Math.min(cashAdvanceAmount(), Math.max(0, billBalanceBeforeEdit() - Math.max(0, Number(amountInput2.value) || 0)))
+        ? Math.min(cashAdvanceAmount(), Math.max(0, billBalanceBeforeEdit()))
         : 0;
     const syncAdvanceDisplay = () => {
         if (!currentBill || !useCashAdvance.checked) { clearAdvanceDisplay(); return; }
@@ -162,12 +167,12 @@ const currentCustomerAccount = () => customerAccountsData.find(item => String(it
         advanceShown = true;
         amountInput.value = applied > 0 ? applied.toFixed(2) : "";
         receiptNo1.value = refs.join(", ");
-        amountInput.readOnly = true; receiptNo1.readOnly = true; paymentMethod1.disabled = true; paymentMethod1.value = "";
+        amountInput.readOnly = true; receiptNo1.readOnly = true;
     };
     const refreshBalance = () => {
         if (!currentBill) return;
         syncAdvanceDisplay();
-        const directAmount = (useCashAdvance.checked ? 0 : Math.max(0, Number(amountInput.value) || 0)) + Math.max(0, Number(amountInput2.value) || 0);
+        const directAmount = (useCashAdvance.checked ? 0 : Math.max(0, Number(amountInput.value) || 0));
         const advanceAmount = useCashAdvance.checked ? Math.min(cashAdvanceAmount(), Math.max(0, billBalanceBeforeEdit() - directAmount)) : 0;
         const projectedBalance = Math.max(0, billBalanceBeforeEdit() - directAmount - advanceAmount);
         fill("detailBalance", money(projectedBalance));
@@ -178,22 +183,15 @@ const currentCustomerAccount = () => customerAccountsData.find(item => String(it
         const advanceAmount = useCashAdvance.checked ? Math.min(cashAdvanceAmount(), billBalanceBeforeEdit()) : 0;
         const max = Math.max(0, billBalanceBeforeEdit() - advanceAmount).toFixed(2);
         amountInput.max = max;
-        amountInput2.max = max;
         refreshBalance();
     };
     amountInput.addEventListener("input", refreshBalance);
-    amountInput2.addEventListener("input", refreshBalance);
-    const setSecondPaymentVisible = visible => {
-        secondaryPaymentFields.hidden = !visible;
-        toggleSecondPaymentBtn.setAttribute("aria-expanded", String(visible));
-        toggleSecondPaymentBtn.textContent = visible ? "− Hide second payment" : "+ Add another payment";
-    };
     useCashAdvance.addEventListener("change", () => {
         updatePaymentLimits();
-        // the advance does not cover the whole bill: the rest goes on the second payment line
-        if (useCashAdvance.checked && currentBill && billBalanceBeforeEdit() - advanceToApply() > 0.005) setSecondPaymentVisible(true);
+        // advance ticked: Cash Collected Date = latest date the customer's advance (CustomerLedger amount > 0) was received
+        const account = currentCustomerAccount();
+        paymentDateInput.value = useCashAdvance.checked && account && account.lastAdvanceDate ? account.lastAdvanceDate : isoToday();
     });
-    toggleSecondPaymentBtn.addEventListener("click", () => setSecondPaymentVisible(secondaryPaymentFields.hidden));
     const refreshPaymentHistory = async billNo => {
         historySection.hidden = false;
         historyBody.replaceChildren();
@@ -206,7 +204,12 @@ const currentCustomerAccount = () => customerAccountsData.find(item => String(it
                 const tr = document.createElement("tr");
                 const actionCell = document.createElement("td");
                 const editButton = document.createElement("button");
-                editButton.type = "button"; editButton.className = "history-edit-btn"; editButton.dataset.editRow = String(item.rowNumber); editButton.textContent = "Edit";
+                if (String(item.paymentMethod || "").trim().startsWith("Cash in Advance")) {
+                    // an advance application cannot be edited: it can only be deleted (the amount goes back to the advance)
+                    editButton.type = "button"; editButton.className = "history-edit-btn history-delete-btn"; editButton.dataset.deleteRow = String(item.rowNumber); editButton.textContent = "Delete";
+                } else {
+                    editButton.type = "button"; editButton.className = "history-edit-btn"; editButton.dataset.editRow = String(item.rowNumber); editButton.textContent = "Edit";
+                }
                 actionCell.appendChild(editButton); tr.appendChild(actionCell);
                 [index + 1, item.paymentDate, item.paymentMethod, item.receiptNo || "-", money(item.paymentAmount), money(item.balance), item.addedBy || ""].forEach(value => { const td = document.createElement("td"); td.textContent = value; tr.appendChild(td); });
                 historyBody.appendChild(tr);
@@ -227,7 +230,7 @@ const currentCustomerAccount = () => customerAccountsData.find(item => String(it
             if (!result.success) throw new Error(result.message || "Could not load this bill.");
             if (!result.found) { showBillMessage("Bill No not found.", "error"); return; }
             currentBill = result.bill;
-             byId("paymentForm").reset(); paymentDateInput.value = isoToday(); paymentMethod2.disabled = false; receiptNo2.disabled = false; amountInput2.disabled = false; setSecondPaymentVisible(false);
+             byId("paymentForm").reset(); paymentDateInput.value = isoToday();
             const account = customerAccountsData.find(item => String(item.name || "").trim().toLowerCase() === String(currentBill.customer || "").trim().toLowerCase());
             fill("detailCashAdvance", money(account ? account.cashAdvance : 0));
             fill("detailBill", currentBill.billNo); fill("detailDate", currentBill.date); fill("detailExpectedDate", currentBill.expectedDate); fill("detailFarmer", currentBill.farmer); fill("detailBatch", currentBill.batch); fill("detailCustomer", currentBill.customer); fill("detailNob", Number(currentBill.totalNob || 0).toLocaleString()); fill("detailWeight", money(currentBill.totalWeight)); fill("detailPrice", money(currentBill.totalPrice)); fill("detailAmount", money(currentBill.totalAmount)); fill("detailPaid", money(currentBill.paidAmount)); fill("detailBalance", money(currentBill.balance));
@@ -254,26 +257,21 @@ const currentCustomerAccount = () => customerAccountsData.find(item => String(it
         if (!currentBill) return;
         const useAdvance = useCashAdvance.checked;
         const amount1 = useAdvance ? 0 : Math.max(0, Number(amountInput.value) || 0);   // with the advance ticked, line 1 is display only
-        const amount2 = Math.max(0, Number(amountInput2.value) || 0);
-                const totalPayment = amount1 + amount2;
+                const totalPayment = amount1;
         const wasEditing = Boolean(editingPayment);
         const billBalanceBefore = billBalanceBeforeEdit();
         const availableAdvance = useAdvance ? Math.min(cashAdvanceAmount(), Math.max(0, billBalanceBefore - totalPayment)) : 0;
         if (totalPayment <= 0 && availableAdvance <= 0) { showBillMessage("Enter a payment amount or use an available Cash in Advance balance.", "error"); return; }
                 if (totalPayment + availableAdvance > billBalanceBefore + 0.000001) { showBillMessage("Payment exceeds the remaining bill balance.", "error"); return; }
-        if (amount1 > 0 && byId("paymentMethod").value !== "Cash" && byId("paymentMethod").value !== "Bank Transfer") { showBillMessage("Select a method for the first payment.", "error"); return; }
-        if (amount2 > 0 && paymentMethod2.value !== "Cash" && paymentMethod2.value !== "Bank Transfer") { showBillMessage("Select a method for the second payment.", "error"); return; }
-        if (wasEditing && amount2 > 0) { showBillMessage("Use one payment line when editing a payment.", "error"); return; }
         const payments = [];
-        if (amount1 > 0) payments.push({ paymentMethod: byId("paymentMethod").value, receiptNo: byId("receiptNo").value.trim(), paymentAmount: amount1 });
-        if (amount2 > 0) payments.push({ paymentMethod: paymentMethod2.value, receiptNo: receiptNo2.value.trim(), paymentAmount: amount2 });
+        if (amount1 > 0) payments.push({ paymentMethod: editingPayment ? (editingPayment.paymentMethod || "") : "", receiptNo: byId("receiptNo").value.trim(), paymentAmount: amount1 });
         saveButton.disabled = true; saveButton.textContent = wasEditing ? "Updating…" : "Saving…";
         try {
                                     const result = await saveBillPayment({ billNo: currentBill.billNo, editRow: editingPayment ? editingPayment.rowNumber : undefined, paymentDate: paymentDateInput.value, payments: payments, useCashAdvance: useCashAdvance.checked, paymentMethod: payments[0]?.paymentMethod || "", receiptNo: payments[0]?.receiptNo || "", paymentAmount: payments[0]?.paymentAmount || 0, addedBy: user.name || user.username });
             if (!result.success) throw new Error(result.message || "Payment could not be saved.");
             currentBill.balance = Number(result.balance); currentBill.paidAmount = Math.max(0, Number(currentBill.totalAmount) - currentBill.balance); fill("detailPaid", money(currentBill.paidAmount)); fill("detailBalance", money(currentBill.balance)); editingPayment = null;
             showBillMessage(`${wasEditing ? "Payment updated" : "Payments saved"}. Remaining balance: ${money(result.balance)}.`, "success");
-            byId("paymentForm").reset(); paymentDateInput.value = isoToday(); paymentMethod2.disabled = false; receiptNo2.disabled = false; amountInput2.disabled = false; setSecondPaymentVisible(false);
+            byId("paymentForm").reset(); paymentDateInput.value = isoToday();
             await refreshPaymentHistory(currentBill.billNo);
             await loadCustomerAccounts();
             const updatedAccount = currentCustomerAccount();
@@ -282,14 +280,33 @@ const currentCustomerAccount = () => customerAccountsData.find(item => String(it
         } catch (error) { showBillMessage(error.message || "Unable to save payment.", "error"); }
         finally { saveButton.disabled = false; saveButton.textContent = "Save Payment"; byId("clearBillBtn").textContent = "Clear"; }
     });
-    historyBody.addEventListener("click", event => {
+    historyBody.addEventListener("click", async event => {
+        const deleteButton = event.target.closest("[data-delete-row]");
+        if (deleteButton) {
+            const row = paymentHistoryRows.find(item => Number(item.rowNumber) === Number(deleteButton.dataset.deleteRow));
+            if (!row || !currentBill) return;
+            if (!window.confirm(`Delete this Cash in Advance payment of ${money(row.paymentAmount)}?\nThe amount will go back to the customer's Cash in Advance.`)) return;
+            deleteButton.disabled = true; deleteButton.textContent = "Deleting…";
+            try {
+                const result = await deleteCashInAdvanceApplication(currentBill.billNo, row.rowNumber);
+                if (!result.success) throw new Error(result.message || "Could not delete the payment.");
+                currentBill.balance = Number(result.balance); currentBill.paidAmount = Math.max(0, Number(currentBill.totalAmount) - currentBill.balance);
+                fill("detailPaid", money(currentBill.paidAmount)); fill("detailBalance", money(currentBill.balance));
+                fill("detailCashAdvance", money(result.cashAdvance));
+                showBillMessage(`Cash in Advance payment deleted. ${money(result.returnedToAdvance)} returned to Cash in Advance. Remaining balance: ${money(result.balance)}.`, "success");
+                await refreshPaymentHistory(currentBill.billNo);
+                await loadCustomerAccounts();
+                updatePaymentLimits();
+            } catch (error) { showBillMessage(error.message || "Unable to delete the payment.", "error"); await refreshPaymentHistory(currentBill.billNo); }
+            return;
+        }
         const button = event.target.closest("[data-edit-row]"); if (!button) return;
         const item = paymentHistoryRows.find(row => Number(row.rowNumber) === Number(button.dataset.editRow)); if (!item) return;
-                if (item.paymentMethod && String(item.paymentMethod).trim().startsWith("Cash in Advance")) { showBillMessage("Cash in Advance application rows cannot be edited here.", "error"); return; } useCashAdvance.checked = false; clearAdvanceDisplay(); editingPayment = item; paymentDateInput.value = item.paymentDate || ""; byId("paymentMethod").value = item.paymentMethod || ""; byId("receiptNo").value = item.receiptNo || ""; amountInput.value = Number(item.paymentAmount || 0).toFixed(2); paymentMethod2.value = ""; receiptNo2.value = ""; amountInput2.value = ""; paymentMethod2.disabled = true; receiptNo2.disabled = true; amountInput2.disabled = true; setSecondPaymentVisible(false); updatePaymentLimits(); saveButton.textContent = "Update Payment"; byId("clearBillBtn").textContent = "Cancel Edit"; showBillMessage("Payment loaded for editing. Save to replace the existing row.");
+                if (item.paymentMethod && String(item.paymentMethod).trim().startsWith("Cash in Advance")) { showBillMessage("Cash in Advance application rows cannot be edited here.", "error"); return; } useCashAdvance.checked = false; clearAdvanceDisplay(); editingPayment = item; paymentDateInput.value = item.paymentDate || ""; byId("receiptNo").value = item.receiptNo || ""; amountInput.value = Number(item.paymentAmount || 0).toFixed(2); updatePaymentLimits(); saveButton.textContent = "Update Payment"; byId("clearBillBtn").textContent = "Cancel Edit"; showBillMessage("Payment loaded for editing. Save to replace the existing row.");
     });
 
     byId("clearBillBtn").addEventListener("click", async () => {
-        if (editingPayment) { editingPayment = null; byId("paymentForm").reset(); paymentDateInput.value = isoToday(); paymentMethod2.disabled = false; receiptNo2.disabled = false; amountInput2.disabled = false; setSecondPaymentVisible(false); updatePaymentLimits(); fill("detailPaid", money(currentBill.paidAmount)); fill("detailBalance", money(currentBill.balance)); saveButton.textContent = "Save Payment"; byId("clearBillBtn").textContent = "Clear"; showBillMessage("Editing cancelled."); await refreshPaymentHistory(currentBill.billNo); return; }
+        if (editingPayment) { editingPayment = null; byId("paymentForm").reset(); paymentDateInput.value = isoToday(); updatePaymentLimits(); fill("detailPaid", money(currentBill.paidAmount)); fill("detailBalance", money(currentBill.balance)); saveButton.textContent = "Save Payment"; byId("clearBillBtn").textContent = "Clear"; showBillMessage("Editing cancelled."); await refreshPaymentHistory(currentBill.billNo); return; }
         billPanel.hidden = true; billsSummaryCard.hidden = true; customerBillsListCard.hidden = !selectedCustomerName; currentBill = null; showBillMessage("");
     });
 
@@ -373,12 +390,31 @@ const currentCustomerAccount = () => customerAccountsData.find(item => String(it
     byId("dailyReportClearBtn").addEventListener("click", () => { byId("fromDate").value = ""; byId("toDate").value = ""; byId("dailyReportCustomer").value = ""; byId("dailyReportMethod").value = "all"; renderDailyReport(); });
     byId("dailyReportRefreshBtn").addEventListener("click", loadDailyReport);
 byId("customerPaymentForm").addEventListener("submit", async event => {
-        event.preventDefault(); const button = byId("saveCustomerPaymentBtn"); const amount = Number(byId("customerPaymentAmount").value);
+        event.preventDefault(); const button = byId("saveCustomerPaymentBtn"); const amount = Number(byId("customerPaymentAmount").value.replace(/,/g, ""));
         if (!(amount > 0)) { showBalanceMessage("Enter a valid payment amount.", "error"); return; }
         button.disabled = true; button.textContent = "Saving…";
-        try { const result = await saveCustomerAccountPayment({ customer: byId("customerAccountSelect").value, paymentDate: byId("customerPaymentDate").value, paymentMethod: byId("customerPaymentMethod").value, referenceNo: byId("customerReferenceNo").value.trim(), amount, remark: byId("customerPaymentRemark").value.trim(), addedBy: user.name || user.username }); if (!result.success) throw new Error(result.message || "Customer payment could not be saved."); byId("customerPaymentForm").reset(); byId("customerPaymentDate").value = isoToday(); showBalanceMessage("Customer payment saved successfully.", "success"); await loadCustomerAccounts(); }
+        try { const result = await saveCustomerAccountPayment({ customer: byId("customerAccountSelect").value, paymentDate: byId("customerPaymentDate").value, paymentMethod: byId("customerPaymentMethod").value, referenceNo: byId("customerReferenceNo").value.trim(), amount, remark: byId("customerPaymentRemark").value.trim(), addedBy: user.name || user.username }); if (!result.success) throw new Error(result.message || "Customer payment could not be saved."); byId("customerPaymentForm").reset(); byId("customerPaymentDate").value = isoToday(); showBalanceMessage("Customer payment saved successfully.", "success"); loadCustomerAccounts(); }   // reload in the background so the button and message do not wait for it
         catch (error) { showBalanceMessage(error.message || "Unable to save customer payment.", "error"); }
         finally { button.disabled = false; button.textContent = "Save Payment"; }
+    });
+    // Amount box: 0,000,000.00 (thousands commas while typing, 2 decimals when leaving the box)
+    const cashAdvanceAmountInput = byId("customerPaymentAmount");
+    cashAdvanceAmountInput.addEventListener("input", () => {
+        const caret = cashAdvanceAmountInput.selectionStart;
+        const before = cashAdvanceAmountInput.value.slice(0, caret).replace(/[^0-9.]/g, "").length;   // digits/dot left of the caret
+        const raw = cashAdvanceAmountInput.value.replace(/[^0-9.]/g, "");
+        const dot = raw.indexOf(".");
+        const whole = (dot < 0 ? raw : raw.slice(0, dot)).replace(/^0+(?=\d)/, "");
+        const decimals = dot < 0 ? null : raw.slice(dot + 1).replace(/\./g, "").slice(0, 2);
+        const text = whole.replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (decimals === null ? "" : "." + decimals);
+        cashAdvanceAmountInput.value = text;
+        let pos = 0, seen = 0;
+        while (pos < text.length && seen < before) { if (/[0-9.]/.test(text[pos])) seen++; pos++; }
+        cashAdvanceAmountInput.setSelectionRange(pos, pos);
+    });
+    cashAdvanceAmountInput.addEventListener("blur", () => {
+        const value = Number(cashAdvanceAmountInput.value.replace(/,/g, ""));
+        if (cashAdvanceAmountInput.value && Number.isFinite(value)) cashAdvanceAmountInput.value = value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     });
     byId("clearCustomerPaymentBtn").addEventListener("click", () => { byId("customerPaymentForm").reset(); byId("customerPaymentDate").value = isoToday(); showBalanceMessage(""); });
 

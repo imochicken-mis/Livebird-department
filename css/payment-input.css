@@ -97,3 +97,6 @@ main.dashboard-main > .payment-card:first-of-type { padding-top: 16px; padding-b
 .add-payment-btn:hover { background: #dbeafe; }
 
 #secondaryPaymentFields[hidden] { display: none !important; }
+.payment-history-table .history-delete-btn { border-color: #fecaca; background: #fef2f2; color: #b91c1c; }
+.payment-history-table .history-delete-btn:hover { background: #fee2e2; }
+.payment-history-table .history-delete-btn:disabled { opacity: .6; cursor: default; }
