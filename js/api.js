@@ -108,7 +108,7 @@ async function sendRequestNetwork(payload) {
 
 const CACHE_TTL_MS = 30 * 1000;              // 30 seconds (was 5 min - sheet edits showed up late)
 const CACHE_PREFIX = "lbcache:";
-const NEVER_CACHE = /^(login|getCatchingRecordLookup|getCatchingRecordBySerial|getBillPaymentInfo|getBillPaymentHistory|getCustomerAccounts|getRefreshReportCache)/i;
+const NEVER_CACHE = /^(login|getCatchingRecordLookup|getCatchingRecordBySerial|getBillPaymentInfo|getBillPaymentHistory|getCustomerAccounts|getKpiControl|getRefreshReportCache)/i;
 
 function clearApiCache() {
     try {

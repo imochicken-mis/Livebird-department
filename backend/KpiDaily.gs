@@ -571,6 +571,8 @@ function sendDailyKpiMail() {
     if (!lock.tryLock(30000)) return;
     try {
         kpiUpdateMonthToDate_();
+        try { if (typeof kpiControlUpdate_ === "function") kpiControlUpdate_(true); }   // KPI_Control sheet (KpiControl.gs)
+        catch (e) { kpiLog_("CONTROL", "", "ERROR", e.message); }
 
         kpiLagGroups_().forEach(function (g) {
             var date = kpiReportDate_(g.lag);

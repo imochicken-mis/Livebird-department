@@ -371,9 +371,15 @@
 
         /* KPI HUB CARDS */
         .kpi-hub { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:18px; padding:28px 4px; }
-        .kpi-hub-card { display:block; padding:22px; background:#fff; border:1px solid #e2e8f0; border-radius:16px; text-decoration:none; color:#0f172a; box-shadow:0 6px 18px rgba(15,23,42,.06); }
+        .kpi-hub-card { position:relative; display:block; padding:22px; background:#fff; border:1px solid #e2e8f0; border-radius:16px; text-decoration:none; color:#0f172a; box-shadow:0 6px 18px rgba(15,23,42,.06); }
         .kpi-hub-card.active:hover { transform:translateY(-2px); border-color:#1E5AA8; }
         .kpi-hub-card.pending { opacity:.55; border-style:dashed; }
+        .kpi-switch { position:absolute; top:16px; right:16px; z-index:2; display:inline-flex; align-items:center; padding:0; border:0; background:none; cursor:pointer; font:inherit; }
+        .kpi-switch-track { position:relative; width:38px; height:22px; border-radius:999px; background:#16a34a; transition:background .2s; }
+        .kpi-switch-track::after { content:""; position:absolute; top:3px; left:19px; width:16px; height:16px; border-radius:50%; background:#fff; box-shadow:0 1px 3px rgba(15,23,42,.35); transition:left .2s; }
+        .kpi-switch[aria-checked="false"] .kpi-switch-track { background:#cbd5e1; }
+        .kpi-switch[aria-checked="false"] .kpi-switch-track::after { left:3px; }
+        .kpi-switch:focus-visible .kpi-switch-track { outline:2px solid #1E5AA8; outline-offset:2px; }
         .kpi-hub-no { font-size:11px; font-weight:800; letter-spacing:1px; color:#b017d2; text-transform:uppercase; }
         .kpi-hub-card h3 { margin:8px 0; font-size:18px; }
         .kpi-hub-card p { margin:0 0 12px; font-size:13px; color:#64748b; }
@@ -746,6 +752,7 @@
 
         <section class="kpi-hub">
             <a href="kpi1-mortality.html" class="kpi-hub-card active" id="ovKpi1">
+                <button type="button" class="kpi-switch" role="switch" aria-checked="true" aria-label="KPI on/off"><span class="kpi-switch-track"></span></button>
                 <span class="kpi-hub-no">KPI 1</span>
                 <div class="kpi-hub-img"><img src="../assets/DOA.png" alt=""></div>
                 <h3>Live Bird Mortality Rate</h3>
@@ -762,6 +769,7 @@
                 <span class="kpi-hub-std">Standard &le; 0.30 %</span>
             </a>
             <a href="kpi2-weight.html" class="kpi-hub-card active" id="ovKpi2">
+                <button type="button" class="kpi-switch" role="switch" aria-checked="true" aria-label="KPI on/off"><span class="kpi-switch-track"></span></button>
                 <span class="kpi-hub-no">KPI 2</span>
                 <div class="kpi-hub-img"><img src="../assets/AVG.png" alt=""></div>
                 <h3>Average Bird Weight</h3>
@@ -778,6 +786,7 @@
                 <span class="kpi-hub-std">Standard 1.80 – 2.40 kg</span>
             </a>
             <a href="kpi3-liveability.html" class="kpi-hub-card active" id="ovKpi3">
+                <button type="button" class="kpi-switch" role="switch" aria-checked="true" aria-label="KPI on/off"><span class="kpi-switch-track"></span></button>
                 <span class="kpi-hub-no">KPI 3</span>
                 <div class="kpi-hub-img"><img src="../assets/Live.png" alt=""></div>
                 <h3>Sales &amp; Collection</h3>
@@ -794,6 +803,7 @@
                 <span class="kpi-hub-std">Standard &ge; 95 %</span>
             </a>
             <a href="kpi4-receiving.html" class="kpi-hub-card active" id="ovKpi4">
+                <button type="button" class="kpi-switch" role="switch" aria-checked="true" aria-label="KPI on/off"><span class="kpi-switch-track"></span></button>
                 <span class="kpi-hub-no">KPI 4</span>
                 <div class="kpi-hub-img"><img src="../assets/Lorry.png" alt=""></div>
                 <h3>Bird Receiving Performance</h3>
@@ -810,6 +820,7 @@
                 <span class="kpi-hub-std" id="ov4Std">Standard 1,200 – 2,000 birds / hr</span>
             </a>
             <a href="kpi5-turnaround.html" class="kpi-hub-card active" id="ovKpi5">
+                <button type="button" class="kpi-switch" role="switch" aria-checked="true" aria-label="KPI on/off"><span class="kpi-switch-track"></span></button>
                 <span class="kpi-hub-no">KPI 5</span>
                 <div class="kpi-hub-img"><img src="../assets/clock.png" alt=""></div>
                 <h3>Truck Turnaround Time</h3>
@@ -848,7 +859,7 @@
         };
     })();
     </script>
-    <script src="../js/api.js"></script>
+    <script src="../js/api.js?v=20261112-1"></script>
 
 
 <script>
@@ -897,6 +908,38 @@ document.addEventListener("DOMContentLoaded", function () {
     ================================ */
 
     const ovCharts = {};
+
+    // ON / OFF switch in the top right corner of every KPI card: saved as Active / Inactive in the KPI_Control sheet
+    const kpiSwitchState = (btn, on) => btn.setAttribute("aria-checked", String(on));
+    document.querySelectorAll(".kpi-switch").forEach(btn => {
+        btn.addEventListener("click", async event => {
+            event.preventDefault();      // the card is a link: do not open it
+            event.stopPropagation();
+            const on = btn.getAttribute("aria-checked") !== "true";
+            const kpi = Number(btn.closest(".kpi-hub-card").id.replace("ovKpi", ""));
+            kpiSwitchState(btn, on);
+            btn.disabled = true;
+            try {
+                const result = await sendRequest({ action: "setKpiActive", kpi: kpi, active: on });
+                if (!result || !result.success) throw new Error((result && result.message) || "Could not save.");
+            } catch (error) {
+                kpiSwitchState(btn, !on);   // not saved: put the switch back
+                console.error(error);
+            } finally { btn.disabled = false; }
+        });
+    });
+
+    // the saved ON / OFF states, then refresh the monthly values in the KPI_Control sheet (the server skips it if done in the last 5 min)
+    (async () => {
+        try {
+            const result = await sendRequest({ action: "getKpiControl" });
+            ((result && result.success && result.items) || []).forEach(item => {
+                const btn = document.querySelector("#ovKpi" + item.kpi + " .kpi-switch");
+                if (btn) kpiSwitchState(btn, item.active);
+            });
+        } catch (error) { console.error(error); }
+        try { await sendRequest({ action: "updateKpiControl" }); } catch (error) { console.error(error); }
+    })();
 
     // move each card's "Standard" line up, right above the DOA / Birds / Batches band
     document.querySelectorAll(".kpi-hub-card").forEach(card => {

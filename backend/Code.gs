@@ -195,6 +195,19 @@ function doPostInner_(e) {
       return getBillPaymentHistory(request.billNo);
     }
 
+    // KPI cards: ON / OFF switches + KPI_Control sheet (KpiControl.gs)
+    if (action === "getKpiControl") {
+      return getKpiControl();
+    }
+
+    if (action === "setKpiActive") {
+      return setKpiActive(request.kpi, request.active);
+    }
+
+    if (action === "updateKpiControl") {
+      return updateKpiControl();
+    }
+
     if (action === "deleteCashInAdvanceApplication") {
       return deleteCashInAdvanceApplication(request.billNo, request.rowNumber);
     }
@@ -3625,18 +3638,14 @@ function getKpi3Data() {
   );
 
   const dailyMap = {};
-  const seenBills = {};
 
   values.forEach(row => {
 
     const billNo = String(row[4] || "").trim();      // E Bill No
     const date = formatSheetDate(row[0]);            // A Date
 
+    // every BillStatus row is counted, also when the same Bill No appears more than once
     if (!billNo || !/^\d{4}-\d{2}-\d{2}$/.test(date)) return;
-
-    const billKey = billNo.toLowerCase();
-    if (seenBills[billKey]) return;
-    seenBills[billKey] = true;
 
     const status = String(row[11] || "")             // L status
       .toLowerCase().replace(/\s+/g, " ").trim();
